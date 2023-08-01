@@ -202,17 +202,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
     
-    func addGroup(group: Group) {
-        
-        let collectionRef = FirestoreService.shared.db.collection("groups")
-        
-        do {
-            try collectionRef.addDocument(from: group)
-        }
-        catch {
-            print(error)
-        }
-    }
     
     // Get the time since most recent Tuesday that has passed (T-day)
     func timeSinceMostRecentTuesday(from userCompleteTime: Date) -> String {

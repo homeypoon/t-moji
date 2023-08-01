@@ -60,6 +60,7 @@ class HomeCollectionViewController: UICollectionViewController {
                 for document in querySnapshot!.documents {
                     do {
                         let group = try document.data(as: Group.self)
+                        
                         self.model.groups.append(group)
                     }
                     catch {

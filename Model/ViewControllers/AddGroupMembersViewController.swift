@@ -107,7 +107,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         }
     }
     
-    func addGroup(group: Group) {
+    func addGroup(group: Group) -> String? {
         let collectionRef = FirestoreService.shared.db.collection("groups")
         
         do {
@@ -126,10 +126,13 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                     
                 }
             }
+            return docRef.documentID
         }
         catch {
             print(error)
         }
+        
+        return nil
     }
     
     func presentErrorAlert(with message: String) {
@@ -153,11 +156,11 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         membersIDs.append(userID)
         
-        group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
-        addGroup(group: group!)
+        self.group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
+        let groupId = self.addGroup(group: self.group!)
+        self.group?.id = groupId
         
         let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
-        groupHomeVC.group = group
-        
+        groupHomeVC.group = self.group
     }
 }
