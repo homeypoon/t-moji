@@ -60,31 +60,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
             
         }
     }
-    
-    
-    // Prepare for the saveUnwind segue by updating User object
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        guard segue.identifier == "showGroupHome" else { return }
-        guard let userID = Auth.auth().currentUser?.uid else { return }
-        
-        let groupName = groupNameTextField.text!
-        var membersIDs = users
-            .filter { $0.isSelected }
-            .compactMap { $0.uid }
-        
-        membersIDs.append(userID)
-        
-        group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
-        addGroup(group: group!)
-        
-        let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
-        groupHomeVC.group = group
-        
-    }
-    
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }
@@ -166,5 +142,27 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    // Prepare for the saveUnwind segue by updating User object
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        guard segue.identifier == "showGroupHome" else { return }
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        let groupName = groupNameTextField.text!
+        var membersIDs = users
+            .filter { $0.isSelected }
+            .compactMap { $0.uid }
+        
+        membersIDs.append(userID)
+        
+        group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
+        addGroup(group: group!)
+        
+        let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
+        groupHomeVC.group = group
+        
     }
 }

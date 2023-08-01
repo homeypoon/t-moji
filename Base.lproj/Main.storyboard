@@ -202,14 +202,9 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </collectionViewCellContentView>
                                 <size key="customSize" width="393" height="75"/>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="ActivityFeed" id="HOK-fD-Lc7" customClass="UICollectionViewListCell">
-                                <rect key="frame" x="0.0" y="85" width="393" height="75"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="e66-fb-0fE">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="75"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </collectionViewCellContentView>
+                                <connections>
+                                    <segue destination="ey2-CB-G97" kind="show" destinationCreationSelector="showGroupHome:sender:" id="zBd-cH-kPD"/>
+                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
@@ -502,7 +497,7 @@
                             <constraint firstItem="fSk-vB-fEu" firstAttribute="bottom" secondItem="ZXz-FD-1X0" secondAttribute="bottom" id="djN-mT-hS5"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="NZE-V1-ze8">
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="NZE-V1-ze8">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="gNw-rO-fV2">
                             <connections>
                                 <segue destination="Idp-tg-7MF" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="cHi-ST-ob9"/>
@@ -523,7 +518,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Ll-sZ-QVL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="Idp-tg-7MF" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2003.8167938931297" y="2912.6760563380285"/>
+            <point key="canvasLocation" x="1097" y="3646"/>
         </scene>
         <!--Group Home Collection View Controller-->
         <scene sceneID="KP1-F2-Bde">
@@ -534,19 +529,20 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="rn1-9B-Rc3">
-                            <size key="itemSize" width="128" height="128"/>
+                            <size key="itemSize" width="393" height="70"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GroupMemberQuizCell" id="iyu-PR-gQ4" customClass="UICollectionViewListCell">
-                                <rect key="frame" x="0.0" y="0.0" width="127.99999999999997" height="128"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Id2-j5-g1w">
-                                    <rect key="frame" x="0.0" y="0.0" width="127.99999999999997" height="128"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="70"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </collectionViewCellContentView>
+                                <size key="customSize" width="393" height="70"/>
                             </collectionViewCell>
                         </cells>
                         <connections>
@@ -565,7 +561,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuF-VP-MsG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="XYV-58-EoS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="158" y="2156"/>
+            <point key="canvasLocation" x="52.671755725190835" y="2912.6760563380285"/>
         </scene>
         <!--Leaderboard-->
         <scene sceneID="hdi-zT-P2h">
@@ -656,14 +652,14 @@
                             <tableViewSection id="kqg-vB-Nfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34.333332061767578"/>
+                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" style="UICTFontTextStyleCallout"/>
@@ -783,6 +779,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="tcn-tm-jKK"/>
+        <segue reference="vIK-zN-fSk"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="checkmark.circle.fill" catalog="system" width="128" height="123"/>

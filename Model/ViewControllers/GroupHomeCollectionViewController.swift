@@ -56,8 +56,14 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         super.init(coder: coder)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = group?.name
+        navigationItem.largeTitleDisplayMode = .never
         navigationItem.hidesBackButton = true
         
         dataSource = createDataSource()
