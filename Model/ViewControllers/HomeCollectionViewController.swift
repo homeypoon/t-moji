@@ -57,6 +57,10 @@ class HomeCollectionViewController: UICollectionViewController {
     var dataSource: DataSourceType!
     var model = Model()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchGroups()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +102,8 @@ class HomeCollectionViewController: UICollectionViewController {
                     if let error = error {
                         self.presentErrorAlert(with: error.localizedDescription)
                     } else {
+                        self.model.groups.removeAll()
+                        
                         for document in querySnapshot!.documents {
                             do {
                                 let group = try document.data(as: Group.self)
@@ -175,5 +181,6 @@ class HomeCollectionViewController: UICollectionViewController {
     
     
     @IBAction func unwindToHome(segue: UIStoryboardSegue) {
+        fetchGroups()
     }
 }

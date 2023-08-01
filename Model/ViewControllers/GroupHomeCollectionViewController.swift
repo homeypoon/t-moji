@@ -58,7 +58,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("group hoome group: \(group)")
         navigationItem.hidesBackButton = true
         
         dataSource = createDataSource()
@@ -72,7 +71,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     // Get all users in the group membersIDs array
     private func fetchUsers() {
         
-        print("'fetching'")
         guard let membersIDs = group?.membersIDs else { return }
         print(membersIDs)
         
@@ -80,7 +78,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
-                print("one doc exists")
                 for document in querySnapshot!.documents {
                     do {
                         let member = try document.data(as: User.self)
@@ -97,15 +94,12 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         }
                         
                         self.model.userQuizHistoriesDict[member] = quizHistory
-                        print(self.model.userQuizHistoriesDict)
                         
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
                 }
-                print(self.model.members)
-                print(self.model.userQuizHistoriesDict)
                 self.updateCollectionView()
             }
         }
@@ -118,9 +112,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupMemberQuizCell", for: indexPath) as! UICollectionViewListCell
                 
                 var content = UIListContentConfiguration.cell()
-                
-                print("quizhis quizid \(quizHistory.quizID)")
-                
+                                
                 QuizData.quizzes.forEach { print($0.id) }
                 if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
                     print(quiz)

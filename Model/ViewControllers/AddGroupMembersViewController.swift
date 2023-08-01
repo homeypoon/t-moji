@@ -7,7 +7,8 @@
 
 import UIKit
 import FirebaseAuth
-import FirebaseStorage
+import FirebaseFirestore
+
 
 class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, PotentialGroupMemberCellDelegate {
     func addToGroupButtonTapped(sender: PotentialGroupMemberTableViewCell) {
@@ -33,7 +34,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         tableView.delegate = self
         tableView.dataSource = self
-
+        
         fetchUsers()
         
         updateSaveButtonState()
@@ -56,7 +57,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     @IBAction func createGroupButtonPressed(_ sender: UIButton) {
         updateSaveButtonState()
         if createGroupButton.isEnabled {
-
+            
         }
     }
     
@@ -77,7 +78,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
         addGroup(group: group!)
-
+        
         let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
         groupHomeVC.group = group
         
@@ -95,7 +96,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         let user = users[indexPath.row]
         cell.usernameLabel?.text = user.username
-
+        
         cell.addToGroupButton.isSelected = user.isSelected
         
         return cell
@@ -135,11 +136,29 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         let collectionRef = FirestoreService.shared.db.collection("groups")
         
         do {
-            try collectionRef.addDocument(from: group)
+            let docRef = try collectionRef.addDocument(from: group)
+            
+            FirestoreService.shared.db.collection("users").whereField("uid", in: group.membersIDs).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    self.presentErrorAlert(with: error.localizedDescription)
+                } else {
+                    for document in querySnapshot!.documents {
+                        print(document.reference)
+                        document.reference.updateData([
+                            "groupsIDs": FieldValue.arrayUnion([docRef.documentID])
+                        ])
+                    }
+                    
+                }
+            }
+            
         }
         catch {
             print(error)
         }
+
+        
+        
     }
     
     func presentErrorAlert(with message: String) {
