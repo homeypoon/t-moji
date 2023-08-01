@@ -118,7 +118,6 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                     self.presentErrorAlert(with: error.localizedDescription)
                 } else {
                     for document in querySnapshot!.documents {
-                        print(document.reference)
                         document.reference.updateData([
                             "groupsIDs": FieldValue.arrayUnion([docRef.documentID])
                         ])
@@ -129,7 +128,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
             return docRef.documentID
         }
         catch {
-            print(error)
+            presentErrorAlert(with: error.localizedDescription)
         }
         
         return nil

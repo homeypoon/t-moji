@@ -85,11 +85,9 @@ class ProfileViewController: UIViewController {
                 
                 if document.exists {
                     self.fetchUser()
-                    print("Document exist")
                     return
                 } else {
                     self.performSegue(withIdentifier: "editProfile", sender: nil)
-                    print("Document does not exist")
                 }
             }
         }
@@ -128,7 +126,7 @@ class ProfileViewController: UIViewController {
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
-                
+                self.model.userQuizHistory.removeAll()
 //                self.user = user
                 guard let uid = Auth.auth().currentUser?.uid else { return }
                 
@@ -141,7 +139,6 @@ class ProfileViewController: UIViewController {
                 self.update()
                 self.updateProfileInfoUI()
                 
-                print("user \(user)")
             case .failure(let error):
                 // could not be initialized from the DocumentSnapshot.
                 self.presentErrorAlert(with: error.localizedDescription)
@@ -158,7 +155,7 @@ class ProfileViewController: UIViewController {
             try collectionRef.document(userId).setData(from: user)
         }
         catch {
-            print(error)
+            presentErrorAlert(with: error.localizedDescription)
         }
     }
     

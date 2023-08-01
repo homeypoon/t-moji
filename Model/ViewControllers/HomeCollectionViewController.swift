@@ -141,7 +141,6 @@ class HomeCollectionViewController: UICollectionViewController {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
-                    print(document.reference)
                     document.reference.updateData([
                         "groupsIDs": FieldValue.arrayRemove([groupId])
                     ])
@@ -156,7 +155,6 @@ class HomeCollectionViewController: UICollectionViewController {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
-                    print(document.reference)
                     document.reference.updateData([
                         "membersIDs": FieldValue.arrayRemove([currentUid])
                     ])
@@ -179,13 +177,10 @@ class HomeCollectionViewController: UICollectionViewController {
     }
     
     @IBAction func unwindToHome(segue: UIStoryboardSegue) {
-        print("not yet")
         // If unwinding from group settings, need to delete group from user
         if let groupSettingsVC = segue.source as? GroupSettingsViewController {
-            print("yes")
             guard let group = groupSettingsVC.group else { return }
             
-            print("yess")
             removeUserFromGroup(group: group)
             
         }

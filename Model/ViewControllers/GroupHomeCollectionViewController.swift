@@ -90,6 +90,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
+                self.model.members.removeAll()
+                self.model.userQuizHistoriesDict.removeAll()
+
                 for document in querySnapshot!.documents {
                     do {
                         let member = try document.data(as: User.self)
@@ -247,6 +250,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         let groupSettingsVC = segue.destination as! GroupSettingsViewController
         groupSettingsVC.members = self.model.members
+        print("mim\(self.model.members)")
         groupSettingsVC.group = self.group
     }
     
