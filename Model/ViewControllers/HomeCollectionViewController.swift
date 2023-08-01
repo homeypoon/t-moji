@@ -1,0 +1,179 @@
+//
+//  HomeCollectionViewController.swift
+//  Groupsona
+//
+//  Created by Homey Poon on 2023-07-29.
+//
+
+import UIKit
+import FirebaseFirestore
+import FirebaseAuth
+
+private let reuseIdentifier = "Cell"
+
+class HomeCollectionViewController: UICollectionViewController {
+    
+    var unwindCreatedGroup: Group?
+    
+    typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
+    
+    enum ViewModel {
+        enum Section: Hashable, Comparable {
+            case groups
+            //            case activityFeed
+        }
+        
+        typealias Item = Group
+        //        enum Item: Hashable {
+        //            case group(group: Group)
+        //            case activityFeed(group: Group)
+        //
+        //            func hash(into hasher: inout Hasher) {
+        //                switch self {
+        //                case .group(let group):
+        //                    hasher.combine(group)
+        //                case .activityFeed(let group):
+        //                    hasher.combine(group)
+        //                }
+        //            }
+        //
+        //            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
+        //                switch (lhs, rhs) {
+        //                case (.group(let lGroup), .group(let rGroup)):
+        //                    return lGroup == rGroup
+        //                case (.activityFeed(let lGroup), .activityFeed(let rGroup)):
+        //                    return lGroup == rGroup
+        //                default:
+        //                    return false
+        //                }
+        //            }
+        //        }
+    }
+    
+    struct Model {
+        var groups = [Group]()
+    }
+    
+    var dataSource: DataSourceType!
+    var model = Model()
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        dataSource = createDataSource()
+        collectionView.dataSource = dataSource
+        
+        collectionView.collectionViewLayout = createLayout()
+        
+        fetchGroups()
+        
+    }
+    
+    // Get groups whose membersIDs contains the current user's id
+    private func fetchGroups() {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+//        FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID)
+//            .addSnapshotListener { querySnapshot, error in
+//                guard let documents = querySnapshot?.documents else {
+//                    self.presentErrorAlert(with: error!.localizedDescription)
+//                    return }
+//
+//                for document in querySnapshot!.documents {
+//                    do {
+//                        let group = try document.data(as: Group.self)
+//                        self.model.groups.append(group)
+//                    }
+//                    catch {
+//                        self.presentErrorAlert(with: error.localizedDescription)
+//                    }
+//
+//                }
+//                self.updateCollectionView()
+//            }
+        
+        
+                FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID).getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    } else {
+                        for document in querySnapshot!.documents {
+                            do {
+                                let group = try document.data(as: Group.self)
+                                self.model.groups.append(group)
+                            }
+                            catch {
+                                self.presentErrorAlert(with: error.localizedDescription)
+                            }
+        
+                        }
+                        self.updateCollectionView()
+                    }
+                }
+    }
+    
+    func createDataSource() -> DataSourceType {
+        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, group) -> UICollectionViewListCell? in
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! UICollectionViewListCell
+            
+            var content = UIListContentConfiguration.cell()
+            
+            content.text = "\(group.name)"
+            
+            cell.contentConfiguration = content
+            cell.accessories = [.disclosureIndicator()]
+            
+            return cell
+        }
+        
+        return dataSource
+    }
+    
+    // Create compositional layout
+    func createLayout() -> UICollectionViewCompositionalLayout {
+        
+        
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        
+        return UICollectionViewCompositionalLayout(section: section)
+        
+
+    }
+    
+    func updateCollectionView() {
+        
+        var itemsBySection = model.groups.reduce(into: [ViewModel.Section: [ViewModel.Item]]()) { partial, habitCount in
+            
+            partial[.groups, default: []].append(habitCount)
+        }
+        
+        itemsBySection = itemsBySection.mapValues { $0.sorted() }
+        
+        let sectionIDs = itemsBySection.keys.sorted()
+        
+        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+    }
+    
+    func presentErrorAlert(with message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    @IBAction func unwindToHome(segue: UIStoryboardSegue) {
+    }
+}
