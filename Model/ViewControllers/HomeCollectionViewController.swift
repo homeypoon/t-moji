@@ -51,25 +51,26 @@ class HomeCollectionViewController: UICollectionViewController {
     private func fetchGroups() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
-                FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID).getDocuments { (querySnapshot, error) in
-                    if let error = error {
-                        self.presentErrorAlert(with: error.localizedDescription)
-                    } else {
-                        self.model.groups.removeAll()
-                        
-                        for document in querySnapshot!.documents {
-                            do {
-                                let group = try document.data(as: Group.self)
-                                self.model.groups.append(group)
-                            }
-                            catch {
-                                self.presentErrorAlert(with: error.localizedDescription)
-                            }
-        
-                        }
-                        self.updateCollectionView()
+        FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                self.model.groups.removeAll()
+                
+                for document in querySnapshot!.documents {
+                    do {
+                        let group = try document.data(as: Group.self)
+                        self.model.groups.append(group)
                     }
+                    catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                    
                 }
+                
+                self.updateCollectionView()
+            }
+        }
     }
     
     func createDataSource() -> DataSourceType {
@@ -129,6 +130,45 @@ class HomeCollectionViewController: UICollectionViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    func removeUserFromGroup(group: Group) {
+        guard let groupId = group.id,
+              let currentUid = Auth.auth().currentUser?.uid else { return }
+                
+        // Remove the group id from the current user's group IDs list
+        FirestoreService.shared.db.collection("users").whereField("uid", isEqualTo: currentUid).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    print(document.reference)
+                    document.reference.updateData([
+                        "groupsIDs": FieldValue.arrayRemove([groupId])
+                    ])
+                }
+                
+            }
+        }
+        
+        // Remove the user id from the group's membersIDs
+        FirestoreService.shared.db.collection("groups").whereField(FieldPath.documentID(), isEqualTo: groupId).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    print(document.reference)
+                    document.reference.updateData([
+                        "membersIDs": FieldValue.arrayRemove([currentUid])
+                    ])
+                }
+                
+                self.fetchGroups()
+                self.collectionView.reloadData()
+            }
+        }
+        
+        
+    }
+    
     @IBSegueAction func showGroupHome(_ coder: NSCoder, sender: UICollectionViewCell?) -> GroupHomeCollectionViewController? {
         guard let cell = sender,
               let indexPath = collectionView.indexPath(for: cell),
@@ -138,6 +178,17 @@ class HomeCollectionViewController: UICollectionViewController {
     }
     
     @IBAction func unwindToHome(segue: UIStoryboardSegue) {
+        print("not yet")
+        // If unwinding from group settings, need to delete group from user
+        if let groupSettingsVC = segue.source as? GroupSettingsViewController {
+            print("yes")
+            guard let group = groupSettingsVC.group else { return }
+            
+            print("yess")
+            removeUserFromGroup(group: group)
+            
+        }
         fetchGroups()
     }
+    
 }

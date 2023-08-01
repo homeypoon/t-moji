@@ -13,7 +13,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     var group: Group?
     
-
     enum ViewModel {
         enum Section: Hashable, Comparable {
             case groupActivityFeeds
@@ -58,27 +57,34 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        fetchUsers()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = group?.name
-        navigationItem.largeTitleDisplayMode = .never
+        let button =  UIButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 2000, height: 40)
+        button.setTitle(group?.name, for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(clickOnButton), for: .touchUpInside)
+        navigationItem.titleView = button
+        
         navigationItem.hidesBackButton = true
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
         collectionView.collectionViewLayout = createLayout()
-        
-        fetchUsers()
+    }
+    
+    @objc func clickOnButton() {
+        performSegue(withIdentifier: "showGroupSettings", sender: nil)
     }
     
     // Get all users in the group membersIDs array
     private func fetchUsers() {
         
         guard let membersIDs = group?.membersIDs else { return }
-        print(membersIDs)
         
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -118,10 +124,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupMemberQuizCell", for: indexPath) as! UICollectionViewListCell
                 
                 var content = UIListContentConfiguration.cell()
-                                
-                QuizData.quizzes.forEach { print($0.id) }
+                
                 if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
-                    print(quiz)
                     content.text = "\(quiz.title)"
                     
                 } else {
@@ -138,7 +142,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 return cell
             }
         }
-    
+        
         return dataSource
     }
     
@@ -182,14 +186,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     func updateCollectionView() {
         var sectionIDs = [ViewModel.Section]()
         
-//        var groupActivityFeedItems: [ViewModel.Item] = []
-        
-//        model.userQuizHistoriesDict.forEach { (member, quizHistories) in
-//
-//            for quizHistory in quizHistories {
-//                groupActivityFeedItems.append(ViewModel.Item.groupActivityFeed(member: member, quizHistory: quizHistory))
-//            }
-//        }
         
         // Create an array of ViewModel.Item based on the data in userQuizHistoriesDict
         let groupActivityFeedItems = model.userQuizHistoriesDict.flatMap { (member, quizHistories) -> [ViewModel.Item] in
@@ -226,7 +222,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         let currentDate = Date()
         
         // Find the most recent past Tuesday from the current date
-        var components = calendar.dateComponents([.weekday], from: currentDate)
+        let components = calendar.dateComponents([.weekday], from: currentDate)
         let currentWeekday = components.weekday!
         let daysUntilTuesday = (9 - currentWeekday) % 7 // 9 represents Tuesday in DateComponents.weekday format (Sunday is 1, Monday is 2, ..., Saturday is 7)
         let mostRecentPastTuesday = calendar.date(byAdding: .day, value: -daysUntilTuesday, to: currentDate)!
@@ -253,6 +249,16 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        guard segue.identifier == "showGroupSettings" else { return }
+        
+        let groupSettingsVC = segue.destination as! GroupSettingsViewController
+        groupSettingsVC.members = self.model.members
+        groupSettingsVC.group = self.group
     }
     
 }

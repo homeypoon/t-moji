@@ -9,7 +9,6 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 
-
 class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, PotentialGroupMemberCellDelegate {
     func addToGroupButtonTapped(sender: PotentialGroupMemberTableViewCell) {
         if let indexPath = tableView.indexPath(for: sender) {
@@ -127,14 +126,10 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                     
                 }
             }
-            
         }
         catch {
             print(error)
         }
-
-        
-        
     }
     
     func presentErrorAlert(with message: String) {

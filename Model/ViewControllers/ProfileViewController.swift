@@ -203,7 +203,7 @@ class ProfileViewController: UIViewController {
             // Emoji section
             if sectionIndex == 0 && self.model.userQuizHistory.count > 0 {
                 let availableWidth = environment.container.effectiveContentSize.width - 20 // 10pt leading + 10pt trailing contentInsets
-                let minimumItemWidth: CGFloat = 48 // Set the minimum desired width for each item
+                let minimumItemWidth: CGFloat = 64 // Set the minimum desired width for each item
                 
                 // Calculate the number of items that can fit within the available width
                 let numberOfItemsInRow = max(1, Int(availableWidth / minimumItemWidth))
@@ -211,7 +211,7 @@ class ProfileViewController: UIViewController {
                 // Calculate the actual item width based on the number of items
                 let itemWidth = (availableWidth - CGFloat(numberOfItemsInRow - 1) * 4) / CGFloat(numberOfItemsInRow)
                 
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth), heightDimension: .absolute(48)) // Set a fixed height here (e.g., 48 points)
+                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth), heightDimension: .absolute(64)) // Set a fixed height here (e.g., 48 points)
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
                 
