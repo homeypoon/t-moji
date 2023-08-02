@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
@@ -57,7 +59,15 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchUsers()
+        
+        // Fetch the group first, and then fetch the users once the group data is available
+        fetchGroup { [weak self] group in
+            // Update the group variable with the fetched group data
+            self?.group = group
+            
+            // Fetch users after getting the group data
+            self?.fetchUsers()
+        }
     }
     
     override func viewDidLoad() {
@@ -92,9 +102,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             } else {
                 self.model.members.removeAll()
                 self.model.userQuizHistoriesDict.removeAll()
-
+                
                 for document in querySnapshot!.documents {
                     do {
+                        print("updating")
                         let member = try document.data(as: User.self)
                         
                         self.model.members.append(member)
@@ -102,7 +113,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         let memberQuizHistory = member.quizHistory
                         
                         var quizHistory = [UserQuizHistory]()
-                        
                         
                         for memQuizHistory in memberQuizHistory {
                             quizHistory.append(memQuizHistory)
@@ -253,5 +263,27 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         print("mim\(self.model.members)")
         groupSettingsVC.group = self.group
     }
+    
+    private func fetchGroup(completion: @escaping (Group?) -> Void) {
+            guard let groupID = group?.id else {
+                completion(nil)
+                return
+            }
+
+            FirestoreService.shared.db.collection("groups").document(groupID).getDocument { (documentSnapshot, error) in
+                if let error = error {
+                    self.presentErrorAlert(with: error.localizedDescription)
+                    completion(nil)
+                } else {
+                    do {
+                        let group = try documentSnapshot?.data(as: Group.self)
+                        completion(group)
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                        completion(nil)
+                    }
+                }
+            }
+        }
     
 }

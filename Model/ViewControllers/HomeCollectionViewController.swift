@@ -164,8 +164,6 @@ class HomeCollectionViewController: UICollectionViewController {
                 self.collectionView.reloadData()
             }
         }
-        
-        
     }
     
     @IBSegueAction func showGroupHome(_ coder: NSCoder, sender: UICollectionViewCell?) -> GroupHomeCollectionViewController? {
