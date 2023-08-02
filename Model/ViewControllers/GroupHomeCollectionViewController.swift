@@ -265,25 +265,24 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     }
     
     private func fetchGroup(completion: @escaping (Group?) -> Void) {
-            guard let groupID = group?.id else {
+        guard let groupID = group?.id else {
+            completion(nil)
+            return
+        }
+        
+        FirestoreService.shared.db.collection("groups").document(groupID).getDocument { (documentSnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
                 completion(nil)
-                return
-            }
-
-            FirestoreService.shared.db.collection("groups").document(groupID).getDocument { (documentSnapshot, error) in
-                if let error = error {
+            } else {
+                do {
+                    let group = try documentSnapshot?.data(as: Group.self)
+                    completion(group)
+                } catch {
                     self.presentErrorAlert(with: error.localizedDescription)
                     completion(nil)
-                } else {
-                    do {
-                        let group = try documentSnapshot?.data(as: Group.self)
-                        completion(group)
-                    } catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
-                        completion(nil)
-                    }
                 }
             }
         }
-    
+    }
 }

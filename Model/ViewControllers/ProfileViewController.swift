@@ -98,6 +98,7 @@ class ProfileViewController: UIViewController {
     func updateProfileInfoUI() {
         usernameLabel.text = user?.username
         bioLabel.text = user?.bio
+        
         self.updateCollectionView()
     }
     

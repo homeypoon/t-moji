@@ -134,7 +134,7 @@ class HomeCollectionViewController: UICollectionViewController {
     func removeUserFromGroup(group: Group) {
         guard let groupId = group.id,
               let currentUid = Auth.auth().currentUser?.uid else { return }
-                
+        
         // Remove the group id from the current user's group IDs list
         FirestoreService.shared.db.collection("users").whereField("uid", isEqualTo: currentUid).getDocuments { (querySnapshot, error) in
             if let error = error {
