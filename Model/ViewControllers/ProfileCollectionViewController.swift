@@ -1,19 +1,17 @@
 //
-//  ProfileViewController.swift
+//  ProfileCollectionViewController.swift
 //  T-moji
 //
-//  Created by Homey Poon on 2023-07-31.
+//  Created by Homey Poon on 2023-08-02.
 //
 
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-class ProfileViewController: UIViewController {
-    @IBOutlet var profileImageView: UIImageView!
-    @IBOutlet var usernameLabel: UILabel!
-    @IBOutlet var bioLabel: UILabel!
-    @IBOutlet var collectionView: UICollectionView!
+private let reuseIdentifier = "Cell"
+
+class ProfileCollectionViewController: UICollectionViewController {
     
     var user: User?
     
@@ -21,15 +19,19 @@ class ProfileViewController: UIViewController {
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
+            case profileInfo
             case userEmojis
             case userQuizHistory
         }
         enum Item: Hashable {
+            case profile(user: User)
             case emoji(resultType: ResultType)
             case quizHistory(quizHistory: UserQuizHistory)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
+                case .profile(let user):
+                    hasher.combine(user)
                 case .emoji(let resultType):
                     hasher.combine(resultType)
                 case .quizHistory(let quizHistory):
@@ -39,6 +41,8 @@ class ProfileViewController: UIViewController {
             
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
+                case (.profile(let lUser), .profile(let rUser)):
+                    return lUser == rUser
                 case (.emoji(let lEmoji), .emoji(let rEmoji)):
                     return lEmoji == rEmoji
                 case (.quizHistory(let lQuizHistory), .quizHistory(let rQuizHistory)):
@@ -62,9 +66,14 @@ class ProfileViewController: UIViewController {
     var dataSource: DataSourceType!
     var model = Model()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchUser()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         checkForExistingProfile()
         dataSource = createDataSource()
@@ -84,7 +93,6 @@ class ProfileViewController: UIViewController {
             if let document = document {
                 
                 if document.exists {
-                    self.fetchUser()
                     return
                 } else {
                     self.performSegue(withIdentifier: "editProfile", sender: nil)
@@ -94,13 +102,14 @@ class ProfileViewController: UIViewController {
         
     }
     
-    func updateProfileInfoUI() {
-        usernameLabel.text = user?.username
-        bioLabel.text = user?.bio
-        
-        self.updateCollectionView()
-    }
-    
+//
+//    func updateProfileInfoUI() {
+//        usernameLabel.text = user?.username
+//        bioLabel.text = user?.bio
+//
+//        self.updateCollectionView()
+//    }
+//
     init?(coder: NSCoder, user: User) {
         self.user = user
         super.init(coder: coder)
@@ -127,17 +136,17 @@ class ProfileViewController: UIViewController {
             switch result {
             case .success(let user):
                 self.model.userQuizHistory.removeAll()
-//                self.user = user
-                guard let uid = Auth.auth().currentUser?.uid else { return }
-                
-                // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
-                // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
-
-                self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
+                self.user = user
+//                guard let uid = Auth.auth().currentUser?.uid else { return }
+//                
+//                // Create a UserQuizHistory instance and use the quizID
+//                let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
+//                // Create a UserQuizHistory instance and use the quizID
+//                let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
+//
+//                self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
                 self.update()
-                self.updateProfileInfoUI()
+                self.updateCollectionView()
                 
             case .failure(let error):
                 // could not be initialized from the DocumentSnapshot.
@@ -160,8 +169,15 @@ class ProfileViewController: UIViewController {
     }
     
     func createDataSource() -> DataSourceType {
-        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewListCell? in
+        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             switch item {
+            case .profile(let user):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileInfo", for: indexPath) as! ProfileInfoCollectionViewCell
+                
+                cell.configure(withUsername: user.username, withBio: user.bio)
+                
+                print("done")
+                return cell
             case .emoji(let resultType):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserEmoji", for: indexPath) as! UICollectionViewListCell
                 
@@ -197,8 +213,20 @@ class ProfileViewController: UIViewController {
     func createLayout() -> UICollectionViewCompositionalLayout {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            
             // Emoji section
-            if sectionIndex == 0 && self.model.userQuizHistory.count > 0 {
+            if sectionIndex == 0  {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(120))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                let section = NSCollectionLayoutSection(group: group)
+                
+                return section
+            } else if sectionIndex == 1  {
+                // emoji section
                 let availableWidth = environment.container.effectiveContentSize.width - 20 // 10pt leading + 10pt trailing contentInsets
                 let minimumItemWidth: CGFloat = 64 // Set the minimum desired width for each item
                 
@@ -221,6 +249,7 @@ class ProfileViewController: UIViewController {
                 
                 return section
             } else {
+                // user history
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
@@ -238,8 +267,12 @@ class ProfileViewController: UIViewController {
     }
     
     func updateCollectionView() {
+        guard let user = user else { return }
+
         var sectionIDs = [ViewModel.Section]()
         
+        sectionIDs.append(.profileInfo)
+        var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: user)]]
         
         let resultTypeItems = model.resultTypes.reduce(into: [ViewModel.Item]()) { partial, resultType in
             let item = ViewModel.Item.emoji(resultType: resultType)
@@ -248,7 +281,8 @@ class ProfileViewController: UIViewController {
         
         sectionIDs.append(.userEmojis)
         
-        var itemsBySection = [ViewModel.Section.userEmojis: resultTypeItems]
+        itemsBySection[.userEmojis] = resultTypeItems
+        
         
         let quizHistoryItems = model.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, quizHistory in
             let item = ViewModel.Item.quizHistory(quizHistory: quizHistory)
@@ -257,6 +291,9 @@ class ProfileViewController: UIViewController {
         
         sectionIDs.append(.userQuizHistory)
         itemsBySection[.userQuizHistory] = quizHistoryItems
+        
+        print("itemsBySection \(itemsBySection)")
+        
         
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
@@ -268,6 +305,19 @@ class ProfileViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func unwindToProfileCollectionVC(segue: UIStoryboardSegue) {
+        guard segue.identifier == "saveUnwind" else { return }
+        
+        let sourceViewController = segue.source as! EditProfileTableViewController
+        
+        if let user = sourceViewController.user {
+            self.user = user
+            
+            addUser(user: user)
+//            updateProfileInfoUI()
+        }
     }
     
     
@@ -285,5 +335,12 @@ class ProfileViewController: UIViewController {
             let detailController = navController.topViewController as! EditProfileTableViewController
             detailController.user = user
         }
+    }
+
+}
+
+extension ProfileViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 40, height: 40) // Return any non-zero size here
     }
 }
