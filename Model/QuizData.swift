@@ -10,7 +10,7 @@ import Foundation
 struct QuizData {
     static let quizzes: [Quiz] = [
         // Fruit Quiz
-        Quiz(id: 0, resultName: "Fruit", title: "What Fruit Are You?", category: .character, question: [
+        Quiz(id: 0, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, question: [
             Question(text: "Where would you like to travel to?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "New York, USA", correspondingResult: ResultType.dog),
                 Answer(text: "Paris, France", correspondingResult: ResultType.cat),
@@ -37,7 +37,7 @@ struct QuizData {
                      ])
         ]),
         // Vehicle Quiz
-        Quiz(id: 1, resultName: "Vehicle", title: "What Vehicle Are You?", category: .character, question: [
+        Quiz(id: 1, resultGroup: .vehicle, title: "What Vehicle Are You?", quizType: .character, question: [
             Question(text: "Which is your favourite genre?", type: .singleChoice, possibleAnswers: [
                 
                 Answer(text: "Fantasy", correspondingResult: ResultType.bike),
@@ -48,7 +48,7 @@ struct QuizData {
             ]),
         // Fruit Quiz
         // CHANGE NEEDED
-        Quiz(id: 2, resultName: "Fruit", title: "What Fruit Are You?", category: .character, question: [
+        Quiz(id: 2, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, question: [
             Question(text: "Which is your favourite genre?", type: .singleChoice, possibleAnswers: [
                 Answer(text: "Fantasy", correspondingResult: ResultType.apple),
                 Answer(text: "Action", correspondingResult: ResultType.banana),

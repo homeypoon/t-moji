@@ -51,7 +51,7 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         
         let member = members[indexPath.row]
         
-        cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.quizHistory.compactMap { String($0.finalResult.character) }.joined(separator: " "))
+        cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.quizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
         
         
         return cell

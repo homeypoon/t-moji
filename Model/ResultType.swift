@@ -7,12 +7,11 @@
 
 import Foundation
 
-enum ResultType: Character {
+enum ResultType: String {
     
-    case dog = "🐶", cat = "🐱", rabbit = "🐰", tiger = "🐯"
-    case car = "🚗", bike = "🚲", motorcycle = "🏍️", bus = "🚌"
-    case apple = "🍎", banana = "🍌", orange = "🍊", strawberry = "🍓"
-    
+    case dog = "dog", cat = "cat", rabbit = "rabbit", tiger = "tiger"
+    case car = "car", bike = "bike", motorcycle = "motorcycle", bus = "bus"
+    case apple = "apple", banana = "banana", orange = "orange", strawberry = "strawberry"
     
     var message: String {
         switch self {
@@ -45,25 +44,78 @@ enum ResultType: Character {
         }
     }
     
-    var character: Character {
-        return rawValue
+    var emoji: Character {
+        switch self {
+        case .dog:
+            return "🐶"
+        case .cat:
+            return "🐱"
+        case .rabbit:
+            return "🐰"
+        case .tiger:
+            return "🐯"
+        case .car:
+            return "🚗"
+        case .bike:
+            return "🚲"
+        case .motorcycle:
+            return "🏍️"
+        case .bus:
+            return "🚌"
+        case .apple:
+            return "🍎"
+        case .banana:
+            return "🍌"
+        case .orange:
+            return "🍊"
+        case .strawberry:
+            return "🍓"
+        }
     }
     
 }
+
+extension ResultType {
+    static let groupedTypes: [ResultGroup: [ResultType]] = {
+        return [
+            .fruit: [.apple, .banana, .orange, .strawberry],
+            .vehicle: [.car, .bike, .motorcycle, .bus],
+            .animal: [.dog, .cat, .rabbit, .tiger]
+            // Add more groups as needed
+        ]
+    }()
+}
+
+extension ResultType {
+    static func allGroups() -> [ResultGroup] {
+        return Array(groupedTypes.keys)
+    }
+    
+    static func getTypes(for groupName: ResultGroup) -> [ResultType]? {
+        return groupedTypes[groupName]
+    }
+}
+
 
 extension ResultType: Codable { }
 
 extension ResultType: Hashable {
     func hash(into hasher: inout Hasher) {
-        hasher.combine(character)
+        hasher.combine(emoji)
     }
     static func == (lhs: ResultType, rhs: ResultType) -> Bool {
-        return lhs.character == rhs.character
+        return lhs.emoji == rhs.emoji
     }
 }
 
 extension ResultType: Comparable {
     static func < (lhs: ResultType, rhs: ResultType) -> Bool {
-        return lhs.character < rhs.character
+        return lhs.emoji < rhs.emoji
     }
+}
+
+enum ResultGroup: String {
+    case fruit
+    case vehicle
+    case animal
 }

@@ -245,7 +245,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         }
     }
     
-    
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -253,15 +252,35 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .groupActivityFeed(let member, let quizHistory):
+                self.performSegue(withIdentifier: "showMemberQuiz", sender: (member, quizHistory))
+            }
+        }
+//        self.performSegue(withIdentifier: "showMemberQuiz", sender: (selectedMember, model.userQuizHistoriesDict[selectedMember]))
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
-        guard segue.identifier == "showGroupSettings" else { return }
-        
-        let groupSettingsVC = segue.destination as! GroupSettingsViewController
-        groupSettingsVC.members = self.model.members
-        print("mim\(self.model.members)")
-        groupSettingsVC.group = self.group
+        if segue.identifier == "showGroupSettings" {
+            let groupSettingsVC = segue.destination as! GroupSettingsViewController
+            groupSettingsVC.members = self.model.members
+            groupSettingsVC.group = self.group
+        } else if segue.identifier == "showMemberQuiz" {
+            let memberQuizVC = segue.destination as! MemberQuizViewController
+            
+            if let senderInfo = sender as? (User, UserQuizHistory) {
+                let member = senderInfo.0
+                let quizHistory = senderInfo.1
+                memberQuizVC.member = member
+                memberQuizVC.quizHistory = quizHistory
+                memberQuizVC.group = self.group
+                print("\(member)")
+            }
+        }
     }
     
     private func fetchGroup(completion: @escaping (Group?) -> Void) {

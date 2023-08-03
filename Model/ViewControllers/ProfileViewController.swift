@@ -132,9 +132,9 @@ class ProfileViewController: UIViewController {
                 guard let uid = Auth.auth().currentUser?.uid else { return }
                 
                 // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .dog, chosenAnswers: [:])
+                let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
                 // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
+                let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
 
                 self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
                 self.update()
@@ -168,7 +168,7 @@ class ProfileViewController: UIViewController {
                 
                 var content = UIListContentConfiguration.cell()
                 
-                content.text = "\(resultType.character)"
+                content.text = "\(resultType.emoji)"
                 
                 content.textProperties.alignment = .center
                 cell.contentConfiguration = content
@@ -181,7 +181,7 @@ class ProfileViewController: UIViewController {
                 
                 if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
                     content.text = "\(quiz.title)"
-                    content.secondaryText = "\(quiz.resultName): \(quizHistory.finalResult.character)"
+                    content.secondaryText = "\(quiz.resultGroup): \(quizHistory.finalResult.emoji)"
                 } else {
                     content.text = "Quiz not found"
                 }

@@ -11,10 +11,10 @@ struct Quiz: Identifiable {
     
     let id: Int
     
-    var resultName: String // Animal, Fruit, Vehicle (also used as the name)
+    var resultGroup: ResultGroup // Animal, Fruit, Vehicle (also used as the name)
     var title: String // Long
     
-    var category: QuizType
+    var quizType: QuizType
     
     var question: [Question]
     
