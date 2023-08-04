@@ -19,7 +19,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         enum Section: Hashable, Comparable {
             case groupActivityFeeds
         }
-        enum Item: Hashable {
+        enum Item: Hashable, Comparable {
             case groupActivityFeed(member: User, quizHistory: UserQuizHistory)
             
             func hash(into hasher: inout Hasher) {
@@ -27,6 +27,12 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 case .groupActivityFeed(let member, let quizHistory):
                     hasher.combine(member)
                     hasher.combine(quizHistory)
+                }
+            }
+            static func < (lhs: Item, rhs: Item) -> Bool {
+                switch (lhs, rhs) {
+                case (.groupActivityFeed(_, let lQuizHistory), .groupActivityFeed(_, let rQuizHistory)):
+                    return lQuizHistory.userCompleteTime < rQuizHistory.userCompleteTime
                 }
             }
             
@@ -105,7 +111,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 for document in querySnapshot!.documents {
                     do {
-                        print("updating")
                         let member = try document.data(as: User.self)
                         
                         self.model.members.append(member)
@@ -209,7 +214,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         sectionIDs.append(.groupActivityFeeds)
         
-        let itemsBySection = [ViewModel.Section.groupActivityFeeds: groupActivityFeedItems]
+        // Changed
+        let itemsBySection = [ViewModel.Section.groupActivityFeeds: groupActivityFeedItems.sorted(by: <)]
+
         
         // Apply the snapshot to the data source
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
@@ -275,10 +282,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             if let senderInfo = sender as? (User, UserQuizHistory) {
                 let member = senderInfo.0
                 let quizHistory = senderInfo.1
+                memberQuizVC.members = self.model.members
                 memberQuizVC.member = member
                 memberQuizVC.quizHistory = quizHistory
                 memberQuizVC.group = self.group
-                print("\(member)")
             }
         }
     }

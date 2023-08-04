@@ -40,11 +40,17 @@ class EditProfileTableViewController: UITableViewController {
         sender.resignFirstResponder()
     }
     
+    func presentErrorAlert(with message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     // Prepare for the saveUnwind segue by updating User object
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
-        
+                
         guard segue.identifier == "saveUnwind", let uid = Auth.auth().currentUser?.uid else { return }
         
         let username = usernameTextField.text!
@@ -55,6 +61,30 @@ class EditProfileTableViewController: UITableViewController {
             user?.bio = bio
         } else {
             user = User(uid: uid ,username: username, bio: bio)
+        }
+        
+        let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
+        // Create a UserQuizHistory instance and use the quizID
+        let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
+
+        self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
+        
+        addUser(user: user!)
+    }
+    
+    func addUser(user: User) {
+        guard let userId = Auth.auth().currentUser?.uid else {return}
+        
+        let collectionRef = FirestoreService.shared.db.collection("users")
+        
+        do {
+            // Create a UserQuizHistory instance and use the quizID
+            
+            
+            try collectionRef.document(userId).setData(from: user)
+        }
+        catch {
+            presentErrorAlert(with: error.localizedDescription)
         }
     }
     

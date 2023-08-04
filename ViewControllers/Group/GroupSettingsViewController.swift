@@ -75,9 +75,37 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         present(alert, animated: true, completion: nil)
     }
     
-    
+    // MAJOR EDITS
     func removeUserFromGroup(member: User) {
-        guard let groupId = self.group?.id else { return }
+        guard let groupId = self.group?.id,
+        let membersIDs = self.group?.membersIDs else { return }
+        
+        FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        var currentMember = try document.data(as: User.self)
+                        
+                        // If the member is the one being deleted
+                        if currentMember.uid == member.uid {
+                            document.reference.updateData([
+                                "groupsIDs": FieldValue.arrayRemove([groupId])
+                            ])
+                        } else {
+                            if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == member.uid }) {
+                                currentMember.masterGroupmatesIDs.remove(at: index)
+                            }
+                            try document.reference.setData(from: currentMember) // Use setData on DocumentReference
+                        }
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                
+            }
+        }
         
         // Remove the group id from the current user's group IDs list
         FirestoreService.shared.db.collection("users").whereField("uid", isEqualTo: member.uid).getDocuments { (querySnapshot, error) in

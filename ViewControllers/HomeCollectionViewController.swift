@@ -95,7 +95,6 @@ class HomeCollectionViewController: UICollectionViewController {
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
-        
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)

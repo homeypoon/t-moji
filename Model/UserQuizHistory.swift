@@ -12,6 +12,8 @@ import FirebaseFirestoreSwift
 struct UserQuizHistory: Codable {
     
     typealias QuestionIndex = Int
+    
+    var membersGuessed: [User] = []
 
     var quizID: Int
     

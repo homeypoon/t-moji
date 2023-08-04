@@ -13,6 +13,7 @@ enum ResultType: String {
     case car = "car", bike = "bike", motorcycle = "motorcycle", bus = "bus"
     case apple = "apple", banana = "banana", orange = "orange", strawberry = "strawberry"
     
+    // ALERT: Watch how long each result message is
     var message: String {
         switch self {
         case .dog:

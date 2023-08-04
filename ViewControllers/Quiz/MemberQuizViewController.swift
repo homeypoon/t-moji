@@ -18,7 +18,9 @@ class MemberQuizViewController: UIViewController {
     
     @IBOutlet var multiChoiceButtons: [UIButton]!
     
+    var quiz: Quiz?
     var group: Group?
+    var members = [User]()
     var member: User?
     var quizHistory: UserQuizHistory?
     
@@ -45,10 +47,13 @@ class MemberQuizViewController: UIViewController {
         }
 
         if let quizHistory = quizHistory,
-           let member = member,
-           let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
-            quizTitleLabel.text = "\(quiz.title)"
-            quizQuestionLabel.text = "Which \(quiz.resultGroup.rawValue) do you think \(member.username) got?"
+           let member = member {
+            
+            if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
+                self.quiz = quiz
+                quizTitleLabel.text = "\(quiz.title)"
+                quizQuestionLabel.text = "Which \(quiz.resultGroup.rawValue) do you think \(member.username) got?"
+            }
             
             let finalResult = quizHistory.finalResult
 
@@ -101,5 +106,19 @@ class MemberQuizViewController: UIViewController {
         default:
             break
         }
+    }
+    
+    // Prepare for the saveUnwind segue by updating User object
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        guard segue.identifier == "submitMemberQuiz" else { return }
+        
+        let quizResultVC = segue.destination as! QuizResultCollectionViewController
+        quizResultVC.group = self.group
+        quizResultVC.quiz = self.quiz
+        quizResultVC.members = self.members
+        quizResultVC.currentMember = self.member
+        quizResultVC.quizHistory = self.quizHistory
     }
 }

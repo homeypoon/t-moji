@@ -12,8 +12,6 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
     @IBOutlet var bioLabel: UILabel!
     
     func configure(withUsername username: String, withBio bio: String?) {
-        print("configured")
-        print("username text \(username)")
         usernameLabel.text = username
         if let bio = bio {
             bioLabel.text = bio

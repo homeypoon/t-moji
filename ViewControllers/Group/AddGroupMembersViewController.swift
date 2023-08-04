@@ -59,7 +59,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
             
         }
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }
@@ -118,9 +118,15 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                     self.presentErrorAlert(with: error.localizedDescription)
                 } else {
                     for document in querySnapshot!.documents {
-                        document.reference.updateData([
-                            "groupsIDs": FieldValue.arrayUnion([docRef.documentID])
-                        ])
+                        do {
+                            var currentMember = try document.data(as: User.self)
+                            document.reference.updateData([
+                                "groupsIDs": FieldValue.arrayUnion([docRef.documentID]),
+                                "masterGroupmatesIDs": FieldValue.arrayUnion([group.membersIDs.filter { $0 != currentMember.uid }])
+                            ])
+                        } catch {
+                            self.presentErrorAlert(with: error.localizedDescription)
+                        }
                     }
                     
                 }
@@ -162,4 +168,5 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
         groupHomeVC.group = self.group
     }
+    
 }

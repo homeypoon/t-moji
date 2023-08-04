@@ -19,6 +19,8 @@ struct User {
     
     @ServerTimestamp var joinTimestamp: Timestamp?
     
+    var masterGroupmatesIDs: [String] = [] // Use as a set - get unique
+    
     var groupsIDs: [GroupID] = []
     var quizHistory: [UserQuizHistory] = []
     

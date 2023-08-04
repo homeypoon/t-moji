@@ -130,12 +130,6 @@ class ProfileViewController: UIViewController {
 //                self.user = user
                 guard let uid = Auth.auth().currentUser?.uid else { return }
                 
-                // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
-                // Create a UserQuizHistory instance and use the quizID
-                let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
-
-                self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
                 self.update()
                 self.updateProfileInfoUI()
                 
@@ -152,6 +146,8 @@ class ProfileViewController: UIViewController {
         let collectionRef = FirestoreService.shared.db.collection("users")
         
         do {
+            
+            
             try collectionRef.document(userId).setData(from: user)
         }
         catch {

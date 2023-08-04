@@ -17,9 +17,7 @@ struct Quiz: Identifiable {
     var quizType: QuizType
     
     var question: [Question]
-    
-    var userResult: ResultType? // User's final result type
-    
+        
     var questionIndex: Int? = 0 // Used to see which question the user is on
 }
 
