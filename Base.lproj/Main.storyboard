@@ -722,14 +722,14 @@
                             <tableViewSection id="kqg-vB-Nfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34.333332061767578"/>
+                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" style="UICTFontTextStyleCallout"/>
@@ -758,7 +758,7 @@
                     <navigationItem key="navigationItem" title="Settings" id="HwJ-qs-iOt">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="chevron.backward" catalog="system" id="8H4-tF-XLR">
                             <connections>
-                                <segue destination="qjO-pS-lsj" kind="unwind" unwindAction="unwindToProfileCollectionViewWithSegue:" id="Zye-oX-n5f"/>
+                                <segue destination="qjO-pS-lsj" kind="unwind" unwindAction="unwindToProfileCollectionVCWithSegue:" id="YK8-nP-ciH"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

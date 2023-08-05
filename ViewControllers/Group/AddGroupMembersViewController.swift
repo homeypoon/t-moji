@@ -122,7 +122,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                             var currentMember = try document.data(as: User.self)
                             document.reference.updateData([
                                 "groupsIDs": FieldValue.arrayUnion([docRef.documentID]),
-                                "masterGroupmatesIDs": FieldValue.arrayUnion([group.membersIDs.filter { $0 != currentMember.uid }])
+                                "masterGroupmatesIDs": FieldValue.arrayUnion(group.membersIDs.filter { $0 != currentMember.uid })
                             ])
                         } catch {
                             self.presentErrorAlert(with: error.localizedDescription)

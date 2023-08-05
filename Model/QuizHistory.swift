@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct QuizHistory {
+struct QuizHistory: Codable {
     typealias UserID = String
     
     var quizID: Int

@@ -19,7 +19,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
         
         enum Item: Hashable {
-            case quiz(quiz: Quiz, completeStateText: String, currentUserResultType: ResultType, takenByText: String)
+            case quiz(quiz: Quiz, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -40,7 +40,8 @@ class ExploreCollectionViewController: UICollectionViewController {
     }
     
     struct Model {
-        var groups = [Group]()
+        var user: User?
+        var quizHistories = [QuizHistory]()
     }
     
     var dataSource: DataSourceType!
@@ -48,9 +49,13 @@ class ExploreCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchGroups()
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        fetchUser(userID: userID) { user in
+            self.model.user = user
+            self.fetchQuizHistories()
+        }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -60,31 +65,6 @@ class ExploreCollectionViewController: UICollectionViewController {
         collectionView.collectionViewLayout = createLayout()
     }
     
-    // Get groups whose membersIDs contains the current user's id
-    private func fetchGroups() {
-        guard let userID = Auth.auth().currentUser?.uid else { return }
-        
-        FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID).getDocuments { (querySnapshot, error) in
-            if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
-            } else {
-                self.model.groups.removeAll()
-                
-                for document in querySnapshot!.documents {
-                    do {
-                        let group = try document.data(as: Group.self)
-                        
-                        self.model.groups.append(group)
-                    }
-                    catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
-                    }
-                }
-                
-                self.updateCollectionView()
-            }
-        }
-    }
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
@@ -123,19 +103,160 @@ class ExploreCollectionViewController: UICollectionViewController {
         sectionIDs.append(.quizzes)
         var quizItems = [ViewModel.Item]()
         
-        var itemsBySection = QuizData.quizzes.reduce(into: [ViewModel.Section: [ViewModel.Item]]()) { partial, quiz in
-            
-            partial[.quizzes, default: []].append(ViewModel.Item.quiz(quiz: quiz, completeStateText: "done", currentUserResultType: .apple, takenByText: "s"))
-        }
-                
-        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        // Create a dictionary to associate quiz histories with quizzes
+        var quizHistoryDictionary: [Int: QuizHistory] = [:]
         
+        // Assuming you have fetched quizHistories from Firestore and stored them in an array called quizHistories
+        for quizHistory in model.quizHistories {
+            quizHistoryDictionary[quizHistory.quizID] = quizHistory
+        }
+        
+        var quizHistoryTuples: [(quiz: Quiz, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)] = []
+        let dispatchGroup = DispatchGroup() // Create a DispatchGroup
+        
+        for quiz in QuizData.quizzes {
+            var takenByText = "Not taken by any t-mates yet"
+            var completeStateText = "Not Taken"
+            var currentUserResultType: ResultType? = nil
+            
+            if let quizHistory = quizHistoryDictionary[quiz.id] {
+                let completedUsersCount = quizHistory.completedUsers.count
+                
+                guard let user = model.user else { return }
+                
+                print("mastergroupmatesid\(user.masterGroupmatesIDs)")
+                print(quizHistory.completedUsers)
+                let completedMemberCount = quizHistory.completedUsers.filter { Set(user.masterGroupmatesIDs).contains($0) }.count
+                
+                print("comple\(completedMemberCount)")
+                
+                guard let uid = Auth.auth().currentUser?.uid else { return }
+                let userHasCompletedQuiz = quizHistory.completedUsers.contains(uid)
+                
+                if userHasCompletedQuiz {
+                    completeStateText = "Taken"
+                    currentUserResultType = user.quizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
+                }
+                
+                switch completedMemberCount {
+                case 1:
+                    let userID = quizHistory.completedUsers[0]
+                    dispatchGroup.enter()
+                    fetchUser(userID: userID) { user in
+                        takenByText = "Taken by \(user.username)"
+                        print("takenBY text \(takenByText)")
+                        dispatchGroup.leave()
+                    }
+                default:
+                    let firstUserID = quizHistory.completedUsers[0]
+                    let secondUserID = quizHistory.completedUsers[1]
+                    dispatchGroup.enter()
+                    self.fetchUser(userID: firstUserID) { firstUser in
+                        self.fetchUser(userID: secondUserID) { secondUser in
+                            if completedUsersCount == 2 {
+                                takenByText = "Taken by \(firstUser.username) and \(secondUser.username)"
+                            } else if completedUsersCount == 3 {
+                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and 1 other"
+                            } else {
+                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and \(completedUsersCount - 2) others"
+                            }
+                            print("append others takenBY text \(takenByText)")
+                            dispatchGroup.leave()
+                        }
+                    }
+                }
+                
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                quizHistoryTuples.append((quiz, completeStateText, currentUserResultType, takenByText))
+                print("takenBY text append \(takenByText)")
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            // This block will be executed after all asynchronous calls have completed
+            print("updateCollectionViewWithNewData \(quizHistoryTuples)")
+            self.updateCollectionViewWithNewData(quizHistoryTuples)
+        }
     }
-
+    
+    func updateCollectionViewWithNewData(_ quizHistoryTuples: [(quiz: Quiz, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)]) {
+        var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
+        
+        for (quiz, completeStateText, currentUserResultType, takenByText) in quizHistoryTuples {
+            let item = ViewModel.Item.quiz(
+                quiz: quiz,
+                completeStateText: completeStateText, // Placeholder for your logic
+                currentUserResultType: currentUserResultType, // Placeholder for your logic
+                takenByText: takenByText
+            )
+            print("item \(item)")
+            itemsBySection[.quizzes, default: []].append(item)
+        }
+        
+        dataSource.applySnapshotUsing(sectionIds: [.quizzes], itemsBySection: itemsBySection)
+    }
+    
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
+    }
+    
+    private func fetchUser(userID: String, completion: @escaping (User) -> Void) {
+        let docRef = FirestoreService.shared.db.collection("users").document(userID)
+        
+        docRef.getDocument(as: User.self) { result in
+            switch result {
+            case .success(let user):
+                completion(user)
+                
+            case .failure(let error):
+                // Handle the error appropriately
+                self.presentErrorAlert(with: error.localizedDescription)
+            }
+        }
+    }
+    
+    // Get groups whose membersIDs contains the current user's id
+    private func fetchQuizHistories() {
+        
+        FirestoreService.shared.db.collection("quizHistories").getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                self.model.quizHistories.removeAll()
+                
+                for document in querySnapshot!.documents {
+                    do {
+                        let quizHistory = try document.data(as: QuizHistory.self)
+                        
+                        self.model.quizHistories.append(quizHistory)
+                    }
+                    catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                self.updateCollectionView()
+            }
+        }
+    }
+    
+    func addQuizHistory() {
+        let quizID = 1
+        guard let userId = Auth.auth().currentUser?.uid else {return}
+        
+        let collectionRef = FirestoreService.shared.db.collection("quizHistories")
+        
+        let quizHistory = QuizHistory(quizID: QuizData.quizzes[1].id, completedUsers: [userId, userId, userId, userId])
+        
+        do {
+            try collectionRef.document(String(quizID)).setData(from: quizHistory)
+        }
+        catch {
+            presentErrorAlert(with: error.localizedDescription)
+        }
     }
 }

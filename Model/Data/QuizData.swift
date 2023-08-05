@@ -10,7 +10,7 @@ import Foundation
 struct QuizData {
     static let quizzes: [Quiz] = [
         // Animal Quiz
-        Quiz(id: 0, resultGroup: .fruit, title: "What Animal Are You?", quizType: .character, question: [
+        Quiz(id: 0, resultGroup: .animalT-moji, title: "What Animal Are You?", quizType: .character, question: [
             Question(text: "Where would you like to travel to?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "New York, USA", correspondingResult: ResultType.dog),
                 Answer(text: "Paris, France", correspondingResult: ResultType.cat),

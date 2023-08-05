@@ -87,5 +87,4 @@ class EditProfileTableViewController: UITableViewController {
             presentErrorAlert(with: error.localizedDescription)
         }
     }
-    
 }
