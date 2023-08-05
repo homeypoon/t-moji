@@ -15,7 +15,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
     @IBOutlet var takenByOthersLabel: UILabel!
     
     
-    func configure(quiz: Quiz, completeStateText: String, currentUserResultType: ResultType?, takenByText: String) {
+    func configure(quizTitle: String, resultGroup: ResultGroup, completeStateText: String, currentUserResultType: ResultType?, takenByText: String) {
         
         resultGroupButton.layer.cornerRadius = 8
         completeStateButton.layer.cornerRadius = 8
@@ -35,8 +35,8 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         
         // get groups and their users
         
-        quizTitleLabel.text = quiz.title
-        resultGroupButton.setTitle(quiz.resultGroup.rawValue.capitalized, for: .normal)
+        quizTitleLabel.text = quizTitle
+        resultGroupButton.setTitle(resultGroup.rawValue.capitalized, for: .normal)
         completeStateButton.setTitle(completeStateText, for: .normal)
         takenByOthersLabel.text = takenByText
     }
