@@ -20,9 +20,9 @@ class MemberQuizViewController: UIViewController {
     
     var quiz: Quiz?
     var group: Group?
+    var quizHistory: UserQuizHistory?
     var members = [User]()
     var member: User?
-    var quizHistory: UserQuizHistory?
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
@@ -66,7 +66,6 @@ class MemberQuizViewController: UIViewController {
                     }
                     resultChoices = ([finalResult] + Array(types.prefix(3))).shuffled()
 
-                    
                     // Set title of the mc buttons
                     multiChoiceButton1.setTitle("\(resultChoices[0].rawValue.capitalized) \(resultChoices[0].emoji)", for: [])
                     multiChoiceButton2.setTitle("\(resultChoices[1].rawValue.capitalized) \(resultChoices[1].emoji)", for: [])
@@ -89,6 +88,7 @@ class MemberQuizViewController: UIViewController {
         // Set the selected button's color
         sender.tintColor = .systemBlue
         
+        selectedButton = sender
     }
 
     @IBAction func submitButtonPressed(_ sender: UIButton) {

@@ -115,7 +115,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         let dispatchGroup = DispatchGroup() // Create a DispatchGroup
         
         for quiz in QuizData.quizzes {
-            var takenByText = "Not taken by any t-mates yet"
+            var takenByText = TakenByText.noTmates
             var completeState = false
             var currentUserResultType: ResultType? = nil
             var currentQuizHistory: QuizHistory? = nil
@@ -268,7 +268,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         if let item = dataSource.itemIdentifier(for: indexPath) {
             switch item {
             case .quiz(let quiz, let quizHistory, let completeState, let currentUserResultType, let takenByText):
-                self.performSegue(withIdentifier: "showQuizDetail", sender: (quiz, quizHistory, completeState, currentUserResultType))
+                self.performSegue(withIdentifier: "showQuizDetail", sender: (quiz, quizHistory, completeState, currentUserResultType, takenByText))
             }
         }
     }
@@ -279,18 +279,19 @@ class ExploreCollectionViewController: UICollectionViewController {
         if segue.identifier == "showQuizDetail" {
             let quizDetailVC = segue.destination as! QuizDetailViewController
             
-            if let senderInfo = sender as? (Quiz, QuizHistory?, Bool, ResultType?) {
+            if let senderInfo = sender as? (Quiz, QuizHistory?, Bool, ResultType?, String) {
                 let quiz = senderInfo.0
                 let quizHistory = senderInfo.1
                 let completeState = senderInfo.2
                 let currentUserResultType = senderInfo.3
+                let takenByText = senderInfo.4
                 
                 quizDetailVC.quiz = quiz
                 quizDetailVC.currentUser = model.user
                 quizDetailVC.quizHistory = quizHistory
                 quizDetailVC.quizCompleteState = completeState
                 quizDetailVC.currentUserResultType = currentUserResultType
-                
+                quizDetailVC.takenByText = takenByText
             }
         }
     }

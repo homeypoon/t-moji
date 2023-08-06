@@ -10,7 +10,7 @@ import Foundation
 struct QuizData {
     static let quizzes: [Quiz] = [
         // Animal Quiz
-        Quiz(id: 0, resultGroup: .animal, title: "What Animal Are You?", quizType: .character, question: [
+        Quiz(id: 0, resultGroup: .animal, title: "What Animal Are You?", quizType: .character, questions: [
             Question(text: "Where would you like to travel to?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "New York, USA", correspondingResult: ResultType.dog),
                 Answer(text: "Paris, France", correspondingResult: ResultType.cat),
@@ -23,13 +23,13 @@ struct QuizData {
                 Answer(text: "Slightly Extraverted", correspondingResult: ResultType.tiger),
                 Answer(text: "Extraverted", correspondingResult: ResultType.dog)
                      ]),
-            Question(text: "What is your favourite season?", type: .singleChoice, possibleAnswers: [
+            Question(text: "What is your favourite season?", type: .multipleChoice, possibleAnswers: [
                         Answer(text: "Spring", correspondingResult: ResultType.rabbit),
                         Answer(text: "Summer", correspondingResult: ResultType.dog),
                         Answer(text: "Autumn", correspondingResult: ResultType.cat),
                         Answer(text: "Winter", correspondingResult: ResultType.tiger)
                      ]),
-            Question(text: "What is your favourite color?", type: .singleChoice, possibleAnswers: [
+            Question(text: "What is your favourite color?", type: .multipleChoice, possibleAnswers: [
                         Answer(text: "Orange", correspondingResult: ResultType.tiger),
                         Answer(text: "Red", correspondingResult: ResultType.dog),
                         Answer(text: "Black", correspondingResult: ResultType.cat),
@@ -37,8 +37,8 @@ struct QuizData {
                      ])
         ]),
         // Vehicle Quiz
-        Quiz(id: 1, resultGroup: .vehicle, title: "What Vehicle Are You?", quizType: .character, question: [
-            Question(text: "Which is your favourite genre?", type: .singleChoice, possibleAnswers: [
+        Quiz(id: 1, resultGroup: .vehicle, title: "What Vehicle Are You?", quizType: .character, questions: [
+            Question(text: "Which is your favourite genre?", type: .multipleChoice, possibleAnswers: [
                 
                 Answer(text: "Fantasy", correspondingResult: ResultType.bike),
                 Answer(text: "Action", correspondingResult: ResultType.motorcycle),
@@ -48,8 +48,8 @@ struct QuizData {
             ]),
         // Fruit Quiz
         // CHANGE NEEDED
-        Quiz(id: 2, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, question: [
-            Question(text: "Which is your favourite genre?", type: .singleChoice, possibleAnswers: [
+        Quiz(id: 2, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, questions: [
+            Question(text: "Which is your favourite genre?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Fantasy", correspondingResult: ResultType.apple),
                 Answer(text: "Action", correspondingResult: ResultType.banana),
                 Answer(text: "Comedy", correspondingResult: ResultType.orange),

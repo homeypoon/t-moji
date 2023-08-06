@@ -16,7 +16,7 @@ struct Quiz: Identifiable {
     
     var quizType: QuizType
     
-    var question: [Question]
+    var questions: [Question]
         
     var questionIndex: Int? = 0 // Used to see which question the user is on
 }
@@ -44,7 +44,7 @@ struct Question {
 }
 
 enum QuestionType: Codable {
-    case singleChoice, multipleChoice, ranged
+    case multipleChoice, ranged
 }
 
 struct Answer: Codable {
