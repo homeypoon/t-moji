@@ -49,6 +49,8 @@ class ExploreCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+        
         guard let userID = Auth.auth().currentUser?.uid else { return }
         fetchUser(userID: userID) { user in
             self.model.user = user

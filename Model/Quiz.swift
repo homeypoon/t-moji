@@ -17,8 +17,25 @@ struct Quiz: Identifiable {
     var quizType: QuizType
     
     var questions: [Question]
+            
+    func calculateResult(chosenAnswers: [Int: [Answer]]) -> ResultType {
+        var answerFrequency: [ResultType: Int] = [:]
+
+        for answersArray in chosenAnswers.values {
+            for answer in answersArray {
+                answerFrequency[answer.correspondingResult, default: 0] += 1
+            }
+        }
         
-    var questionIndex: Int? = 0 // Used to see which question the user is on
+        let sortedAnswerFrequency = answerFrequency.sorted(by: {
+            (pair1, pair2) in
+            return pair1.value > pair2.value
+        })
+        
+        let result = sortedAnswerFrequency.sorted { $0.1 > $1.1 }.first!.key
+        
+        return result
+    }
 }
 
 extension Quiz: Hashable {

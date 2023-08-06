@@ -31,6 +31,11 @@ class QuizDetailViewController: UIViewController {
     
     var takeQuizState: Int!
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

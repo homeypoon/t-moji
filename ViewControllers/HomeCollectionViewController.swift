@@ -35,6 +35,7 @@ class HomeCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         fetchGroups()
     }
     

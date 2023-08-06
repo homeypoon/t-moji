@@ -24,3 +24,7 @@ struct ButtonState {
 struct TakenByText {
     static let noTmates = "Not taken by any t-mates yet"
 }
+
+enum QuizKind {
+    case personal, member
+}

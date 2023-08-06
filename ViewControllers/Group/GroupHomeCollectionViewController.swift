@@ -65,6 +65,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
         
         // Fetch the group first, and then fetch the users once the group data is available
         fetchGroup { [weak self] group in

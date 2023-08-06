@@ -32,7 +32,7 @@ class PersonalQuizViewController: UIViewController {
     @IBOutlet var rangedLabel2: UILabel!
     
     @IBOutlet var quizProgressView: UIProgressView!
-
+    
     @IBOutlet var submitButton: UIButton!
     
     
@@ -44,21 +44,37 @@ class PersonalQuizViewController: UIViewController {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-                print(quiz)
-        
+        updateInitialUI()
         updateUI()
-
         // Do any additional setup after loading the view.
+    }
+    
+    func updateInitialUI() {
+        for button in multiChoiceButtons {
+            button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+                var outgoing = incoming
+                outgoing.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+                return outgoing
+            }
+        }
+        
+        submitButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+            return outgoing
+        }
+        
     }
     
     func updateUI() {
         
         currentQuestion = quiz.questions[questionIndex]
         possibleAnswers = currentQuestion.possibleAnswers
+        
+        quizQuestionLabel.text = currentQuestion.text
         
         let totalProgress = Float(questionIndex) / Float(quiz.questions.count)
         
@@ -67,6 +83,14 @@ class PersonalQuizViewController: UIViewController {
         
         navigationItem.title = "Question \(questionIndex + 1)/\(quiz.questions.count)"
         quizProgressView.setProgress(totalProgress, animated: true)
+        
+        if questionIndex == (quiz.questions.count - 1) {
+            if isRetakeQuiz {
+                submitButton.setTitle("Submit Quiz -\(Price.retakeQuiz)💸", for: [])
+            } else {
+                submitButton.setTitle("Submit Quiz", for: [])
+            }
+        }
         
         switch currentQuestion.type {
         case .multipleChoice:
@@ -79,13 +103,7 @@ class PersonalQuizViewController: UIViewController {
     func updateMultiChoiceStack(using answers: [Answer]) {
         print(true)
         multiChoiceStackView.isHidden = false
-        for button in multiChoiceButtons {
-            button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-                var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-                return outgoing
-            }
-        }
+        
         
         for button in multiChoiceButtons {
             button.tintColor = .systemTeal
@@ -162,8 +180,30 @@ class PersonalQuizViewController: UIViewController {
         if questionIndex < quiz.questions.count {
             updateUI()
         } else {
-//            performSegue(withIdentifier: "showPersonalResults", sender: nil)
+            submitQuiz()
         }
     }
+    
+    func submitQuiz() {
 
+        performSegue(withIdentifier: "showPersonalResults", sender: nil)
+
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        guard segue.identifier == "showPersonalResults" else { return }
+        
+        let navController = segue.destination as! UINavigationController
+        let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
+        quizResultVC.quiz = self.quiz
+        quizResultVC.quizKind = .personal
+        quizResultVC.currentUser = self.currentUser
+        
+        quizResultVC.quizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
+        
+        self.navigationController?.popViewController(animated: false)
+    }
+    
 }

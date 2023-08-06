@@ -10,10 +10,11 @@ import UIKit
 private let reuseIdentifier = "Cell"
 
 class QuizResultCollectionViewController: UICollectionViewController {
+    var quizKind: QuizKind!
     var quiz: Quiz?
     var group: Group?
     var members = [User]()
-    var currentMember: User?
+    var currentUser: User?
     var quizHistory: UserQuizHistory?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
@@ -64,7 +65,6 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         updateCollectionView()
     }
     
@@ -141,13 +141,13 @@ class QuizResultCollectionViewController: UICollectionViewController {
         var sectionIDs = [ViewModel.Section]()
         
         sectionIDs.append(.currentUserResult)
-        var itemsBySection = [ViewModel.Section.currentUserResult: [ViewModel.Item.currentUserResult(member: currentMember!, quizHistory: quizHistory!)]]
+        var itemsBySection = [ViewModel.Section.currentUserResult: [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: quizHistory!)]]
         print(itemsBySection)
         
         // Check if the current user's ID is in the membersGuessed array of each member
-        for member in members.filter({ $0.uid != currentMember?.uid }) {
+        for member in members.filter({ $0.uid != currentUser?.uid }) {
             let isCurrentUserGuessed = member.quizHistory.contains { quizHistory in
-                quizHistory.membersGuessed.contains { $0.uid == currentMember?.uid }
+                quizHistory.membersGuessed.contains { $0.uid == currentUser?.uid }
             }
             
             // Create the appropriate item based on whether the current user's ID is in membersGuessed or not
@@ -196,5 +196,10 @@ class QuizResultCollectionViewController: UICollectionViewController {
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
+    
+    @IBAction func dismissResultPressed(_ sender: UIBarButtonItem) {
+        self.dismiss(animated: true)
+    }
+    
     
 }

@@ -26,7 +26,13 @@ class MemberQuizViewController: UIViewController {
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -114,11 +120,15 @@ class MemberQuizViewController: UIViewController {
         
         guard segue.identifier == "submitMemberQuiz" else { return }
         
-        let quizResultVC = segue.destination as! QuizResultCollectionViewController
+        let navController = segue.destination as! UINavigationController
+        let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
         quizResultVC.group = self.group
         quizResultVC.quiz = self.quiz
+        quizResultVC.quizKind = .member
         quizResultVC.members = self.members
-        quizResultVC.currentMember = self.member
+        quizResultVC.currentUser = self.member
         quizResultVC.quizHistory = self.quizHistory
+        
+        self.navigationController?.popViewController(animated: false)
     }
 }
