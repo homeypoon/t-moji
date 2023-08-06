@@ -19,19 +19,19 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
         
         enum Item: Hashable {
-            case quiz(quizTitle: String, resultGroup: ResultGroup, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)
+            case quiz(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
-                case .quiz(let quizTitle, _, _, _, _):
-                    hasher.combine(quizTitle)
+                case .quiz(let quiz, _, _, _, _):
+                    hasher.combine(quiz)
                 }
             }
             
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
-                case (.quiz(let lQuizTitle, _, _, _, _), .quiz(let rQuizTitle, _, _, _, _)):
-                    return lQuizTitle == rQuizTitle
+                case (.quiz(let lQuiz, _, _, _, _), .quiz(let rQuiz, _, _, _, _)):
+                    return lQuiz == rQuiz
                 default:
                     return false
                 }
@@ -69,10 +69,10 @@ class ExploreCollectionViewController: UICollectionViewController {
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             switch item {
-            case .quiz(let quizTitle, let resultGroup, let completeStateText, let currentUserResultType, let takenByText):
+            case .quiz(let quiz, _, let completeState, let currentUserResultType, let takenByText):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ExploreQuizCell", for: indexPath) as! ExploreQuizCollectionViewCell
                 
-                cell.configure(quizTitle: quizTitle, resultGroup: resultGroup, completeStateText: completeStateText, currentUserResultType: currentUserResultType, takenByText: takenByText)
+                cell.configure(quiz: quiz, completeState: completeState, currentUserResultType: currentUserResultType, takenByText: takenByText)
                 
                 return cell
             }
@@ -111,15 +111,18 @@ class ExploreCollectionViewController: UICollectionViewController {
             quizHistoryDictionary[quizHistory.quizID] = quizHistory
         }
         
-        var quizHistoryTuples: [(quizTitle: String, resultGroup: ResultGroup, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)] = []
+        var quizHistoryTuples: [(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)] = []
         let dispatchGroup = DispatchGroup() // Create a DispatchGroup
         
         for quiz in QuizData.quizzes {
             var takenByText = "Not taken by any t-mates yet"
-            var completeStateText = "Not Taken"
+            var completeState = false
             var currentUserResultType: ResultType? = nil
+            var currentQuizHistory: QuizHistory? = nil
             
             if let quizHistory = quizHistoryDictionary[quiz.id] {
+                currentQuizHistory = quizHistory
+                
                 let completedUsersCount = quizHistory.completedUsers.count
                 
                 guard let user = model.user else { return }
@@ -134,7 +137,7 @@ class ExploreCollectionViewController: UICollectionViewController {
                 let userHasCompletedQuiz = quizHistory.completedUsers.contains(uid)
                 
                 if userHasCompletedQuiz {
-                    completeStateText = "Taken"
+                    completeState = true
                     currentUserResultType = user.quizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
                 
@@ -169,7 +172,7 @@ class ExploreCollectionViewController: UICollectionViewController {
             }
             
             dispatchGroup.notify(queue: .main) {
-                quizHistoryTuples.append((quiz.title, quiz.resultGroup, completeStateText, currentUserResultType, takenByText))
+                quizHistoryTuples.append((quiz, currentQuizHistory, completeState, currentUserResultType, takenByText))
                 print("takenBY text append \(takenByText)")
             }
         }
@@ -181,15 +184,15 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
     }
     
-    func updateCollectionViewWithNewData(_ quizHistoryTuples: [(quizTitle: String, resultGroup: ResultGroup, completeStateText: String, currentUserResultType: ResultType?, takenByText: String)]) {
+    func updateCollectionViewWithNewData(_ quizHistoryTuples: [(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)]) {
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
-        for (quizTitle, resultGroup, completeStateText, currentUserResultType, takenByText) in quizHistoryTuples {
+        for (quiz, quizHistory, completeState, currentUserResultType, takenByText) in quizHistoryTuples {
             let item = ViewModel.Item.quiz(
-                quizTitle: quizTitle,
-                resultGroup: resultGroup,
-                completeStateText: completeStateText, // Placeholder for your logic
-                currentUserResultType: currentUserResultType, // Placeholder for your logic
+                quiz: quiz,
+                quizHistory: quizHistory,
+                completeState: completeState,
+                currentUserResultType: currentUserResultType,
                 takenByText: takenByText
             )
             print("item \(item)")
@@ -258,6 +261,37 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
         catch {
             presentErrorAlert(with: error.localizedDescription)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .quiz(let quiz, let quizHistory, let completeState, let currentUserResultType, let takenByText):
+                self.performSegue(withIdentifier: "showQuizDetail", sender: (quiz, quizHistory, completeState, currentUserResultType))
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "showQuizDetail" {
+            let quizDetailVC = segue.destination as! QuizDetailViewController
+            
+            if let senderInfo = sender as? (Quiz, QuizHistory?, Bool, ResultType?) {
+                let quiz = senderInfo.0
+                let quizHistory = senderInfo.1
+                let completeState = senderInfo.2
+                let currentUserResultType = senderInfo.3
+                
+                quizDetailVC.quiz = quiz
+                quizDetailVC.currentUser = model.user
+                quizDetailVC.quizHistory = quizHistory
+                quizDetailVC.quizCompleteState = completeState
+                quizDetailVC.currentUserResultType = currentUserResultType
+                
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
     @IBOutlet var takenByOthersLabel: UILabel!
     
     
-    func configure(quizTitle: String, resultGroup: ResultGroup, completeStateText: String, currentUserResultType: ResultType?, takenByText: String) {
+    func configure(quiz: Quiz, completeState: Bool, currentUserResultType: ResultType?, takenByText: String) {
         
         resultGroupButton.layer.cornerRadius = 8
         completeStateButton.layer.cornerRadius = 8
@@ -33,11 +33,18 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
             return outgoing
         }
         
+        
+        
         // get groups and their users
         
-        quizTitleLabel.text = quizTitle
-        resultGroupButton.setTitle(resultGroup.rawValue.capitalized, for: .normal)
-        completeStateButton.setTitle(completeStateText, for: .normal)
+        quizTitleLabel.text = quiz.title
+        resultGroupButton.setTitle(quiz.resultGroup.rawValue.capitalized, for: .normal)
+
+        if completeState == true {
+            completeStateButton.setTitle("Result: \(currentUserResultType?.emoji)", for: .normal)
+        } else {
+            completeStateButton.setTitle("Not Taken", for: .normal)
+        }
         takenByOthersLabel.text = takenByText
     }
 }

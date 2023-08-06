@@ -266,7 +266,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 self.performSegue(withIdentifier: "showMemberQuiz", sender: (member, quizHistory))
             }
         }
-//        self.performSegue(withIdentifier: "showMemberQuiz", sender: (selectedMember, model.userQuizHistoriesDict[selectedMember]))
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
