@@ -48,6 +48,7 @@ class PersonalQuizViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
+        self.navigationItem.hidesBackButton = true
     }
     
     override func viewDidLoad() {
@@ -193,14 +194,17 @@ class PersonalQuizViewController: UIViewController {
     func submitQuiz() {
         let dispatchGroup = DispatchGroup()
         self.userQuizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
+        self.currentUser?.quizHistory.append(userQuizHistory)
         
+        if isRetakeQuiz {
+            currentUser?.dollarCount -= Price.retakeQuiz
+        }
         
-        if let currentUserIndex = self.currentUser?.quizHistory.firstIndex(where: { $0.quizID == self.userQuizHistory.quizID }) {
-            // If a UserQuizHistory with the same quizID exists, replace it
-            self.currentUser?.quizHistory[currentUserIndex] = self.userQuizHistory
-        } else {
-            // If no UserQuizHistory with the same quizID exists, append the new one
-            self.currentUser?.quizHistory.append(self.userQuizHistory)
+        func presentErrorAlert(with message: String) {
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+            present(alert, animated: true, completion: nil)
         }
         
         dispatchGroup.enter()
@@ -209,7 +213,7 @@ class PersonalQuizViewController: UIViewController {
         }
         
         dispatchGroup.enter()
-        updateUserWithUserQuizHistory {
+        updateUser {
             dispatchGroup.leave()
         }
         
@@ -248,9 +252,11 @@ class PersonalQuizViewController: UIViewController {
                         var quizHistory = try document.data(as: QuizHistory.self)
                         quizHistory.completedUsers.append(userID)
                         self.quizHistory = quizHistory
-                        document.reference.updateData([
-                            "completedUsers": FieldValue.arrayUnion([userID])
-                        ])
+                        
+                            document.reference.updateData([
+                                "completedUsers": FieldValue.arrayUnion([userID]),
+                            ])
+                    
                     } catch {
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
@@ -261,7 +267,7 @@ class PersonalQuizViewController: UIViewController {
     }
     
     
-    func updateUserWithUserQuizHistory(completion: @escaping () -> Void) {
+    func updateUser(completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else {return}
         
         let collectionRef = FirestoreService.shared.db.collection("users")
@@ -285,12 +291,12 @@ class PersonalQuizViewController: UIViewController {
                 let quizHistory = QuizHistory(quizID: quiz.id, completedUsers: [])
                 try collectionRef.document(String(quiz.id)).setData(from: quizHistory)
             }
-            
         }
         catch {
             presentErrorAlert(with: error.localizedDescription)
         }
     }
+    
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)

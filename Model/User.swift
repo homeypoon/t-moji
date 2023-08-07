@@ -25,6 +25,9 @@ struct User {
     var quizHistory: [UserQuizHistory] = []
     
     var isSelected: Bool = false
+    
+    var dollarCount: Int = 0
+    var heartCount: Int = 0
 
 }
 

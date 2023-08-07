@@ -63,12 +63,6 @@ class EditProfileTableViewController: UITableViewController {
             user = User(uid: uid ,username: username, bio: bio)
         }
         
-        let userQuizHistory = UserQuizHistory(quizID: QuizData.quizzes[0].id, userCompleteTime: Date(), finalResult: .apple, chosenAnswers: [:])
-        // Create a UserQuizHistory instance and use the quizID
-        let userQuizHistory2 = UserQuizHistory(quizID: QuizData.quizzes[1].id, userCompleteTime: Date(), finalResult: .car, chosenAnswers: [:])
-
-        self.user = User(uid: uid, username: "s", bio: "s", quizHistory: [userQuizHistory, userQuizHistory2])
-        
         addUser(user: user!)
     }
     

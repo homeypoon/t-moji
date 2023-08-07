@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 class QuizDetailViewController: UIViewController {
     var quiz: Quiz?
-    var currentUser: User?
+    var currentUser: User!
     var quizHistory: QuizHistory!
     var quizCompleteState: Bool = false
     var currentUserResultType: ResultType?
@@ -26,6 +26,8 @@ class QuizDetailViewController: UIViewController {
     @IBOutlet var takeQuizPriceLabel: UILabel!
     @IBOutlet var guessForTmatesPriceLabel: UILabel!
     @IBOutlet var questionMarkLabel: UILabel!
+    @IBOutlet var dollarCountLabel: UILabel!
+    @IBOutlet var heartCountLabel: UILabel!
     
     @IBOutlet var quizButtons: [UIButton]!
     
@@ -49,6 +51,8 @@ class QuizDetailViewController: UIViewController {
     }
     
     private func updateUIText() {
+        print("updating uitext")
+        print("self \(currentUserResultType)")
         guard let userID = Auth.auth().currentUser?.uid else { return }
         takeQuizState = quizHistory.completedUsers.contains(userID) ? ButtonState.retakeQuiz : ButtonState.takeQuiz
         
@@ -72,6 +76,8 @@ class QuizDetailViewController: UIViewController {
         }
         
         quizTitleLabel.text = quiz?.title
+        dollarCountLabel.text = "💸 \(currentUser.dollarCount)"
+        heartCountLabel.text = "💗 \(currentUser.heartCount)"
         
         // If no t-mates have taken quiz
         if takenByText == TakenByText.noTmates {
@@ -98,12 +104,53 @@ class QuizDetailViewController: UIViewController {
     }
     
     @IBAction func showQuiz(_ sender: UIButton) {
+
         isRetakeQuiz = takeQuizState == ButtonState.retakeQuiz
         if isRetakeQuiz! {
+            let dollarCountAfterCost = currentUser.dollarCount - Price.retakeQuiz
             
+            // User has enough dollars
+            if dollarCountAfterCost >= 0 {
+                sender.isEnabled = false
+                animateDeductionAndPerformSegue(animateTo: "💸 \(dollarCountAfterCost)") {
+                    sender.isEnabled = true
+                }
+            } else {
+                presentRetakeAlert(withTitle: "Not Enough 💸", withMessage: "Retaking the quiz requires 💸\(Price.retakeQuiz)")
+            }
         } else {
             performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
         }
+    }
+    
+    func animateDeductionAndPerformSegue(animateTo newValue: String, completion: @escaping () -> Void) {
+        // Animate the deduction
+        UIView.animate(withDuration: 0.3, animations: {
+            self.dollarCountLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // Scale up
+            self.dollarCountLabel.textColor = .red // Change color
+            self.takeQuizButton.transform = CGAffineTransform(scaleX: 1.05, y: 1.05) // Scale up
+        }) { _ in
+            self.dollarCountLabel.text = newValue
+            UIView.animate(withDuration: 0.3, delay: 0.3, animations: {
+                self.dollarCountLabel.transform = .identity // Reset scale
+                self.dollarCountLabel.textColor = .black // Reset color
+                self.takeQuizButton.transform = .identity // Reset scale
+            }) { _ in
+                // After the second animation, perform the segue
+                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
+                completion()
+            }
+        }
+    }
+    
+    func presentRetakeAlert(withTitle title: String, withMessage message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        
+        // add watch ad to redo
+        
+        present(alert, animated: true, completion: nil)
     }
     
     func fetchQuizHistory() {
@@ -141,7 +188,7 @@ class QuizDetailViewController: UIViewController {
                 self.currentUser = user
                 print("result type \(user)")
                 self.currentUserResultType = user.quizHistory.first(where: { $0.quizID == self.quiz?.id })?.finalResult
-                print("result type \(self.currentUserResultType)")
+                print("currentUserResultType")
                 self.updateUIText()
             case .failure(let error):
                 // Handle the error appropriately
