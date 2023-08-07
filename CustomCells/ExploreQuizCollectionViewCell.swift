@@ -41,7 +41,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         resultGroupButton.setTitle(quiz.resultGroup.rawValue.capitalized, for: .normal)
 
         if completeState == true {
-            completeStateButton.setTitle("Result: \(currentUserResultType?.emoji)", for: .normal)
+            completeStateButton.setTitle("Result: \(currentUserResultType?.emoji ?? " ")", for: .normal)
         } else {
             completeStateButton.setTitle("Not Taken", for: .normal)
         }

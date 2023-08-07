@@ -45,7 +45,7 @@ enum ResultType: String {
         }
     }
     
-    var emoji: Character {
+    var emoji: String {
         switch self {
         case .dog:
             return "🐶"
@@ -73,7 +73,6 @@ enum ResultType: String {
             return "🍓"
         }
     }
-    
 }
 
 extension ResultType {

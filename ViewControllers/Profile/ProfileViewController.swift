@@ -146,8 +146,6 @@ class ProfileViewController: UIViewController {
         let collectionRef = FirestoreService.shared.db.collection("users")
         
         do {
-            
-            
             try collectionRef.document(userId).setData(from: user)
         }
         catch {

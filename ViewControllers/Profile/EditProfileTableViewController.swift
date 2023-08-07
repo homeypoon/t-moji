@@ -78,8 +78,6 @@ class EditProfileTableViewController: UITableViewController {
         let collectionRef = FirestoreService.shared.db.collection("users")
         
         do {
-            // Create a UserQuizHistory instance and use the quizID
-            
             
             try collectionRef.document(userId).setData(from: user)
         }

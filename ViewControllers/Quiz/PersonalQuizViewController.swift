@@ -6,11 +6,16 @@
 //
 
 import UIKit
+import FirebaseFirestore
+import FirebaseAuth
 
 class PersonalQuizViewController: UIViewController {
     var isRetakeQuiz: Bool!
     var quiz: Quiz!
     var currentUser: User?
+    var quizHistory: QuizHistory?
+    
+    var userQuizHistory: UserQuizHistory!
     
     typealias QuestionIndex = Int
     var chosenAnswers: [QuestionIndex: [Answer]] = [:]
@@ -49,6 +54,7 @@ class PersonalQuizViewController: UIViewController {
         super.viewDidLoad()
         updateInitialUI()
         updateUI()
+        
         // Do any additional setup after loading the view.
     }
     
@@ -185,9 +191,33 @@ class PersonalQuizViewController: UIViewController {
     }
     
     func submitQuiz() {
-
-        performSegue(withIdentifier: "showPersonalResults", sender: nil)
-
+        let dispatchGroup = DispatchGroup()
+        self.userQuizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
+        
+        
+        if let currentUserIndex = self.currentUser?.quizHistory.firstIndex(where: { $0.quizID == self.userQuizHistory.quizID }) {
+            // If a UserQuizHistory with the same quizID exists, replace it
+            self.currentUser?.quizHistory[currentUserIndex] = self.userQuizHistory
+        } else {
+            // If no UserQuizHistory with the same quizID exists, append the new one
+            self.currentUser?.quizHistory.append(self.userQuizHistory)
+        }
+        
+        dispatchGroup.enter()
+        addQuizHistory {
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        updateUserWithUserQuizHistory {
+            dispatchGroup.leave()
+        }
+        
+        
+        dispatchGroup.notify(queue: .main) {
+            self.performSegue(withIdentifier: "showPersonalResults", sender: nil)
+        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -201,9 +231,72 @@ class PersonalQuizViewController: UIViewController {
         quizResultVC.quizKind = .personal
         quizResultVC.currentUser = self.currentUser
         
-        quizResultVC.quizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
+        quizResultVC.quizHistory = self.userQuizHistory
         
         self.navigationController?.popViewController(animated: false)
+    }
+    
+    func addQuizHistory(completion: @escaping () -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else {return}
+        
+        FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quiz.id).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        var quizHistory = try document.data(as: QuizHistory.self)
+                        quizHistory.completedUsers.append(userID)
+                        self.quizHistory = quizHistory
+                        document.reference.updateData([
+                            "completedUsers": FieldValue.arrayUnion([userID])
+                        ])
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                completion()
+            }
+        }
+    }
+    
+    
+    func updateUserWithUserQuizHistory(completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else {return}
+        
+        let collectionRef = FirestoreService.shared.db.collection("users")
+        
+        do {
+            try collectionRef.document(userId).setData(from: self.currentUser)
+            completion()
+        }
+        catch {
+            presentErrorAlert(with: error.localizedDescription)
+        }
+    }
+    
+    // Used for adding quizzes
+    func resetQuizHistories() {
+        
+        let collectionRef = FirestoreService.shared.db.collection("quizHistories")
+        
+        do {
+            for quiz in QuizData.quizzes {
+                let quizHistory = QuizHistory(quizID: quiz.id, completedUsers: [])
+                try collectionRef.document(String(quiz.id)).setData(from: quizHistory)
+            }
+            
+        }
+        catch {
+            presentErrorAlert(with: error.localizedDescription)
+        }
+    }
+    
+    func presentErrorAlert(with message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
     }
     
 }

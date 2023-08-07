@@ -145,7 +145,6 @@ class HomeCollectionViewController: UICollectionViewController {
                         "groupsIDs": FieldValue.arrayRemove([groupId])
                     ])
                 }
-                
             }
         }
         

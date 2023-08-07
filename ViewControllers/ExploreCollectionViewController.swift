@@ -121,6 +121,7 @@ class ExploreCollectionViewController: UICollectionViewController {
             var completeState = false
             var currentUserResultType: ResultType? = nil
             var currentQuizHistory: QuizHistory? = nil
+            print("quiz \(quiz)")
             
             if let quizHistory = quizHistoryDictionary[quiz.id] {
                 currentQuizHistory = quizHistory
@@ -144,6 +145,8 @@ class ExploreCollectionViewController: UICollectionViewController {
                 }
                 
                 switch completedMemberCount {
+                case 0:
+                    break
                 case 1:
                     let userID = quizHistory.completedUsers[0]
                     dispatchGroup.enter()
@@ -179,10 +182,15 @@ class ExploreCollectionViewController: UICollectionViewController {
             }
         }
         
+        
         dispatchGroup.notify(queue: .main) {
-            // This block will be executed after all asynchronous calls have completed
             print("updateCollectionViewWithNewData \(quizHistoryTuples)")
+            
+            // Update the data source with new data
             self.updateCollectionViewWithNewData(quizHistoryTuples)
+            
+            // Reload the collection view to reflect the changes
+            self.collectionView.reloadData()
         }
     }
     
@@ -250,21 +258,6 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
     }
     
-    func addQuizHistory() {
-        let quizID = 1
-        guard let userId = Auth.auth().currentUser?.uid else {return}
-        
-        let collectionRef = FirestoreService.shared.db.collection("quizHistories")
-        
-        let quizHistory = QuizHistory(quizID: QuizData.quizzes[1].id, completedUsers: [userId, userId, userId, userId])
-        
-        do {
-            try collectionRef.document(String(quizID)).setData(from: quizHistory)
-        }
-        catch {
-            presentErrorAlert(with: error.localizedDescription)
-        }
-    }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let item = dataSource.itemIdentifier(for: indexPath) {
