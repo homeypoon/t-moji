@@ -13,7 +13,7 @@ struct UserQuizHistory: Codable {
     
     typealias QuestionIndex = Int
     
-    var membersGuessed: [User] = [] // members who have guessed for the current user and quiz
+    var membersGuessed: [String] = [] // members who have guessed for the current user and quiz
 
     var quizID: Int
     

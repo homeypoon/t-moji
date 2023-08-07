@@ -120,9 +120,9 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     func update() {
-        guard let quizHistory = user?.quizHistory else { return }
+        guard let userQuizHistory = user?.userQuizHistory else { return }
         
-        model.userQuizHistory = quizHistory
+        model.userQuizHistory = userQuizHistory
         
         self.updateCollectionView()
     }
@@ -131,11 +131,11 @@ class ProfileCollectionViewController: UICollectionViewController {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
-        
+        self.model.userQuizHistory.removeAll()
+
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
-                self.model.userQuizHistory.removeAll()
                 self.user = user
 
                 self.update()

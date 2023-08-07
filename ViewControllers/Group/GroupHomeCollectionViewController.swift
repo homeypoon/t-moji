@@ -13,7 +13,7 @@ private let reuseIdentifier = "Cell"
 
 class GroupHomeCollectionViewController: UICollectionViewController {
     
-    var group: Group?
+    var group: Group!
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
@@ -103,12 +103,13 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         guard let membersIDs = group?.membersIDs else { return }
         
+        self.model.members.removeAll()
+        self.model.userQuizHistoriesDict.removeAll()
+        
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
-                self.model.members.removeAll()
-                self.model.userQuizHistoriesDict.removeAll()
                 
                 for document in querySnapshot!.documents {
                     do {
@@ -116,7 +117,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         
                         self.model.members.append(member)
                         
-                        let memberQuizHistory = member.quizHistory
+                        let memberQuizHistory = member.userQuizHistory
                         
                         var quizHistory = [UserQuizHistory]()
                         
@@ -284,7 +285,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let quizHistory = senderInfo.1
                 memberQuizVC.members = self.model.members
                 memberQuizVC.member = member
-                memberQuizVC.quizHistory = quizHistory
+                memberQuizVC.userQuizHistory = quizHistory
                 memberQuizVC.group = self.group
             }
         }

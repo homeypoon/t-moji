@@ -20,9 +20,11 @@ class MemberQuizViewController: UIViewController {
     
     var quiz: Quiz?
     var group: Group?
-    var quizHistory: UserQuizHistory?
+    var userQuizHistory: UserQuizHistory?
     var members = [User]()
     var member: User?
+    
+    var guessedResultType: ResultType! // selected by user
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
@@ -35,7 +37,6 @@ class MemberQuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         updateUI()
 
@@ -52,7 +53,7 @@ class MemberQuizViewController: UIViewController {
             }
         }
 
-        if let quizHistory = quizHistory,
+        if let quizHistory = userQuizHistory,
            let member = member {
             
             if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
@@ -98,20 +99,21 @@ class MemberQuizViewController: UIViewController {
     }
 
     @IBAction func submitButtonPressed(_ sender: UIButton) {
-        let selectedResultType: ResultType
         
         switch selectedButton {
         case multiChoiceButton1:
-            selectedResultType = resultChoices[0]
+            guessedResultType = resultChoices[0]
         case multiChoiceButton2:
-            selectedResultType = resultChoices[1]
+            guessedResultType = resultChoices[1]
         case multiChoiceButton3:
-            selectedResultType = resultChoices[2]
+            guessedResultType = resultChoices[2]
         case multiChoiceButton4:
-            selectedResultType = resultChoices[3]
+            guessedResultType = resultChoices[3]
         default:
             break
         }
+        
+        performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
     }
     
     // Prepare for the saveUnwind segue by updating User object
@@ -121,13 +123,13 @@ class MemberQuizViewController: UIViewController {
         guard segue.identifier == "submitMemberQuiz" else { return }
         
         let navController = segue.destination as! UINavigationController
-        let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
-        quizResultVC.group = self.group
-        quizResultVC.quiz = self.quiz
-        quizResultVC.quizKind = .member
-        quizResultVC.members = self.members
-        quizResultVC.currentUser = self.member
-        quizResultVC.quizHistory = self.quizHistory
+        let guessResultVC = navController.topViewController as! GuessResultCollectionViewController
+        
+        guessResultVC.group = self.group
+        guessResultVC.quiz = self.quiz
+        guessResultVC.members = self.members
+        guessResultVC.currentUser = self.member
+        guessResultVC.userQuizHistory = self.userQuizHistory
         
         self.navigationController?.popViewController(animated: false)
     }

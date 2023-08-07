@@ -51,6 +51,8 @@ class QuizDetailViewController: UIViewController {
     }
     
     private func updateUIText() {
+        currentUser.dollarCount = 28 // TEMP FOR TESTING
+        
         print("updating uitext")
         print("self \(currentUserResultType)")
         guard let userID = Auth.auth().currentUser?.uid else { return }
@@ -187,7 +189,7 @@ class QuizDetailViewController: UIViewController {
             case .success(let user):
                 self.currentUser = user
                 print("result type \(user)")
-                self.currentUserResultType = user.quizHistory.first(where: { $0.quizID == self.quiz?.id })?.finalResult
+                self.currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == self.quiz?.id })?.finalResult
                 print("currentUserResultType")
                 self.updateUIText()
             case .failure(let error):
@@ -204,6 +206,10 @@ class QuizDetailViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    @IBAction func seeResultDetailsPressed(_ sender: UIButton) {
+        self.performSegue(withIdentifier: "showResultDetails", sender: nil)
+    }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
@@ -213,6 +219,13 @@ class QuizDetailViewController: UIViewController {
             personalQuizVC.isRetakeQuiz = isRetakeQuiz
             personalQuizVC.currentUser = currentUser
             personalQuizVC.quiz = quiz
+        } else if segue.identifier == "showResultDetails" {
+            let navController = segue.destination as! UINavigationController
+            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
+            quizResultVC.quiz = self.quiz
+            quizResultVC.currentUser = self.currentUser
+            
+            quizResultVC.userQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == self.quiz?.id })
             
         }
     }

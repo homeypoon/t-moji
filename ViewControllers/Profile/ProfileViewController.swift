@@ -111,9 +111,9 @@ class ProfileViewController: UIViewController {
     }
     
     func update() {
-        guard let quizHistory = user?.quizHistory else { return }
+        guard let userQuizHistory = user?.userQuizHistory else { return }
         
-        model.userQuizHistory = quizHistory
+        model.userQuizHistory = userQuizHistory
         
         self.updateCollectionView()
     }

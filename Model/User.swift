@@ -10,8 +10,10 @@ import FirebaseFirestoreSwift
 import FirebaseFirestore
 
 struct User {
-    typealias QuizID = UUID
+    typealias QuizID = Int
+    typealias IsGuessCorrect = Bool
     typealias GroupID = String
+    
     
     var uid: String
     var username: String = ""
@@ -22,12 +24,14 @@ struct User {
     var masterGroupmatesIDs: [String] = [] // Use as a set - get unique
     
     var groupsIDs: [GroupID] = []
-    var quizHistory: [UserQuizHistory] = []
+    var userQuizHistory: [UserQuizHistory] = []
     
     var isSelected: Bool = false
     
     var dollarCount: Int = 0
     var heartCount: Int = 0
+    
+    var guessHistory: [QuizID: IsGuessCorrect] = [:]
 
 }
 

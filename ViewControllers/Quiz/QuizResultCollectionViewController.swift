@@ -10,19 +10,21 @@ import UIKit
 private let reuseIdentifier = "Cell"
 
 class QuizResultCollectionViewController: UICollectionViewController {
-    var quizKind: QuizKind!
     var quiz: Quiz?
     var group: Group?
     var members = [User]()
     var currentUser: User?
-    var quizHistory: UserQuizHistory?
+    var userQuizHistory: UserQuizHistory?
+    
+    var quizHistory: QuizHistory?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
             case currentUserResult
-            case othersResults
+            case membersResults
+            case otherTmatesResults
         }
         
         enum Item: Hashable, Comparable {
@@ -60,11 +62,23 @@ class QuizResultCollectionViewController: UICollectionViewController {
         }
     }
     
+    struct Model {
+        var userMasterTmates = [User]()
+    }
     
     var dataSource: DataSourceType!
+    var model = Model()
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("current user\(currentUser)")
+        print("group\(group)")
+        fetchQuizHistory { [weak self] in
+            
+            self!.fetchUsers(membersIDs: Array(Set(self!.currentUser!.masterGroupmatesIDs)))
+        }
+        
         updateCollectionView()
     }
     
@@ -136,65 +150,143 @@ class QuizResultCollectionViewController: UICollectionViewController {
         }
     }
     
+//    func updateCollectionView() {
+//
+//        var sectionIDs = [ViewModel.Section]()
+//
+//        sectionIDs.append(.currentUserResult)
+//        var itemsBySection = [ViewModel.Section.currentUserResult: [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]]
+//        print(itemsBySection)
+//
+//        guard let quizHistory = quizHistory, let currentUser = currentUser else {return }
+//
+//            let completedMasterTmates = model.userMasterTmates.filter { quizHistory.completedUsers.contains($0.uid) }
+//
+//            let incompletedMasterTmates = model.userMasterTmates.filter { !quizHistory.completedUsers.contains($0.uid) }
+//
+//
+//        // Check if the current user's ID is in the membersGuessed array of each member
+//        for userMasterTmate in model.userMasterTmates {
+//            if let group = group {
+//                group.membersIDs.map { $0 = com}
+//
+//            }
+//            let isCurrentUserGuessed = completedTmate.quizHistory.contains { quizHistory in
+//                quizHistory.membersGuessed.contains { $0.uid == currentUser.uid }
+//            }
+//
+//            // Create the appropriate item based on whether the current user's ID is in membersGuessed or not
+//            if isCurrentUserGuessed {
+//                for quizHistory in member.quizHistory {
+//                    itemsBySection[.othersResults, default: []].append(ViewModel.Item.revealedResult(member: member, quizHistory: quizHistory))
+//                }
+//            } else {
+//                itemsBySection[.othersResults, default: []].append(ViewModel.Item.unrevealedResult(member: member))
+//            }
+//        }
+//
+//        // Add the othersResults section and its corresponding items
+//        sectionIDs.append(.othersResults)
+//        if let othersResultsItems = itemsBySection[.othersResults] {
+//            itemsBySection[.othersResults] = othersResultsItems.sorted() // Optional: Sort the items if necessary
+//        }
+//
+//        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+//    }
+    
     func updateCollectionView() {
-        
         var sectionIDs = [ViewModel.Section]()
-        
+        var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
+
         sectionIDs.append(.currentUserResult)
-        var itemsBySection = [ViewModel.Section.currentUserResult: [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: quizHistory!)]]
-        print(itemsBySection)
-        
-        // Check if the current user's ID is in the membersGuessed array of each member
-        for member in members.filter({ $0.uid != currentUser?.uid }) {
-            let isCurrentUserGuessed = member.quizHistory.contains { quizHistory in
-                quizHistory.membersGuessed.contains { $0.uid == currentUser?.uid }
-            }
-            
-            // Create the appropriate item based on whether the current user's ID is in membersGuessed or not
-            if isCurrentUserGuessed {
-                for quizHistory in member.quizHistory {
-                    itemsBySection[.othersResults, default: []].append(ViewModel.Item.revealedResult(member: member, quizHistory: quizHistory))
+        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]
+
+        sectionIDs.append(.membersResults)
+        sectionIDs.append(.otherTmatesResults)
+
+        for userMasterTmate in model.userMasterTmates {
+            if let group = group, group.membersIDs.contains(userMasterTmate.uid) {
+                if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                    if matchingQuizHistory.membersGuessed.contains(userMasterTmate.uid) {
+                        itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
+                    } else {
+                        itemsBySection[.membersResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
+                    }
                 }
             } else {
-                itemsBySection[.othersResults, default: []].append(ViewModel.Item.unrevealedResult(member: member))
+                if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                    if matchingQuizHistory.membersGuessed.contains(userMasterTmate.uid) {
+                        itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
+                    } else {
+                        itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
+                    }
+                }
             }
         }
-        
-        // Add the othersResults section and its corresponding items
-        sectionIDs.append(.othersResults)
-        if let othersResultsItems = itemsBySection[.othersResults] {
-            itemsBySection[.othersResults] = othersResultsItems.sorted() // Optional: Sort the items if necessary
+
+        // Sort and update the dataSource
+        if let membersResultsItems = itemsBySection[.membersResults] {
+            itemsBySection[.membersResults] = membersResultsItems.sorted() // Optional: Sort the items if necessary
         }
-        
-        //        let othersResultsItems = members.reduce(into: [ViewModel.Item]()) { partial, member in
-        //            member.quizHistory.membersGuessed
-        //                let item = ViewModel.Item.emoji(resultType: resultType)
-        //                partial.append(item)
-        //            }
-        
-        //        let resultTypeItems = model.resultTypes.reduce(into: [ViewModel.Item]()) { partial, resultType in
-        //            let item = ViewModel.Item.emoji(resultType: resultType)
-        //            partial.append(item)
-        //        }
-        //
-        //        sectionIDs.append(.userEmojis)
-        //
-        //        itemsBySection[.userEmojis] = resultTypeItems
-        //
-        //
-        //        let quizHistoryItems = model.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, quizHistory in
-        //            let item = ViewModel.Item.quizHistory(quizHistory: quizHistory)
-        //            partial.append(item)
-        //        }
-        //
-        //        sectionIDs.append(.userQuizHistory)
-        //        itemsBySection[.userQuizHistory] = quizHistoryItems
-        //
-        //        print("itemsBySection \(itemsBySection)")
-        //
-        //
-        
+
+        if let otherTmatesResultsItems = itemsBySection[.otherTmatesResults] {
+            itemsBySection[.otherTmatesResults] = otherTmatesResultsItems.sorted() // Optional: Sort the items if necessary
+        }
+
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+
+    }
+    
+    
+    
+    func fetchQuizHistory(completion: @escaping () -> Void) {
+        guard let quizID = quiz?.id else {return}
+        
+        FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+                completion()
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        self.quizHistory = try document.data(as: QuizHistory.self)
+                        completion()
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                        completion()
+                    }
+                }
+            }
+        }
+    }
+    
+    private func fetchUsers(membersIDs: [String]) {
+        self.model.userMasterTmates.removeAll()
+        
+        FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                
+                for document in querySnapshot!.documents {
+                    do {
+                        let member = try document.data(as: User.self)
+                        self.model.userMasterTmates.append(member)
+                    }
+                    catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                self.updateCollectionView()
+            }
+        }
+    }
+    
+    func presentErrorAlert(with message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func dismissResultPressed(_ sender: UIBarButtonItem) {

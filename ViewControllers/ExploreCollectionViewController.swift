@@ -141,7 +141,7 @@ class ExploreCollectionViewController: UICollectionViewController {
                 
                 if userHasCompletedQuiz {
                     completeState = true
-                    currentUserResultType = user.quizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
+                    currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
                 
                 switch completedMemberCount {

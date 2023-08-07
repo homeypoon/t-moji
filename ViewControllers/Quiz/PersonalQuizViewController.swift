@@ -92,11 +92,11 @@ class PersonalQuizViewController: UIViewController {
         quizProgressView.setProgress(totalProgress, animated: true)
         
         if questionIndex == (quiz.questions.count - 1) {
-            if isRetakeQuiz {
-                submitButton.setTitle("Submit Quiz -\(Price.retakeQuiz)💸", for: [])
-            } else {
-                submitButton.setTitle("Submit Quiz", for: [])
-            }
+//            if isRetakeQuiz {
+//                submitButton.setTitle("Submit Quiz -\(Price.retakeQuiz)💸", for: [])
+//            } else {
+            submitButton.setTitle("Submit Quiz", for: [])
+//            }
         }
         
         switch currentQuestion.type {
@@ -194,10 +194,20 @@ class PersonalQuizViewController: UIViewController {
     func submitQuiz() {
         let dispatchGroup = DispatchGroup()
         self.userQuizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
-        self.currentUser?.quizHistory.append(userQuizHistory)
         
-        if isRetakeQuiz {
-            currentUser?.dollarCount -= Price.retakeQuiz
+        if var currentUser = currentUser {
+            if let index = currentUser.userQuizHistory.firstIndex(where: { $0.quizID == self.userQuizHistory.quizID }) {
+                // If it's a retake, replace the item at the found index with the new self.userQuizHistory
+                if isRetakeQuiz {
+                    currentUser.userQuizHistory[index] = self.userQuizHistory
+                    currentUser.dollarCount -= Price.retakeQuiz
+                }
+            } else {
+                // If it's not a retake, append the new userQuizHistory
+                currentUser.userQuizHistory.append(self.userQuizHistory)
+            }
+            // Update the modified 'currentUser' back to the original 'currentUser' object
+            self.currentUser = currentUser
         }
         
         func presentErrorAlert(with message: String) {
@@ -232,10 +242,8 @@ class PersonalQuizViewController: UIViewController {
         let navController = segue.destination as! UINavigationController
         let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
         quizResultVC.quiz = self.quiz
-        quizResultVC.quizKind = .personal
         quizResultVC.currentUser = self.currentUser
-        
-        quizResultVC.quizHistory = self.userQuizHistory
+        quizResultVC.userQuizHistory = self.userQuizHistory
         
         self.navigationController?.popViewController(animated: false)
     }
