@@ -13,7 +13,7 @@ private let reuseIdentifier = "Cell"
 class QuizResultCollectionViewController: UICollectionViewController {
     var quiz: Quiz?
     var group: Group?
-    var members = [User]()
+    var members = [User]() // test delete
     var currentUser: User?
     var userQuizHistory: UserQuizHistory?
     
@@ -76,8 +76,10 @@ class QuizResultCollectionViewController: UICollectionViewController {
         print("current user\(currentUser)")
         print("group\(group)")
         fetchQuizHistory { [weak self] in
-            
-            self!.fetchUserMasterTmates(membersIDs: Array(Set(self!.currentUser!.masterGroupmatesIDs)))
+            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, masterGroupmatesIDs.isEmpty {
+                print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+                self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+            }
         }
         
         updateCollectionView()
@@ -96,7 +98,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
-
+            
             switch item {
             case .currentUserResult(_, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CurrentUserResult", for: indexPath) as! CurrentUserResultCollectionViewCell
@@ -143,7 +145,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 // Here we use 'count' parameter to specify the number of items per group, which is 2 in this case.
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(320))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(340))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2) // Use count: 2 to have two items per group.
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -157,13 +159,13 @@ class QuizResultCollectionViewController: UICollectionViewController {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
-
+        
         sectionIDs.append(.currentUserResult)
         itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]
-
+        
         sectionIDs.append(.membersResults)
         sectionIDs.append(.otherTmatesResults)
-
+        
         for userMasterTmate in model.userMasterTmates {
             
             // if the userMasterTmate has completed the quiz
@@ -195,18 +197,18 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 
             }
         }
-
+        
         // Sort and update the dataSource
         if let membersResultsItems = itemsBySection[.membersResults] {
             itemsBySection[.membersResults] = membersResultsItems.sorted() // Optional: Sort the items if necessary
         }
-
+        
         if let otherTmatesResultsItems = itemsBySection[.otherTmatesResults] {
             itemsBySection[.otherTmatesResults] = otherTmatesResultsItems.sorted() // Optional: Sort the items if necessary
         }
-
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
-
+        
     }
     
     

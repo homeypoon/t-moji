@@ -81,7 +81,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
         fetchQuizHistory { [weak self] in
             
-            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs {
+            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs, masterGroupmatesIDs.isEmpty {
                 print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                 self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
             }
@@ -152,7 +152,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 // Here we use 'count' parameter to specify the number of items per group, which is 2 in this case.
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(320))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(340))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2) // Use count: 2 to have two items per group.
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -185,8 +185,8 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                     
                     // Ensure the userMasterTmate has a matching quiz history
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
-                        // if user has guessed
-                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                        // if tmate has guessed or is the current user
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) || userMasterTmate.uid == currentUid {
                             itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
                         } else {
                             itemsBySection[.membersResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
@@ -195,8 +195,8 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 } else {
                     // Ensure the userMasterTmate has a matching quiz history
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
-                        // if user has guessed
-                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                        // if tmate has guessed or is the current user
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) || userMasterTmate.uid == currentUid {
                             itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
                         } else {
                             itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
@@ -308,9 +308,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 memberQuizVC.group = self.group
             }
             
-            
-            print("removing")
-            
+                        
             self.navigationController?.popViewController(animated: true)
         }
     }

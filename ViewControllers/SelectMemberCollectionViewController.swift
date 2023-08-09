@@ -28,15 +28,15 @@ class SelectMemberCollectionViewController: UICollectionViewController {
 
         enum Item: Hashable {
             case memberSelection(tmate: User)
-            case guessedMember(tmate: User, quizHistory: UserQuizHistory)
+            case guessedMember(tmate: User, userQuizHistory: UserQuizHistory)
 
             func hash(into hasher: inout Hasher) {
                 switch self {
                 case .memberSelection(let tmate):
                     hasher.combine(tmate)
-                case .guessedMember(let tmate, let quizHistory):
+                case .guessedMember(let tmate, let userQuizHistory):
                     hasher.combine(tmate)
-                    hasher.combine(quizHistory)
+                    hasher.combine(userQuizHistory)
                 }
             }
 
@@ -141,7 +141,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
                     // if user has guessed
                     if matchingQuizHistory.membersGuessed.contains(currentUid) {
-                        itemsBySection[.memberSelections, default: []].append(ViewModel.Item.guessedMember(tmate: userMasterTmate, quizHistory: matchingQuizHistory))
+                        itemsBySection[.memberSelections, default: []].append(ViewModel.Item.guessedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                     } else {
                         itemsBySection[.memberSelections, default: []].append(ViewModel.Item.memberSelection(tmate: userMasterTmate))
                     }
@@ -208,5 +208,46 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .memberSelection(let tmate):
+                self.performSegue(withIdentifier: "guessForTmate", sender: tmate)
+            case .guessedMember(let tmate, let userQuizHistory):
+                self.performSegue(withIdentifier: "showResultFromSelectMember", sender: (tmate, userQuizHistory))
+                print("tmatee \(tmate)")
 
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "guessForTmate" {
+            let guessQuizVC = segue.destination as! GuessQuizViewController
+            
+            if let senderInfo = sender as? (User) {
+                let guessedMember = senderInfo
+                guessQuizVC.guessedMember = guessedMember
+                guessQuizVC.userQuizHistory = guessedMember.userQuizHistory.first(where: {$0.quizID == quiz?.id })
+            }
+            
+            self.navigationController?.popViewController(animated: true)
+        } else if segue.identifier == "showResultFromSelectMember" {
+            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            
+            if let senderInfo = sender as? (User, UserQuizHistory) {
+                let tmate = senderInfo.0
+                let userQuizHistory = senderInfo.1
+                
+                print("tmatee2 \(tmate)")
+
+                quizResultVC.quiz = self.quiz
+                quizResultVC.currentUser = tmate
+                quizResultVC.userQuizHistory = userQuizHistory
+            }
+        }
+    }
 }

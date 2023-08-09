@@ -40,7 +40,7 @@ struct QuizData {
         Quiz(id: 1, resultGroup: .vehicle, title: "What Vehicle Are You?", quizType: .character, questions: [
             Question(text: "Which is your favourite genre?", type: .multipleChoice, possibleAnswers: [
                 
-                Answer(text: "Fantasy", correspondingResult: ResultType.bike),
+                Answer(text: "Fantasy", correspondingResult: ResultType.bus),
                 Answer(text: "Action", correspondingResult: ResultType.motorcycle),
                 Answer(text: "Comedy", correspondingResult: ResultType.car),
                 Answer(text: "Romance", correspondingResult: ResultType.bike)

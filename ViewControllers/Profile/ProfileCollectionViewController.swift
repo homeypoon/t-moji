@@ -26,7 +26,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         enum Item: Hashable {
             case profile(user: User)
             case emoji(resultType: ResultType)
-            case quizHistory(quizHistory: UserQuizHistory)
+            case userQuizHistory(userQuizHistory: UserQuizHistory)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -34,7 +34,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     hasher.combine(user)
                 case .emoji(let resultType):
                     hasher.combine(resultType)
-                case .quizHistory(let quizHistory):
+                case .userQuizHistory(let quizHistory):
                     hasher.combine(quizHistory)
                 }
             }
@@ -45,7 +45,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     return lUser == rUser
                 case (.emoji(let lEmoji), .emoji(let rEmoji)):
                     return lEmoji == rEmoji
-                case (.quizHistory(let lQuizHistory), .quizHistory(let rQuizHistory)):
+                case (.userQuizHistory(let lQuizHistory), .userQuizHistory(let rQuizHistory)):
                     return lQuizHistory == rQuizHistory
                 default:
                     return false
@@ -169,7 +169,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 cell.contentConfiguration = content
                 
                 return cell
-            case .quizHistory(let quizHistory):
+            case .userQuizHistory(let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserQuizHistory", for: indexPath) as! UICollectionViewListCell
                 
                 var content = UIListContentConfiguration.cell()
@@ -264,8 +264,8 @@ class ProfileCollectionViewController: UICollectionViewController {
         itemsBySection[.userEmojis] = resultTypeItems
         
         
-        let quizHistoryItems = model.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, quizHistory in
-            let item = ViewModel.Item.quizHistory(quizHistory: quizHistory)
+        let quizHistoryItems = model.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
+            let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
             partial.append(item)
         }
         
@@ -304,10 +304,31 @@ class ProfileCollectionViewController: UICollectionViewController {
             let navController = segue.destination as! UINavigationController
             let detailController = navController.topViewController as! EditProfileTableViewController
             detailController.user = user
+        } else if segue.identifier == "resultFromProfile" {
+            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            
+            if let senderInfo = sender as? (UserQuizHistory) {
+                let userQuizHistory = senderInfo
+                quizResultVC.quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })
+                quizResultVC.currentUser = self.user
+                quizResultVC.userQuizHistory = userQuizHistory
+            }
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .userQuizHistory(let userQuizHistory):
+                self.performSegue(withIdentifier: "resultFromProfile", sender: userQuizHistory)
+            default:
+                break
+            }
         }
     }
 
 }
+
 
 extension ProfileViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
