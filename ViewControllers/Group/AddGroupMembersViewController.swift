@@ -119,9 +119,15 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                     for document in querySnapshot!.documents {
                         do {
                             var currentMember = try document.data(as: User.self)
+                            
+                            
+                            currentMember.masterGroupmatesIDs.append(contentsOf: group.membersIDs.filter { $0 != currentMember.uid })
+                            
+                            print("member ids \(currentMember.masterGroupmatesIDs)")
+                            
                             document.reference.updateData([
                                 "groupsIDs": FieldValue.arrayUnion([docRef.documentID]),
-                                "masterGroupmatesIDs": FieldValue.arrayUnion(group.membersIDs.filter { $0 != currentMember.uid })
+                                "masterGroupmatesIDs": currentMember.masterGroupmatesIDs
                             ])
                         } catch {
                             self.presentErrorAlert(with: error.localizedDescription)

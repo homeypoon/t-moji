@@ -135,16 +135,32 @@ class HomeCollectionViewController: UICollectionViewController {
         guard let groupId = group.id,
               let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        // Remove the group id from the current user's group IDs list
-        FirestoreService.shared.db.collection("users").whereField("uid", isEqualTo: currentUid).getDocuments { (querySnapshot, error) in
+        guard !group.membersIDs.isEmpty else { return }
+        
+        FirestoreService.shared.db.collection("users").whereField("uid", in: group.membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
-                    document.reference.updateData([
-                        "groupsIDs": FieldValue.arrayRemove([groupId])
-                    ])
+                    do {
+                        var currentMember = try document.data(as: User.self)
+                        
+                        // If the member is the one being deleted
+                        if currentMember.uid == currentUid {
+                            document.reference.updateData([
+                                "groupsIDs": FieldValue.arrayRemove([groupId])
+                            ])
+                        } else {
+                            if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == currentUid }) {
+                                currentMember.masterGroupmatesIDs.remove(at: index)
+                            }
+                            try document.reference.setData(from: currentMember) // Use setData on DocumentReference
+                        }
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
                 }
+                
             }
         }
         
@@ -173,7 +189,9 @@ class HomeCollectionViewController: UICollectionViewController {
         return GroupHomeCollectionViewController(coder: coder, group: group)
     }
     
+    // User exits group
     @IBAction func unwindToHome(segue: UIStoryboardSegue) {
+        
         // If unwinding from group settings, need to delete group from user
         if let groupSettingsVC = segue.source as? GroupSettingsViewController {
             guard let group = groupSettingsVC.group else { return }

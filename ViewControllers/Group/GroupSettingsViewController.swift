@@ -34,6 +34,8 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         tableView.delegate = self
         tableView.dataSource = self
         
+        members = Array(Set(members))
+        
         members.sort(by: { $0.uid == group?.leader ? true : $1.uid == group?.leader ? false : $0.username < $1.username })
         
         tableView.reloadData()

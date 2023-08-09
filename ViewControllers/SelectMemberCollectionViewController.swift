@@ -90,13 +90,15 @@ class SelectMemberCollectionViewController: UICollectionViewController {
 
             switch item {
             case .memberSelection(let tmate):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessMemberSelection", for: indexPath) as! GuessMemberSelectionCollectionViewCell
-                cell.configure(isGuessed: false, withUsername: tmate.username, withResultType: nil)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSelectMember", for: indexPath) as! GuessSelectMemberCollectionViewCell
+                cell.configure(withUsername: tmate.username)
                 return cell
-            case .guessedMember(let tmate, let quizHistory):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessMemberSelection", for: indexPath) as! GuessMemberSelectionCollectionViewCell
-                cell.configure(isGuessed: true, withUsername: tmate.username, withResultType: quizHistory.finalResult)
+            case .guessedMember(let tmate, let userQuizHistory):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedSelectMember", for: indexPath) as! RevealedSelectMemberCollectionViewCell
+                
+                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 print("is guessed member")
+                
                 return cell
             }
         }
@@ -106,19 +108,32 @@ class SelectMemberCollectionViewController: UICollectionViewController {
 
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
-
+        
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            
+            // Guess Select Member
+            if sectionIndex == 0  {
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(85))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
-            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(85))
-            let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                let section = NSCollectionLayoutSection(group: group)
 
-            let section = NSCollectionLayoutSection(group: group)
+                return section
+            } else  {
+                // Revealed Select Member
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-            return section
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
+                let section = NSCollectionLayoutSection(group: group)
+
+                return section
+            }
         }
     }
 
@@ -129,6 +144,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
 
         sectionIDs.append(.memberSelections)
         sectionIDs.append(.guessedMembers)
+
 
         print("model.usersss \(model.userMasterTmates)")
 
@@ -141,12 +157,11 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
                     // if user has guessed
                     if matchingQuizHistory.membersGuessed.contains(currentUid) {
-                        itemsBySection[.memberSelections, default: []].append(ViewModel.Item.guessedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
+                        itemsBySection[.guessedMembers, default: []].append(ViewModel.Item.guessedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                     } else {
                         itemsBySection[.memberSelections, default: []].append(ViewModel.Item.memberSelection(tmate: userMasterTmate))
                     }
                 }
-
             }
         }
 
