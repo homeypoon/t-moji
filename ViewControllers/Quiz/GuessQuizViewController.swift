@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseStorage
 
-class MemberQuizViewController: UIViewController {
+class GuessQuizViewController: UIViewController {
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var quizQuestionLabel: UILabel!
     @IBOutlet var multiChoiceButton1: UIButton!
@@ -22,7 +24,7 @@ class MemberQuizViewController: UIViewController {
     var group: Group?
     var userQuizHistory: UserQuizHistory?
     var members = [User]()
-    var member: User?
+    var guessedMember: User?
     
     var guessedResultType: ResultType! // selected by user
     
@@ -54,7 +56,7 @@ class MemberQuizViewController: UIViewController {
         }
 
         if let quizHistory = userQuizHistory,
-           let member = member {
+           let member = guessedMember {
             
             if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
                 self.quiz = quiz
@@ -112,9 +114,40 @@ class MemberQuizViewController: UIViewController {
         default:
             break
         }
-        
-        performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+        updateUser {
+            self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+        }
     }
+    
+    func updateUser(completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            completion()
+            return }
+        
+        if let quizID = quiz?.id, var guessedMember = self.guessedMember {
+            if let index = guessedMember.userQuizHistory.firstIndex(where: { $0.quizID == quizID }) {
+                var mutableUserQuizHistory = guessedMember.userQuizHistory[index]
+                mutableUserQuizHistory.membersGuessed.append(userId)
+                guessedMember.userQuizHistory[index] = mutableUserQuizHistory
+                
+                // Assign the modified guessedMember back to the property
+                self.guessedMember = guessedMember
+            }
+        }
+        guard let guessedMemberID = guessedMember?.uid else {
+            completion()
+            return }
+        
+        let collectionRef = FirestoreService.shared.db.collection("users")
+        do {
+            try collectionRef.document(guessedMemberID).setData(from: self.guessedMember)
+            completion()
+        }
+        catch {
+            Helper.presentErrorAlert(on: self, with: error.localizedDescription)
+        }
+    }
+    
     
     // Prepare for the saveUnwind segue by updating User object
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -122,15 +155,15 @@ class MemberQuizViewController: UIViewController {
         
         guard segue.identifier == "submitMemberQuiz" else { return }
         
-        let navController = segue.destination as! UINavigationController
-        let guessResultVC = navController.topViewController as! GuessResultCollectionViewController
+        let navController = segue.destination as! GuessResultCollectionViewController
         
-        guessResultVC.group = self.group
-        guessResultVC.quiz = self.quiz
-        guessResultVC.members = self.members
-        guessResultVC.currentUser = self.member
-        guessResultVC.userQuizHistory = self.userQuizHistory
+        navController.group = self.group
+        navController.quiz = self.quiz
+        navController.members = self.members
+        navController.guessedUser = self.guessedMember
+        navController.userQuizHistory = self.userQuizHistory
+        navController.guessedResultType = self.guessedResultType
         
-        self.navigationController?.popViewController(animated: false)
+        self.navigationController?.popViewController(animated: true)
     }
 }

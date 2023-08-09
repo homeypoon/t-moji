@@ -33,8 +33,6 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
             return outgoing
         }
         
-        
-        
         // get groups and their users
         
         quizTitleLabel.text = quiz.title

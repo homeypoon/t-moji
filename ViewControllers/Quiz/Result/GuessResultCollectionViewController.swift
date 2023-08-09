@@ -1,20 +1,26 @@
 //
-//  QuizResultCollectionViewController.swift
+//  GuessResultCollectionViewController.swift
 //  T-moji
 //
-//  Created by Homey Poon on 2023-08-03.
+//  Created by Homey Poon on 2023-08-07.
 //
 
 import UIKit
+import FirebaseAuth
 
 private let reuseIdentifier = "Cell"
 
-class QuizResultCollectionViewController: UICollectionViewController {
+class GuessResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate {
+    func guessToRevealPressed(sender: UnrevealedResultCollectionViewCell) {
+        performSegue(withIdentifier: "guessToRevealFromGuess", sender: nil)
+    }
+    
     var quiz: Quiz?
     var group: Group?
     var members = [User]()
-    var currentUser: User?
+    var guessedUser: User?
     var userQuizHistory: UserQuizHistory?
+    var guessedResultType: ResultType?
     
     var quizHistory: QuizHistory?
     
@@ -47,18 +53,18 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 }
             }
             
-            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
-                switch (lhs, rhs) {
-                case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
-                    return lMember == rMember && lQuizHistory == rQuizHistory
-                case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
-                    return lMember == rMember && lQuizHistory == rQuizHistory
-                case (.unrevealedResult(let lMember), .unrevealedResult(let rMember)):
-                    return lMember == rMember
-                default:
-                    return false
-                }
-            }
+//            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
+//                switch (lhs, rhs) {
+//                case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
+//                    return lMember == rMember && lQuizHistory == rQuizHistory
+//                case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
+//                    return lMember == rMember && lQuizHistory == rQuizHistory
+//                case (.unrevealedResult(let lMember), .unrevealedResult(let rMember)):
+//                    return lMember == rMember
+//                default:
+//                    return false
+//                }
+//            }
         }
     }
     
@@ -72,11 +78,13 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("current user\(currentUser)")
-        print("group\(group)")
+                
         fetchQuizHistory { [weak self] in
             
-            self!.fetchUsers(membersIDs: Array(Set(self!.currentUser!.masterGroupmatesIDs)))
+            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs {
+                print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+                self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+            }
         }
         
         updateCollectionView()
@@ -94,23 +102,27 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
+            guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
+            
+            
             switch item {
             case .currentUserResult(_, let quizHistory):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CurrentUserResult", for: indexPath) as! CurrentUserResultCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessResult", for: indexPath) as! GuessResultCollectionViewCell
                 
-                cell.configure(withQuizTitle: self.quiz?.title, withResultType: quizHistory.finalResult)
+                cell.configure(quizTitle: self.quiz?.title, resultType: quizHistory.finalResult, guessedResultType: self.guessedResultType, username: self.guessedUser?.username)
                 
                 return cell
             case .revealedResult(let member, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedResult", for: indexPath) as! RevealedResultCollectionViewCell
                 
-                cell.configure(withUsername: member.username, withResultType: quizHistory.finalResult)
+                cell.configure(withUsername: member.username, withResultType: quizHistory.finalResult, isCurrentUser: member.uid == currentUid)
                 
                 return cell
             case .unrevealedResult(let member):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UnrevealedResult", for: indexPath) as! UnrevealedResultCollectionViewCell
                 
-                cell.configure(withUsername: member.username)
+                
+                cell.configure(withUsername: member.username, isCurrentUser: member.uid == currentUid)
                 
                 return cell
             }
@@ -129,7 +141,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(410))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(505))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -150,93 +162,64 @@ class QuizResultCollectionViewController: UICollectionViewController {
         }
     }
     
-//    func updateCollectionView() {
-//
-//        var sectionIDs = [ViewModel.Section]()
-//
-//        sectionIDs.append(.currentUserResult)
-//        var itemsBySection = [ViewModel.Section.currentUserResult: [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]]
-//        print(itemsBySection)
-//
-//        guard let quizHistory = quizHistory, let currentUser = currentUser else {return }
-//
-//            let completedMasterTmates = model.userMasterTmates.filter { quizHistory.completedUsers.contains($0.uid) }
-//
-//            let incompletedMasterTmates = model.userMasterTmates.filter { !quizHistory.completedUsers.contains($0.uid) }
-//
-//
-//        // Check if the current user's ID is in the membersGuessed array of each member
-//        for userMasterTmate in model.userMasterTmates {
-//            if let group = group {
-//                group.membersIDs.map { $0 = com}
-//
-//            }
-//            let isCurrentUserGuessed = completedTmate.quizHistory.contains { quizHistory in
-//                quizHistory.membersGuessed.contains { $0.uid == currentUser.uid }
-//            }
-//
-//            // Create the appropriate item based on whether the current user's ID is in membersGuessed or not
-//            if isCurrentUserGuessed {
-//                for quizHistory in member.quizHistory {
-//                    itemsBySection[.othersResults, default: []].append(ViewModel.Item.revealedResult(member: member, quizHistory: quizHistory))
-//                }
-//            } else {
-//                itemsBySection[.othersResults, default: []].append(ViewModel.Item.unrevealedResult(member: member))
-//            }
-//        }
-//
-//        // Add the othersResults section and its corresponding items
-//        sectionIDs.append(.othersResults)
-//        if let othersResultsItems = itemsBySection[.othersResults] {
-//            itemsBySection[.othersResults] = othersResultsItems.sorted() // Optional: Sort the items if necessary
-//        }
-//
-//        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
-//    }
-    
     func updateCollectionView() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
-
+        
         sectionIDs.append(.currentUserResult)
-        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]
-
+        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: guessedUser!, quizHistory: userQuizHistory!)]
+        
         sectionIDs.append(.membersResults)
         sectionIDs.append(.otherTmatesResults)
-
+        
+        print("model.usersss \(model.userMasterTmates)")
+        
         for userMasterTmate in model.userMasterTmates {
-            if let group = group, group.membersIDs.contains(userMasterTmate.uid) {
-                if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
-                    if matchingQuizHistory.membersGuessed.contains(userMasterTmate.uid) {
-                        itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
-                    } else {
-                        itemsBySection[.membersResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
+            
+            // if the userMasterTmate has completed the quiz
+            if quizHistory!.completedUsers.contains(userMasterTmate.uid) {
+                
+                // If userMasterTmate in the current group
+                if let group = group, group.membersIDs.contains(userMasterTmate.uid) {
+                    
+                    // Ensure the userMasterTmate has a matching quiz history
+                    if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                        // if user has guessed
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                            itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
+                        } else {
+                            itemsBySection[.membersResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
+                        }
+                    }
+                } else {
+                    // Ensure the userMasterTmate has a matching quiz history
+                    if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                        // if user has guessed
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                            itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
+                        } else {
+                            itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
+                        }
                     }
                 }
-            } else {
-                if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
-                    if matchingQuizHistory.membersGuessed.contains(userMasterTmate.uid) {
-                        itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
-                    } else {
-                        itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.unrevealedResult(member: userMasterTmate))
-                    }
-                }
+                
             }
         }
-
+        
         // Sort and update the dataSource
         if let membersResultsItems = itemsBySection[.membersResults] {
             itemsBySection[.membersResults] = membersResultsItems.sorted() // Optional: Sort the items if necessary
         }
-
+        
         if let otherTmatesResultsItems = itemsBySection[.otherTmatesResults] {
             itemsBySection[.otherTmatesResults] = otherTmatesResultsItems.sorted() // Optional: Sort the items if necessary
         }
-
+        
+        print("itemsbysiredction \(itemsBySection)")
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
-
     }
-    
     
     
     func fetchQuizHistory(completion: @escaping () -> Void) {
@@ -260,8 +243,10 @@ class QuizResultCollectionViewController: UICollectionViewController {
         }
     }
     
-    private func fetchUsers(membersIDs: [String]) {
+    private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
+        
+        print("in memberids \(membersIDs)")
         
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -269,9 +254,11 @@ class QuizResultCollectionViewController: UICollectionViewController {
             } else {
                 
                 for document in querySnapshot!.documents {
+                    print("new")
                     do {
                         let member = try document.data(as: User.self)
                         self.model.userMasterTmates.append(member)
+                        print("new member \(member)")
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)
@@ -289,9 +276,43 @@ class QuizResultCollectionViewController: UICollectionViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    
     @IBAction func dismissResultPressed(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .unrevealedResult(let member):
+                self.performSegue(withIdentifier: "guessToRevealFromGuess", sender: (member))
+            default:
+                return
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        print("popping")
+        
+        if segue.identifier == "guessToRevealFromGuess" {
+            let memberQuizVC = segue.destination as! GuessQuizViewController
+            
+            if let senderInfo = sender as? (User) {
+                let member = senderInfo
+                memberQuizVC.members = self.members
+                memberQuizVC.guessedMember = member
+                memberQuizVC.userQuizHistory = userQuizHistory
+                memberQuizVC.group = self.group
+            }
+            
+            
+            print("removing")
+            
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
     
 }

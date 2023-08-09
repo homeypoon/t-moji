@@ -13,9 +13,16 @@ class RevealedResultCollectionViewCell: UICollectionViewCell {
     @IBOutlet var resultDescriptionLabel: UILabel!
     
     
-    func configure(withUsername userName: String, withResultType resultType: ResultType) {
+    func configure(withUsername username: String, withResultType resultType: ResultType, isCurrentUser: Bool) {
         
-        usernameLabel.text = userName
+        var modifiedUsername = username
+        
+        if isCurrentUser {
+            modifiedUsername = "Me"
+            usernameLabel.textColor = .blue
+        }
+
+        usernameLabel.text = modifiedUsername
         resultTitleLabel.text = "\(resultType.emoji) \(resultType.rawValue.capitalized)"
         resultDescriptionLabel.text = resultType.message
     }

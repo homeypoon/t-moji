@@ -239,13 +239,12 @@ class PersonalQuizViewController: UIViewController {
         
         guard segue.identifier == "showPersonalResults" else { return }
         
-        let navController = segue.destination as! UINavigationController
-        let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
+        let quizResultVC = segue.destination as! QuizResultCollectionViewController
         quizResultVC.quiz = self.quiz
         quizResultVC.currentUser = self.currentUser
         quizResultVC.userQuizHistory = self.userQuizHistory
         
-        self.navigationController?.popViewController(animated: false)
+        self.navigationController?.popViewController(animated: true)
     }
     
     func addQuizHistory(completion: @escaping () -> Void) {

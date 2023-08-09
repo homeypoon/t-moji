@@ -125,6 +125,10 @@ class QuizDetailViewController: UIViewController {
         }
     }
     
+    @IBAction func guessForTmatesPressed(_ sender: UIButton) {
+        performSegue(withIdentifier: "selectMember", sender: nil)
+    }
+    
     func animateDeductionAndPerformSegue(animateTo newValue: String, completion: @escaping () -> Void) {
         // Animate the deduction
         UIView.animate(withDuration: 0.3, animations: {
@@ -226,7 +230,11 @@ class QuizDetailViewController: UIViewController {
             quizResultVC.currentUser = self.currentUser
             
             quizResultVC.userQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == self.quiz?.id })
-            
+        } else if segue.identifier == "selectMember" {
+            let selectMemberVC = segue.destination as! SelectMemberCollectionViewController
+            selectMemberVC.quiz = quiz
+            selectMemberVC.currentUser = currentUser
+            selectMemberVC.quizHistory = quizHistory
         }
     }
     

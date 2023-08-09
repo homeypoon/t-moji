@@ -206,7 +206,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     func updateCollectionView() {
         var sectionIDs = [ViewModel.Section]()
         
-        
         // Create an array of ViewModel.Item based on the data in userQuizHistoriesDict
         let groupActivityFeedItems = model.userQuizHistoriesDict.flatMap { (member, quizHistories) -> [ViewModel.Item] in
             return quizHistories.map { quizHistory -> ViewModel.Item in
@@ -278,13 +277,13 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             groupSettingsVC.members = self.model.members
             groupSettingsVC.group = self.group
         } else if segue.identifier == "showMemberQuiz" {
-            let memberQuizVC = segue.destination as! MemberQuizViewController
+            let memberQuizVC = segue.destination as! GuessQuizViewController
             
             if let senderInfo = sender as? (User, UserQuizHistory) {
                 let member = senderInfo.0
                 let quizHistory = senderInfo.1
                 memberQuizVC.members = self.model.members
-                memberQuizVC.member = member
+                memberQuizVC.guessedMember = member
                 memberQuizVC.userQuizHistory = quizHistory
                 memberQuizVC.group = self.group
             }

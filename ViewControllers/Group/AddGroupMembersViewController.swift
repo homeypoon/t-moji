@@ -81,20 +81,19 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     private func fetchUsers() {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
+        self.users.removeAll()
         
-        FirestoreService.shared.db.collection("users").getDocuments { (querySnapshot, error) in
+        FirestoreService.shared.db.collection("users").whereField(FieldPath.documentID(), isNotEqualTo: uid).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
                     do {
-                        
                         var user = try document.data(as: User.self)
                         
-                        if user.uid != uid {
-                            user.isSelected = false
-                            self.users.append(user)
-                        }
+                        user.isSelected = false
+                        self.users.append(user)
+                        
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)
