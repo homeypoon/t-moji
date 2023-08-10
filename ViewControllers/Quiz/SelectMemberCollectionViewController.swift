@@ -27,13 +27,14 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         }
 
         enum Item: Hashable {
-            case memberSelection(tmate: User)
+            case memberSelection(tmate: User, userQuizHistory: UserQuizHistory)
             case guessedMember(tmate: User, userQuizHistory: UserQuizHistory)
 
             func hash(into hasher: inout Hasher) {
                 switch self {
-                case .memberSelection(let tmate):
+                case .memberSelection(let tmate, let userQuizHistory):
                     hasher.combine(tmate)
+                    hasher.combine(userQuizHistory)
                 case .guessedMember(let tmate, let userQuizHistory):
                     hasher.combine(tmate)
                     hasher.combine(userQuizHistory)
@@ -42,10 +43,10 @@ class SelectMemberCollectionViewController: UICollectionViewController {
 
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
-                case (.memberSelection(let lTmate), .memberSelection(let rTmate)):
-                    return lTmate == rTmate
-                case (.guessedMember(let lTmate, _), .guessedMember(let rTmate, _)):
-                    return lTmate == rTmate
+                case (.memberSelection(let lTmate, let lUserQuizHistory), .memberSelection(let rTmate, let rUserQuizHistory)):
+                    return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
+                case (.guessedMember(let lTmate, let lUserQuizHistory), .guessedMember(let rTmate, let rUserQuizHistory)):
+                    return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
                 default:
                     return false
                 }
@@ -89,15 +90,14 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
 
             switch item {
-            case .memberSelection(let tmate):
+            case .memberSelection(let tmate, let userQuizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSelectMember", for: indexPath) as! GuessSelectMemberCollectionViewCell
-                cell.configure(withUsername: tmate.username)
+                cell.configure(withUsername: tmate.username, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 return cell
             case .guessedMember(let tmate, let userQuizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedSelectMember", for: indexPath) as! RevealedSelectMemberCollectionViewCell
                 
                 cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
-                print("is guessed member")
                 
                 return cell
             }
@@ -159,7 +159,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     if matchingQuizHistory.membersGuessed.contains(currentUid) {
                         itemsBySection[.guessedMembers, default: []].append(ViewModel.Item.guessedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                     } else {
-                        itemsBySection[.memberSelections, default: []].append(ViewModel.Item.memberSelection(tmate: userMasterTmate))
+                        itemsBySection[.memberSelections, default: []].append(ViewModel.Item.memberSelection(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                     }
                 }
             }
@@ -194,8 +194,6 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
 
-        print("in memberids \(membersIDs)")
-
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
@@ -227,8 +225,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let item = dataSource.itemIdentifier(for: indexPath) {
             switch item {
-            case .memberSelection(let tmate):
-                self.performSegue(withIdentifier: "guessForTmate", sender: tmate)
+            case .memberSelection(let tmate, let userQuizHistory):
+                self.performSegue(withIdentifier: "guessForTmate", sender: (tmate, userQuizHistory))
             case .guessedMember(let tmate, let userQuizHistory):
                 self.performSegue(withIdentifier: "showResultFromSelectMember", sender: (tmate, userQuizHistory))
                 print("tmatee \(tmate)")
@@ -243,10 +241,12 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         if segue.identifier == "guessForTmate" {
             let guessQuizVC = segue.destination as! GuessQuizViewController
             
-            if let senderInfo = sender as? (User) {
-                let guessedMember = senderInfo
+            if let senderInfo = sender as? (User, UserQuizHistory) {
+                let guessedMember = senderInfo.0
+                let userQuizHistory = senderInfo.1
+                
                 guessQuizVC.guessedMember = guessedMember
-                guessQuizVC.userQuizHistory = guessedMember.userQuizHistory.first(where: {$0.quizID == quiz?.id })
+                guessQuizVC.userQuizHistory = userQuizHistory
             }
             
             self.navigationController?.popViewController(animated: true)

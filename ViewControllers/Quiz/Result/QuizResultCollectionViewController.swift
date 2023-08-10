@@ -76,11 +76,12 @@ class QuizResultCollectionViewController: UICollectionViewController {
         print("current user\(currentUser)")
         print("group\(group)")
         fetchQuizHistory { [weak self] in
-            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, masterGroupmatesIDs.isEmpty {
-                print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
+                print("masterGroupmatesIDsjkfjsdjfdf\(masterGroupmatesIDs)")
                 self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
             }
         }
+        
         
         updateCollectionView()
     }
@@ -104,13 +105,14 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CurrentUserResult", for: indexPath) as! CurrentUserResultCollectionViewCell
                 
                 cell.configure(withQuizTitle: self.quiz?.title, withResultType: quizHistory.finalResult)
+                print("configured current ")
                 
                 return cell
             case .revealedResult(let member, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedResult", for: indexPath) as! RevealedResultCollectionViewCell
                 
                 cell.configure(withUsername: member.username, withResultType: quizHistory.finalResult, isCurrentUser: member.uid == currentUid)
-                
+                print("configured revealed ")
                 return cell
             case .unrevealedResult(let member):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UnrevealedResult", for: indexPath) as! UnrevealedResultCollectionViewCell
@@ -166,6 +168,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
         sectionIDs.append(.membersResults)
         sectionIDs.append(.otherTmatesResults)
         
+        print("modeling \(self.model.userMasterTmates)")
+        
         for userMasterTmate in model.userMasterTmates {
             
             // if the userMasterTmate has completed the quiz
@@ -207,6 +211,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
             itemsBySection[.otherTmatesResults] = otherTmatesResultsItems.sorted() // Optional: Sort the items if necessary
         }
         
+        print("itemsBySectionasdjfkf \(itemsBySection)")
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
     }
@@ -237,11 +243,12 @@ class QuizResultCollectionViewController: UICollectionViewController {
     private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
         
+        print("membersIDS in fetchuser \(membersIDs)")
+        
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
-                
                 for document in querySnapshot!.documents {
                     do {
                         let member = try document.data(as: User.self)

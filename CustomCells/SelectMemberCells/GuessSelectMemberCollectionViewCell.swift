@@ -9,9 +9,11 @@ import UIKit
 
 class GuessSelectMemberCollectionViewCell: UICollectionViewCell {
     @IBOutlet var usernameLabel: UILabel!
-        
-    func configure(withUsername username: String) {
+    @IBOutlet var timePassedLabel: UILabel!
+    
+    func configure(withUsername username: String, withTimePassed timePassed: String) {
         
         usernameLabel.text = username
+        timePassedLabel.text = timePassed
     }
 }

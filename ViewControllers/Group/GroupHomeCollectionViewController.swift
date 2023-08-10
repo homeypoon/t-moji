@@ -125,15 +125,19 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
             
             switch item {
-            case .unrevealedMember(let tmate, _):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSelectMember", for: indexPath) as! GuessSelectMemberCollectionViewCell
-                cell.configure(withUsername: tmate.username)
+            case .unrevealedMember(let tmate, let userQuizHistory):
+                
+                let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UnrevealedTmate", for: indexPath) as! UnrevealedTmateCollectionViewCell
+                
+                cell.configure(withUsername: tmate.username, withQuizTitle: quizTitle, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 return cell
             case .revealedMember(let tmate, let userQuizHistory):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedSelectMember", for: indexPath) as! RevealedSelectMemberCollectionViewCell
+                let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
                 
-                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
-                print("is guessed member")
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedTmate", for: indexPath) as! RevealedTmateCollectionViewCell
+                
+                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withQuizTitle: quizTitle, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
             }
@@ -149,10 +153,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             
             // Guess Select Member
             if sectionIndex == 0  {
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -160,10 +164,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 return section
             } else  {
                 // Revealed Select Member
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -198,6 +202,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
         
+        itemsBySection[.unrevealedMembers] = itemsBySection[.unrevealedMembers]?.sorted()
+        itemsBySection[.revealedMembers] = itemsBySection[.revealedMembers]?.sorted()
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
     
@@ -221,32 +228,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
     }
-    
-    //    private func fetchUserMasterTmates(membersIDs: [String]) {
-    //        self.model.userMasterTmates.removeAll()
-    //
-    //        print("in memberids \(membersIDs)")
-    //
-    //        FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
-    //            if let error = error {
-    //                self.presentErrorAlert(with: error.localizedDescription)
-    //            } else {
-    //
-    //                for document in querySnapshot!.documents {
-    //                    print("new")
-    //                    do {
-    //                        let member = try document.data(as: User.self)
-    //                        self.model.userMasterTmates.append(member)
-    //                        print("new member \(member)")
-    //                    }
-    //                    catch {
-    //                        self.presentErrorAlert(with: error.localizedDescription)
-    //                    }
-    //                }
-    //                self.updateCollectionView()
-    //            }
-    //        }
-    //    }
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -280,6 +261,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 guessQuizVC.guessedMember = tmate
                 guessQuizVC.userQuizHistory = userQuizHistory
+                guessQuizVC.group = group
             }
             
         } else if segue.identifier == "showRevealedResults" {
@@ -294,6 +276,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 quizResultVC.quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })
                 quizResultVC.currentUser = tmate
                 quizResultVC.userQuizHistory = userQuizHistory
+                quizResultVC.group = group
             }
         } else if segue.identifier == "showGroupSettings" {
             let groupSettingsVC = segue.destination as! GroupSettingsViewController

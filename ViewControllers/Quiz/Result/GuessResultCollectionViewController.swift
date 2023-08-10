@@ -81,7 +81,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
         fetchQuizHistory { [weak self] in
             
-            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs, masterGroupmatesIDs.isEmpty {
+            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                 print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                 self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
             }

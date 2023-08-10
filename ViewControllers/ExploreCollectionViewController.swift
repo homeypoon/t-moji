@@ -161,12 +161,12 @@ class ExploreCollectionViewController: UICollectionViewController {
                     dispatchGroup.enter()
                     self.fetchUser(userID: firstUserID) { firstUser in
                         self.fetchUser(userID: secondUserID) { secondUser in
-                            if completedUsersCount == 2 {
+                            if completedMemberCount == 2 {
                                 takenByText = "Taken by \(firstUser.username) and \(secondUser.username)"
-                            } else if completedUsersCount == 3 {
+                            } else if completedMemberCount == 3 {
                                 takenByText = "Taken by \(firstUser.username), \(secondUser.username), and 1 other"
                             } else {
-                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and \(completedUsersCount - 2) others"
+                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and \(completedMemberCount - 2) others"
                             }
                             print("append others takenBY text \(takenByText)")
                             dispatchGroup.leave()
