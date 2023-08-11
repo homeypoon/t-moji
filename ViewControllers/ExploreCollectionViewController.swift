@@ -42,6 +42,7 @@ class ExploreCollectionViewController: UICollectionViewController {
     struct Model {
         var user: User?
         var quizHistories = [QuizHistory]()
+        var completedTmates = [Int: [User]]()
     }
     
     var dataSource: DataSourceType!
@@ -52,9 +53,13 @@ class ExploreCollectionViewController: UICollectionViewController {
         self.tabBarController?.tabBar.isHidden = false
         
         guard let userID = Auth.auth().currentUser?.uid else { return }
-        fetchUser(userID: userID) { user in
+        
+        fetchCurrentUser(userID: userID) { user in
             self.model.user = user
-            self.fetchQuizHistories()
+            
+            self.fetchQuizHistories {
+                self.fetchTmates()
+            }
         }
     }
     
@@ -101,115 +106,68 @@ class ExploreCollectionViewController: UICollectionViewController {
     
     func updateCollectionView() {
         var sectionIDs = [ViewModel.Section]()
+        var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
         sectionIDs.append(.quizzes)
-        var quizItems = [ViewModel.Item]()
-        
-        // Create a dictionary to associate quiz histories with quizzes
-        var quizHistoryDictionary: [Int: QuizHistory] = [:]
-        
-        // Assuming you have fetched quizHistories from Firestore and stored them in an array called quizHistories
-        for quizHistory in model.quizHistories {
-            quizHistoryDictionary[quizHistory.quizID] = quizHistory
-        }
-        
-        var quizHistoryTuples: [(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)] = []
-        let dispatchGroup = DispatchGroup() // Create a DispatchGroup
         
         for quiz in QuizData.quizzes {
-            var takenByText = TakenByText.noTmates
+            //            var takenByText = TakenByText.noTmates
+            var takenByText = ""
             var completeState = false
             var currentUserResultType: ResultType? = nil
-            var currentQuizHistory: QuizHistory? = nil
-            print("quiz \(quiz)")
             
-            if let quizHistory = quizHistoryDictionary[quiz.id] {
-                currentQuizHistory = quizHistory
+            if let quizHistory = model.quizHistories.first(where: { $0.quizID == quiz.id }) {
+                guard let user = model.user else {
+                    continue
+                }
+                print("quiz hish \(quizHistory)")
                 
-                let completedUsersCount = quizHistory.completedUsers.count
-                
-                guard let user = model.user else { return }
-                
-                print("mastergroupmatesid\(user.masterGroupmatesIDs)")
-                print(quizHistory.completedUsers)
-                let completedMemberCount = quizHistory.completedUsers.filter { Set(user.masterGroupmatesIDs).contains($0) }.count
-                
-                print("comple\(completedMemberCount)")
-                
-                guard let uid = Auth.auth().currentUser?.uid else { return }
-                let userHasCompletedQuiz = quizHistory.completedUsers.contains(uid)
+                let userHasCompletedQuiz = quizHistory.completedUsers.contains(user.uid)
                 
                 if userHasCompletedQuiz {
                     completeState = true
                     currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
                 
-                switch completedMemberCount {
-                case 0:
-                    break
-                case 1:
-                    let userID = quizHistory.completedUsers[0]
-                    dispatchGroup.enter()
-                    fetchUser(userID: userID) { user in
-                        takenByText = "Taken by \(user.username)"
+                
+                
+                if let completedTmates = model.completedTmates[quiz.id]?.filter({ $0.uid != user.uid }), !completedTmates.isEmpty {
+                    
+                    switch completedTmates.count {
+                    case 0:
+                        takenByText = TakenByText.noTmates
+                    case 1:
+                        takenByText = "Taken by \(completedTmates[0].username)"
                         print("takenBY text \(takenByText)")
-                        dispatchGroup.leave()
-                    }
-                default:
-                    let firstUserID = quizHistory.completedUsers[0]
-                    let secondUserID = quizHistory.completedUsers[1]
-                    dispatchGroup.enter()
-                    self.fetchUser(userID: firstUserID) { firstUser in
-                        self.fetchUser(userID: secondUserID) { secondUser in
-                            if completedMemberCount == 2 {
-                                takenByText = "Taken by \(firstUser.username) and \(secondUser.username)"
-                            } else if completedMemberCount == 3 {
-                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and 1 other"
-                            } else {
-                                takenByText = "Taken by \(firstUser.username), \(secondUser.username), and \(completedMemberCount - 2) others"
-                            }
+                        
+                    default:
+                        if completedTmates.count == 2 {
+                            takenByText = "Taken by \(completedTmates[0].username) and \(completedTmates[1].username)"
+                        } else if completedTmates.count == 3 {
+                            takenByText = "Taken by \(completedTmates[0].username), \(completedTmates[1].username), and 1 other"
+                        } else {
+                            takenByText = "Taken by \(completedTmates[0].username), \(completedTmates[1].username), and \(completedTmates.count - 2) others"
+                            
                             print("append others takenBY text \(takenByText)")
-                            dispatchGroup.leave()
                         }
                     }
+                } else {
+                    takenByText = TakenByText.noTmates
                 }
-                
             }
             
-            dispatchGroup.notify(queue: .main) {
-                quizHistoryTuples.append((quiz, currentQuizHistory, completeState, currentUserResultType, takenByText))
-                print("takenBY text append \(takenByText)")
-            }
-        }
-        
-        
-        dispatchGroup.notify(queue: .main) {
-            print("updateCollectionViewWithNewData \(quizHistoryTuples)")
-            
-            // Update the data source with new data
-            self.updateCollectionViewWithNewData(quizHistoryTuples)
-            
-            // Reload the collection view to reflect the changes
-            self.collectionView.reloadData()
-        }
-    }
-    
-    func updateCollectionViewWithNewData(_ quizHistoryTuples: [(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)]) {
-        var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
-        
-        for (quiz, quizHistory, completeState, currentUserResultType, takenByText) in quizHistoryTuples {
             let item = ViewModel.Item.quiz(
                 quiz: quiz,
-                quizHistory: quizHistory,
+                quizHistory: model.quizHistories.first(where: { $0.quizID == quiz.id }),
                 completeState: completeState,
                 currentUserResultType: currentUserResultType,
                 takenByText: takenByText
             )
-            print("item \(item)")
+            
             itemsBySection[.quizzes, default: []].append(item)
         }
         
-        dataSource.applySnapshotUsing(sectionIds: [.quizzes], itemsBySection: itemsBySection)
+        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
     
     func presentErrorAlert(with message: String) {
@@ -219,7 +177,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    private func fetchUser(userID: String, completion: @escaping (User) -> Void) {
+    private func fetchCurrentUser(userID: String, completion: @escaping (User) -> Void) {
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
         
         docRef.getDocument(as: User.self) { result in
@@ -234,12 +192,47 @@ class ExploreCollectionViewController: UICollectionViewController {
         }
     }
     
+    private func fetchTmates() {
+        self.model.completedTmates.removeAll()
+        
+        for quizHistory in self.model.quizHistories {
+            var membersIDs = [String]()
+            
+            if quizHistory.completedUsers.count == 1 {
+                membersIDs = [quizHistory.completedUsers[0]]
+            } else if quizHistory.completedUsers.count >= 2 {
+                membersIDs = [quizHistory.completedUsers[0], quizHistory.completedUsers[1]]
+                
+            }
+            
+            if !membersIDs.isEmpty {
+                FirestoreService.shared.db.collection("users").whereField("uid", in: quizHistory.completedUsers).getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    } else {
+                        for document in querySnapshot!.documents {
+                            do {
+                                let tmate = try document.data(as: User.self)
+                                self.model.completedTmates[quizHistory.quizID] = (self.model.completedTmates[quizHistory.quizID] ?? []) + [tmate]
+                            }
+                            catch {
+                                self.presentErrorAlert(with: error.localizedDescription)
+                            }
+                        }
+                        self.updateCollectionView()
+                    }
+                }
+            }
+        }
+    }
+    
     // Get groups whose membersIDs contains the current user's id
-    private func fetchQuizHistories() {
+    func fetchQuizHistories(completion: @escaping () -> Void) {
         
         FirestoreService.shared.db.collection("quizHistories").getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
+                completion()
             } else {
                 self.model.quizHistories.removeAll()
                 
@@ -248,12 +241,14 @@ class ExploreCollectionViewController: UICollectionViewController {
                         let quizHistory = try document.data(as: QuizHistory.self)
                         
                         self.model.quizHistories.append(quizHistory)
+                        
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
                 }
-                self.updateCollectionView()
+                
+                completion()
             }
         }
     }

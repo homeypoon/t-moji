@@ -31,6 +31,8 @@ struct User {
     var dollarCount: Int = 0
     var heartCount: Int = 0
     
+    var points: Int = 0
+    
     var guessHistory: [QuizID: IsGuessCorrect] = [:]
 
 }

@@ -73,8 +73,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("current user\(currentUser)")
-        print("group\(group)")
+        
         fetchQuizHistory { [weak self] in
             if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                 print("masterGroupmatesIDsjkfjsdjfdf\(masterGroupmatesIDs)")
