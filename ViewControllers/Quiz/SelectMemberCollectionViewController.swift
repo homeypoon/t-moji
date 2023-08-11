@@ -66,7 +66,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         super.viewWillAppear(animated)
                 
         fetchQuizHistory { [weak self] in
-            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs {
+            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                 print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                 self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
             }

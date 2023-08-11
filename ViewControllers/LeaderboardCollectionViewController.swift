@@ -130,7 +130,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 10,
                     leading: 0,
-                    bottom: 10,
+                    bottom: 0,
                     trailing: 0
                 )
 

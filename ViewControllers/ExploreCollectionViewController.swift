@@ -57,7 +57,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         fetchCurrentUser(userID: userID) { user in
             self.model.user = user
             
-            self.fetchQuizHistories {
+            self.fetchQuizHistories(currentUser: user) {
                 self.fetchTmates()
             }
         }
@@ -107,7 +107,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: horzSpacing, bottom: 0, trailing: horzSpacing)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 0, trailing: horzSpacing)
         
         return UICollectionViewCompositionalLayout(section: section)
     }
@@ -208,6 +208,8 @@ class ExploreCollectionViewController: UICollectionViewController {
         
         for quizHistory in self.model.quizHistories {
             fetchTmatesDispatchGroup.enter()
+            print("entered")
+            
             
             var membersIDs = [String]()
             
@@ -237,6 +239,8 @@ class ExploreCollectionViewController: UICollectionViewController {
                         fetchTmatesDispatchGroup.leave()
                     }
                 }
+            } else {
+                fetchTmatesDispatchGroup.leave()
             }
         }
         fetchTmatesDispatchGroup.notify(queue: .main) {
@@ -247,7 +251,7 @@ class ExploreCollectionViewController: UICollectionViewController {
     }
     
     // Get groups whose membersIDs contains the current user's id
-    func fetchQuizHistories(completion: @escaping () -> Void) {
+    func fetchQuizHistories(currentUser: User, completion: @escaping () -> Void) {
         
         FirestoreService.shared.db.collection("quizHistories").getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -258,8 +262,12 @@ class ExploreCollectionViewController: UICollectionViewController {
                 
                 for document in querySnapshot!.documents {
                     do {
-                        let quizHistory = try document.data(as: QuizHistory.self)
+                        var quizHistory = try document.data(as: QuizHistory.self)
                         
+                            quizHistory.completedUsers = quizHistory.completedUsers.filter { currentUser.masterGroupmatesIDs.contains($0) }
+                            print("filtered")
+                        print("mastergorupmatedsid \(currentUser.masterGroupmatesIDs)")
+                        print("quizHistory \(quizHistory)")
                         self.model.quizHistories.append(quizHistory)
                         
                     }

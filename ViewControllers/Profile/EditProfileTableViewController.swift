@@ -44,7 +44,10 @@ class EditProfileTableViewController: UITableViewController {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+        print("error")
     }
     
     // Prepare for the saveUnwind segue by updating User object
@@ -63,7 +66,17 @@ class EditProfileTableViewController: UITableViewController {
             user = User(uid: uid ,username: username, bio: bio)
         }
         
-        addUser(user: user!)
+        // Check username availability before saving
+            checkUsernameAvailability(username: username) { isAvailable in
+                if isAvailable {
+                    // Username is unique, proceed with saving
+                    self.addUser(user: self.user!)
+                } else {
+                    // Username is not unique, show error
+                    self.presentErrorAlert(with: "Username is already taken.")
+                    print("error")
+                }
+            }
     }
     
     func addUser(user: User) {
@@ -77,6 +90,42 @@ class EditProfileTableViewController: UITableViewController {
         }
         catch {
             presentErrorAlert(with: error.localizedDescription)
+        }
+    }
+    
+    @IBAction func saveButtonTapped(_ sender: UIBarButtonItem) {
+        // Check username availability before saving
+        
+        if let username = usernameTextField.text {
+            checkUsernameAvailability(username: username) { isAvailable in
+                if isAvailable {
+                    // Username is unique, perform the unwind segue
+                    self.performSegue(withIdentifier: "saveUnwind", sender: sender)
+                } else {
+                    // Username is not unique, show error
+                    self.presentErrorAlert(with: "Username is already taken.")
+                }
+            }
+        }
+    }
+    
+    func checkUsernameAvailability(username: String, completion: @escaping (Bool) -> Void) {
+        let collectionRef = FirestoreService.shared.db.collection("users")
+        
+        collectionRef.whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error checking username availability: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            if let documents = querySnapshot?.documents, !documents.isEmpty {
+                // Username already exists
+                completion(false)
+            } else {
+                // Username is available
+                completion(true)
+            }
         }
     }
 }
