@@ -115,8 +115,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 let horzSpacing: CGFloat = 12
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-//                item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-                
+
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(90))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
                 

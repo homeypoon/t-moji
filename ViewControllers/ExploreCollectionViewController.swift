@@ -90,21 +90,30 @@ class ExploreCollectionViewController: UICollectionViewController {
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
+        let vertSpacing: CGFloat = 10
+        let horzSpacing: CGFloat = 12
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(160))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+        group.contentInsets = NSDirectionalEdgeInsets(
+            top: 0,
+            leading: 0,
+            bottom: vertSpacing,
+            trailing: 0
+        )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: horzSpacing, bottom: 0, trailing: horzSpacing)
         
         return UICollectionViewCompositionalLayout(section: section)
     }
     
     func updateCollectionView() {
+        print("updating colleciton view explore")
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
@@ -128,8 +137,6 @@ class ExploreCollectionViewController: UICollectionViewController {
                     completeState = true
                     currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
-                
-                
                 
                 if let completedTmates = model.completedTmates[quiz.id]?.filter({ $0.uid != user.uid }), !completedTmates.isEmpty {
                     
@@ -195,20 +202,28 @@ class ExploreCollectionViewController: UICollectionViewController {
     private func fetchTmates() {
         self.model.completedTmates.removeAll()
         
+        let fetchTmatesDispatchGroup = DispatchGroup()
+        
+        print("called")
+        
         for quizHistory in self.model.quizHistories {
+            fetchTmatesDispatchGroup.enter()
+            
             var membersIDs = [String]()
             
             if quizHistory.completedUsers.count == 1 {
                 membersIDs = [quizHistory.completedUsers[0]]
             } else if quizHistory.completedUsers.count >= 2 {
                 membersIDs = [quizHistory.completedUsers[0], quizHistory.completedUsers[1]]
-                
             }
             
             if !membersIDs.isEmpty {
+                
                 FirestoreService.shared.db.collection("users").whereField("uid", in: quizHistory.completedUsers).getDocuments { (querySnapshot, error) in
+                    
                     if let error = error {
                         self.presentErrorAlert(with: error.localizedDescription)
+                        fetchTmatesDispatchGroup.leave()
                     } else {
                         for document in querySnapshot!.documents {
                             do {
@@ -219,11 +234,16 @@ class ExploreCollectionViewController: UICollectionViewController {
                                 self.presentErrorAlert(with: error.localizedDescription)
                             }
                         }
-                        self.updateCollectionView()
+                        fetchTmatesDispatchGroup.leave()
                     }
                 }
             }
         }
+        fetchTmatesDispatchGroup.notify(queue: .main) {
+            self.updateCollectionView()
+            print("calling colleciton view update")
+        }
+        
     }
     
     // Get groups whose membersIDs contains the current user's id
