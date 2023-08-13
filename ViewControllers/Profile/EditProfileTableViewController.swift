@@ -28,7 +28,7 @@ class EditProfileTableViewController: UITableViewController {
     
     // Enable save button only when the username text field is not empty
     func updateSaveButtonState() {
-        let shouldEnableSaveButton = usernameTextField.text?.isEmpty == false && usernameTextField.text?.trimmingCharacters(in: .whitespaces) != user?.username
+        let shouldEnableSaveButton = usernameTextField.text?.isEmpty == false
         
         saveButton.isEnabled = shouldEnableSaveButton
     }
@@ -36,6 +36,7 @@ class EditProfileTableViewController: UITableViewController {
     @IBAction func textEditingChanged(_ sender: UITextField) {
         updateSaveButtonState()
     }
+    
     
     @IBAction func returnPressed(_ sender: UITextField) {
         sender.resignFirstResponder()
@@ -58,12 +59,11 @@ class EditProfileTableViewController: UITableViewController {
         print("any")
                 
         guard segue.identifier == "saveUnwind", let uid = Auth.auth().currentUser?.uid else { return }
-        print("saveunwind")
-        print("usernameTextField.text? \(usernameTextField.text)")
-        print("user?.username \(user?.username)")
         
         let username = usernameTextField.text!.trimmingCharacters(in: .whitespaces)
-        let bio = bioTextView.text
+        let bio = bioTextView.text.trimmingCharacters(in: .whitespaces)
+        
+        let profileInfoChanged = (username != user?.username || bio != user?.bio)
         
         if user != nil {
             user?.username = username
@@ -72,7 +72,10 @@ class EditProfileTableViewController: UITableViewController {
             user = User(uid: uid ,username: username, bio: bio)
         }
         
-        addUser(user: user!)
+        if profileInfoChanged {
+            Helper.presentLoading(on: self, with: "Saving Profile Info")
+            addUser(user: user!)
+        }
     }
     
     func addUser(user: User) {
@@ -81,10 +84,11 @@ class EditProfileTableViewController: UITableViewController {
         let collectionRef = FirestoreService.shared.db.collection("users")
         
         do {
-            
             try collectionRef.document(userId).setData(from: user)
+            dismiss(animated: false, completion: nil)
         }
         catch {
+            dismiss(animated: false, completion: nil)
             presentErrorAlert(with: error.localizedDescription)
         }
     }

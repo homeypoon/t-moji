@@ -17,8 +17,8 @@ extension UICollectionViewCell {
         case .big:
             // explore
             self.contentView.layer.cornerRadius = 18.0
-//            self.contentView.layer.borderWidth = 0.1
-//            self.contentView.layer.borderColor = UIColor.gray.cgColor
+            //            self.contentView.layer.borderWidth = 0.1
+            //            self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.contentView.layer.masksToBounds = true
             
             self.layer.shadowColor = UIColor.black.cgColor
@@ -67,8 +67,8 @@ extension UIStackView {
         case .big:
             // explore
             self.layer.cornerRadius = 18.0
-//            self.contentView.layer.borderWidth = 0.1
-//            self.contentView.layer.borderColor = UIColor.gray.cgColor
+            //            self.contentView.layer.borderWidth = 0.1
+            //            self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.layer.masksToBounds = true
             
             self.layer.shadowColor = UIColor.black.cgColor
@@ -113,6 +113,62 @@ extension UIButton {
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
         }
+    }
+    
+}
+
+extension UILabel {
+    enum LabelType {
+        case level
+    }
+    enum BorderedLabelType {
+        case profileEmoji
+    }
+    
+    func applyStyle(labelType: LabelType) {
+        self.layer.cornerRadius = 13.0
+        self.layer.borderWidth = 3.0
+        self.layer.backgroundColor = UIColor.green.cgColor
+        self.layer.borderColor = UIColor.green.cgColor
+    }
+    
+    func applyRoundedCornerAndShadow(borderedLabelType: BorderedLabelType) {
+        switch borderedLabelType {
+        case .profileEmoji:
+            self.layer.cornerRadius = 18.0
+            //            self.contentView.layer.borderWidth = 0.1
+            //            self.contentView.layer.borderColor = UIColor.gray.cgColor
+            self.layer.masksToBounds = true
+            
+            self.layer.shadowColor = UIColor.black.cgColor
+            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
+            self.layer.shadowRadius = 2
+            self.layer.shadowOpacity = 0.5
+            self.layer.masksToBounds = false
+            
+            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+        }
         
     }
 }
+
+extension UIProgressView {
+    enum ProgressType {
+        case levelProgress
+    }
+    
+    func applyStyle(progressType: ProgressType) {
+        self.transform = .identity
+        self.transform = self.transform.scaledBy(x: 1, y: 4.5)
+        
+//        self.progressTintColor = UIColor.green
+//        self.trackTintColor = UIColor.lightGray
+        
+        self.layer.cornerRadius = 12.0
+        self.layer.masksToBounds = true
+    }
+    
+}
+
+
+

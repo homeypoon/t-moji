@@ -145,12 +145,12 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         }
     }
     
-    @IBSegueAction func showMemberProfile(_ coder: NSCoder, sender: UITableViewCell?) -> ProfileViewController? {
+    @IBSegueAction func showMemberProfile(_ coder: NSCoder, sender: UITableViewCell?) -> ProfileCollectionViewController? {
         guard let cell = sender,
               let indexPath = tableView.indexPath(for: cell) else { return nil }
         
         let member = members[indexPath.row]
-        return ProfileViewController(coder: coder, user: member)
+        return ProfileCollectionViewController(coder: coder, user: member)
     }
     
 }
