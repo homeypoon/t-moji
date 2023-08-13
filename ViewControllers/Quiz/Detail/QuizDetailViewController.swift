@@ -23,7 +23,6 @@ class QuizDetailViewController: UIViewController {
     @IBOutlet var takeQuizButton: UIButton!
     @IBOutlet var guessForTmatesButton: UIButton!
     @IBOutlet var quizDetailStackView: UIStackView!
-    @IBOutlet var takenByTextLabel: UILabel!
     
     
     @IBOutlet var quizButtons: [UIButton]!
@@ -71,7 +70,6 @@ class QuizDetailViewController: UIViewController {
         }
         
         quizTitleLabel.text = quiz?.title
-        takenByTextLabel.text = takenByText
         
         // If no t-mates have taken quiz
         if takenByText == TakenByText.noTmates {
@@ -94,6 +92,7 @@ class QuizDetailViewController: UIViewController {
     
     private func updateButtonFont() {
         for button in quizButtons {
+            button.applyRoundedCornerAndShadow(borderType: .big)
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
                 outgoing.font = UIFont.systemFont(ofSize: 22, weight: .semibold)

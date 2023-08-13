@@ -84,3 +84,35 @@ extension UIStackView {
         
     }
 }
+
+extension UIButton {
+    enum BorderType {
+        case big, smallStrong, smallWeak
+    }
+    func applyRoundedCornerAndShadow(borderType: BorderType) {
+        switch borderType {
+        case .big:
+            // explore
+            self.layer.cornerRadius = 1.0
+            self.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+            self.layer.shadowOffset = CGSize(width: 0.5, height: 2.0)
+            self.layer.shadowOpacity = 1.0
+            self.layer.shadowRadius = 0.0
+            self.layer.masksToBounds = false
+            self.layer.cornerRadius = 4.0
+            
+            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+            
+            
+        default:
+            self.layer.shadowColor = UIColor.black.cgColor
+            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
+            self.layer.shadowRadius = 2.5
+            self.layer.shadowOpacity = 0.7
+            self.layer.masksToBounds = false
+            
+            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+        }
+        
+    }
+}

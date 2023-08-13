@@ -563,22 +563,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="45" translatesAutoresizingMaskIntoConstraints="NO" id="79S-It-BgH">
-                                <rect key="frame" x="36" y="158.99999999999997" width="321" height="273.33333333333326"/>
+                                <rect key="frame" x="20" y="159" width="353" height="283"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="bvR-7R-DDc">
-                                        <rect key="frame" x="0.0" y="0.0" width="321" height="156"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="353" height="119.66666666666667"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="What Animal Are You Exactly" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EKM-0f-cvq">
-                                                <rect key="frame" x="0.0" y="0.0" width="321" height="71.666666666666671"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="353" height="71.666666666666671"/>
                                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
                                                 <color key="textColor" name="TextColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="tdX-ih-7jy">
-                                                <rect key="frame" x="0.0" y="88.666666666666657" width="321" height="31"/>
+                                                <rect key="frame" x="0.0" y="88.666666666666657" width="353" height="31"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ixt-PZ-HAX">
-                                                        <rect key="frame" x="0.0" y="0.0" width="321" height="31"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="353" height="31"/>
                                                         <color key="tintColor" systemColor="systemIndigoColor"/>
                                                         <state key="normal" title="Button"/>
                                                         <buttonConfiguration key="configuration" style="filled" title="Animal" cornerStyle="large">
@@ -587,25 +587,26 @@
                                                     </button>
                                                 </subviews>
                                             </stackView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Taken by xxx, xxx, and 20 other friends" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k3h-Pz-rxA">
-                                                <rect key="frame" x="0.0" y="136.66666666666669" width="321" height="19.333333333333343"/>
-                                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                         </subviews>
                                     </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wFe-UL-XqK">
+                                        <rect key="frame" x="0.0" y="164.66666666666669" width="353" height="1"/>
+                                        <color key="backgroundColor" name="LightText"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="Y9j-w3-svu"/>
+                                        </constraints>
+                                    </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="qm8-HK-lbx">
-                                        <rect key="frame" x="0.0" y="201" width="321" height="72.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="210.66666666666669" width="353" height="72.333333333333314"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="752" text="My Result: 🐶 " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GEu-vv-UwE">
-                                                <rect key="frame" x="85.333333333333329" y="0.0" width="150.66666666666669" height="28.666666666666668"/>
+                                                <rect key="frame" x="101.33333333333333" y="0.0" width="150.66666666666669" height="28.666666666666668"/>
                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                                 <color key="textColor" name="Text"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5a0-oZ-xwM">
-                                                <rect key="frame" x="76.333333333333329" y="36.666666666666686" width="168.66666666666669" height="35.666666666666657"/>
+                                                <rect key="frame" x="92.333333333333329" y="36.666666666666629" width="168.66666666666669" height="35.666666666666657"/>
                                                 <color key="tintColor" systemColor="tintColor"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="See Result Details">
@@ -620,41 +621,51 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LL4-fA-GjF">
-                                <rect key="frame" x="43" y="588" width="314" height="53"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" name="white"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Redo Quiz">
-                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
-                                    <color key="baseForegroundColor" name="lightButtonText"/>
-                                    <color key="baseBackgroundColor" name="white"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="showQuiz:" destination="5LA-7k-TtP" eventType="touchUpInside" id="weM-M3-tYm"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CeB-eq-45x">
-                                <rect key="frame" x="43" y="666" width="314" height="69"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Guess for T-mates" subtitle="" titleAlignment="center">
-                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
-                                    <color key="baseForegroundColor" name="white"/>
-                                    <color key="baseBackgroundColor" name="lightButtonText"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="guessForTmatesPressed:" destination="5LA-7k-TtP" eventType="touchUpInside" id="HZP-N8-Md9"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="25" translatesAutoresizingMaskIntoConstraints="NO" id="wHH-x5-fSt">
+                                <rect key="frame" x="39.333333333333343" y="552" width="314.33333333333326" height="137"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LL4-fA-GjF">
+                                        <rect key="frame" x="0.0" y="0.0" width="314.33333333333331" height="52"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="52" id="rwn-wd-kfd"/>
+                                        </constraints>
+                                        <color key="tintColor" name="white"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Redo Quiz">
+                                            <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                            <color key="baseForegroundColor" name="lightButtonText"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="showQuiz:" destination="5LA-7k-TtP" eventType="touchUpInside" id="weM-M3-tYm"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CeB-eq-45x">
+                                        <rect key="frame" x="0.0" y="77" width="314.33333333333331" height="60"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="60" id="93g-lP-TwT"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" title="Guess for T-mates" subtitle="" titleAlignment="center">
+                                            <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                            <color key="baseForegroundColor" name="white"/>
+                                            <color key="baseBackgroundColor" name="lightButtonText"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="guessForTmatesPressed:" destination="5LA-7k-TtP" eventType="touchUpInside" id="HZP-N8-Md9"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="BSA-K0-8vP"/>
                         <color key="backgroundColor" name="blueBackgroundColor "/>
                         <constraints>
-                            <constraint firstItem="79S-It-BgH" firstAttribute="leading" secondItem="BSA-K0-8vP" secondAttribute="leading" constant="36" id="07s-B9-iRg"/>
-                            <constraint firstItem="79S-It-BgH" firstAttribute="top" secondItem="BSA-K0-8vP" secondAttribute="top" constant="56" id="QXK-Au-A1v"/>
-                            <constraint firstItem="79S-It-BgH" firstAttribute="top" relation="greaterThanOrEqual" secondItem="BSA-K0-8vP" secondAttribute="top" constant="24" id="gyg-ze-9QI"/>
-                            <constraint firstItem="BSA-K0-8vP" firstAttribute="trailing" secondItem="79S-It-BgH" secondAttribute="trailing" constant="36" id="lN9-QO-91I"/>
+                            <constraint firstItem="BSA-K0-8vP" firstAttribute="bottom" secondItem="wHH-x5-fSt" secondAttribute="bottom" constant="80" id="281-qY-BRo"/>
+                            <constraint firstItem="wHH-x5-fSt" firstAttribute="centerX" secondItem="Sfk-xL-QTI" secondAttribute="centerX" id="2Xz-PH-x1O"/>
+                            <constraint firstItem="79S-It-BgH" firstAttribute="top" secondItem="BSA-K0-8vP" secondAttribute="top" constant="56" id="J6t-Z2-cfo"/>
+                            <constraint firstItem="79S-It-BgH" firstAttribute="leading" secondItem="BSA-K0-8vP" secondAttribute="leading" constant="20" id="N3N-SM-sps"/>
+                            <constraint firstItem="LL4-fA-GjF" firstAttribute="width" secondItem="Sfk-xL-QTI" secondAttribute="width" multiplier="0.8" id="aX8-r2-C4w"/>
+                            <constraint firstAttribute="trailing" secondItem="79S-It-BgH" secondAttribute="trailing" constant="20" id="ydJ-jj-Nbc"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="Sga-lG-nok"/>
@@ -666,7 +677,6 @@
                         <outlet property="resultDetailButton" destination="5a0-oZ-xwM" id="jii-dP-LpB"/>
                         <outlet property="resultStackView" destination="qm8-HK-lbx" id="6Ne-Yg-g52"/>
                         <outlet property="takeQuizButton" destination="LL4-fA-GjF" id="7QK-uS-AGh"/>
-                        <outlet property="takenByTextLabel" destination="k3h-Pz-rxA" id="8np-la-fb3"/>
                         <outletCollection property="quizButtons" destination="LL4-fA-GjF" collectionClass="NSMutableArray" id="ke7-RW-GMe"/>
                         <outletCollection property="quizButtons" destination="CeB-eq-45x" collectionClass="NSMutableArray" id="50H-oe-tVg"/>
                         <segue destination="hlY-lH-rQv" kind="show" identifier="showPersonalQuiz" id="QTX-jx-ITe"/>
@@ -2446,6 +2456,9 @@
         <image name="trophy.fill" catalog="system" width="128" height="128"/>
         <namedColor name="Blue">
             <color red="0.29803921568627451" green="0.6470588235294118" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="LightText">
+            <color red="0.2196078431372549" green="0.2196078431372549" blue="0.2196078431372549" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="Sunflower">
             <color red="1" green="0.7803921568627451" blue="0.12156862745098039" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
