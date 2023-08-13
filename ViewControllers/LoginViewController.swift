@@ -17,7 +17,8 @@ class LoginViewController: UIViewController {
         
     }
     
-    @IBAction func signIn(_ sender: GIDSignInButton) {
+    @IBAction func signInUser(_ sender: GIDSignInButton) {
+        print("in")
         guard let clientID = FirebaseApp.app()?.options.clientID else { return }
         
         // Create Google Sign In configuration object.
@@ -40,13 +41,10 @@ class LoginViewController: UIViewController {
             
             Auth.auth().signIn(with: credential) { result, error in
 
-              // At this point, our user is signed in
-                // If sign in succeeded, display the app's main content View.
-                self.handleSignInResult()
+//                self.handleSignInResult()
                 
             }
         }
-        
     }
     
     

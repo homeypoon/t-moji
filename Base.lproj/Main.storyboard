@@ -1181,6 +1181,31 @@
             </objects>
             <point key="canvasLocation" x="6401" y="2172"/>
         </scene>
+        <!--Login View Controller-->
+        <scene sceneID="ScA-L5-tQC">
+            <objects>
+                <viewController storyboardIdentifier="LoginViewController" id="9pv-pT-9Gg" customClass="LoginViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wdl-hT-Puk">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mvt-c0-Puy" customClass="GIDSignInButton">
+                                <rect key="frame" x="76" y="406" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <connections>
+                                    <action selector="signInUser:" destination="9pv-pT-9Gg" eventType="touchDown" id="mIF-W3-ssT"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="mMj-Qe-2Xg"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MDD-oi-VwQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7365" y="2179"/>
+        </scene>
         <!--Explore-->
         <scene sceneID="PxB-Vw-CcR">
             <objects>

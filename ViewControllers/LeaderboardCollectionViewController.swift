@@ -50,12 +50,14 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     }
     
     struct Model {
+        var sortedGlobalUsers = [User]()
         var sortedUserMasterTmates = [User]() // Sorted by points
         var currentUser: User?
     }
     
     var dataSource: DataSourceType!
     var model = Model()
+    var selectedSegmentIndex: Int = 0
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -63,10 +65,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         fetchCurrentUser() { user in
             self.model.currentUser = user
             
-            if let masterGroupmatesIDs = self.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
-                print("master group mates\(masterGroupmatesIDs)")
-                self.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
-            }
+            self.fetchGlobalUsers()
         }
         
         updateCollectionView()
@@ -75,10 +74,37 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let segmentedControl = UISegmentedControl(items: ["Global", "T-mates"])
+        segmentedControl.selectedSegmentIndex = 0  // Set the default selected segment index
+        segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
+        
+        // Add the segmented control to the navigation bar
+        navigationItem.titleView = segmentedControl
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
         collectionView.collectionViewLayout = createLayout()
+    }
+    
+    @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
+        selectedSegmentIndex = sender.selectedSegmentIndex
+
+        updateCollectionView()
+    }
+    
+    // Method to update rankings for teammates
+    func updateRankingsForTmates() {
+        // Update teamMembers array based on points
+        print("self group mates\(self.model.currentUser?.masterGroupmatesIDs)")
+        if let masterGroupmatesIDs = self.model.currentUser?.masterGroupmatesIDs {
+            
+            model.sortedUserMasterTmates = model.sortedGlobalUsers.filter { user in
+                Array(Set(masterGroupmatesIDs)).contains(user.uid)
+            }
+            
+            print("master group mates\(masterGroupmatesIDs)")
+        }
     }
     
     func createDataSource() -> DataSourceType {
@@ -115,7 +141,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 let horzSpacing: CGFloat = 12
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
+                
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(90))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
                 
@@ -125,7 +151,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                     bottom: vertSpacing,
                     trailing: horzSpacing
                 )
-
+                
                 let section = NSCollectionLayoutSection(group: group)
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 10,
@@ -133,7 +159,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                     bottom: 0,
                     trailing: 0
                 )
-
+                
                 return section
             } else {
                 let vertSpacing: CGFloat = 6
@@ -162,7 +188,19 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     
     func updateCollectionView() {
         // Sort the user master team members by points in descending order
-        let sortedUsers = model.sortedUserMasterTmates.sorted { (user1, user2) in
+        
+        var sortedUsers: [User]
+        
+        if selectedSegmentIndex == 0 {
+            // Use the global array for "Global" tab
+            sortedUsers = model.sortedGlobalUsers
+        } else {
+            // Use the teammates array for "Teammates" tab
+            updateRankingsForTmates()
+            sortedUsers = model.sortedUserMasterTmates
+        }
+        
+        sortedUsers = sortedUsers.sorted { (user1, user2) in
             if user1.points == user2.points {
                 return user1.username < user2.username
             }
@@ -178,22 +216,11 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         sectionIDs.append(.remaining)
         
         var currentRanking = 1
-        
-        // Process sorted users and use index as ranking
+        var previousUserPoints: Int?
+
         for (index, user) in sortedUsers.enumerated() {
-            
-            // Check if this user has the same points as the next one
-            if index < sortedUsers.count - 1 {
-                let nextUser = sortedUsers[index + 1]
-                
-                if user.points == nextUser.points {
-                    // Increment the ordinal only if the next user has a different point value than the one after it
-                    if index < sortedUsers.count - 2 && nextUser.points != sortedUsers[index + 2].points {
-                        currentRanking += 1
-                    }
-                } else {
-                    currentRanking += 1
-                }
+            if let previousPoints = previousUserPoints, user.points != previousPoints {
+                currentRanking += 1
             }
             
             let item: ViewModel.Item
@@ -204,8 +231,9 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             } else {
                 item = .remainingTmates(tmate: user, ordinal: ordinalNumber(from: currentRanking))
                 itemsBySection[.remaining, default: []].append(item)
-                
             }
+            
+            previousUserPoints = user.points
         }
         
         // Update the dataSource with the sorted and ranked items
@@ -222,26 +250,22 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
     }
     
-    private func fetchUserMasterTmates(membersIDs: [String]) {
+    private func fetchGlobalUsers() {
+        self.model.sortedGlobalUsers.removeAll()
         self.model.sortedUserMasterTmates.removeAll()
         
-        print("membersIDS in fetchuser \(membersIDs)")
-        
-        FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
+        FirestoreService.shared.db.collection("users").getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
                     do {
                         let member = try document.data(as: User.self)
-                        self.model.sortedUserMasterTmates.append(member)
+                        self.model.sortedGlobalUsers.append(member)
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
-                }
-                if let currentUser = self.model.currentUser {
-                    self.model.sortedUserMasterTmates.append(currentUser)
                 }
                 self.updateCollectionView()
             }

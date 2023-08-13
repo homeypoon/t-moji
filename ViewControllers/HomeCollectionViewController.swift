@@ -147,9 +147,20 @@ class HomeCollectionViewController: UICollectionViewController {
                         
                         // If the member is the one being deleted
                         if currentMember.uid == currentUid {
-                            document.reference.updateData([
-                                "groupsIDs": FieldValue.arrayRemove([groupId])
-                            ])
+                            for memberID in group.membersIDs.filter({ $0 != currentUid }) {
+                                
+                                if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == memberID }) {
+                                    currentMember.masterGroupmatesIDs.remove(at: index)
+                                }
+                            }
+                            
+                            currentMember.groupsIDs = currentMember.groupsIDs.filter({$0 != groupId })
+                            
+                            try document.reference.setData(from: currentMember)
+                                                        
+//                            document.reference.updateData([
+//                                "groupsIDs": FieldValue.arrayRemove([groupId])
+//                            ])
                         } else {
                             if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == currentUid }) {
                                 currentMember.masterGroupmatesIDs.remove(at: index)
