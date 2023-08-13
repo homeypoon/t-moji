@@ -27,13 +27,25 @@ struct Helper {
         
         if let days = timeDifference.day, days >= 1 {
             // If it has been at least 24 hours, show the amount of days past
-            return "~ \(days) days"
+            if days >= 2 {
+                return "~ \(days) days"
+            } else {
+                return "~ \(days) day"
+            }
         } else if let hours = timeDifference.hour, hours >= 1 {
             // If it has been at least 1 hour, show the amount of hours past
-            return "~ \(hours) hours"
+            if hours >= 2 {
+                return "~ \(hours) hours"
+            } else {
+                return "~ \(hours) hour"
+            }
         } else if let minutes = timeDifference.minute, minutes >= 1 {
             // If it has been at least 1 minute, show the amount of minutes past
-            return "~ \(minutes) minutes"
+            if minutes >= 2 {
+                return "~ \(minutes) minutes"
+            } else {
+                return "~ \(minutes) minute"
+            }
         } else {
             // Otherwise, show "Less than a minute"
             return "~ Less than a minute"

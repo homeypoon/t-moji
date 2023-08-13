@@ -11,12 +11,6 @@ import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
-enum SupplementaryViewKind {
-    static let sectionHeader = "sectionHeader"
-    static let topLine = "topLine"
-    static let bottomLine = "bottomLine"
-}
-
 class SelectMemberCollectionViewController: UICollectionViewController {
     
     var quiz: Quiz?
@@ -132,18 +126,23 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     func createLayout() -> UICollectionViewCompositionalLayout {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
-            let horzSpacing: CGFloat = 12
+            let horzSpacing: CGFloat = 20
             
             let sectionHeaderItemSize =
             NSCollectionLayoutSize(widthDimension:
                     .fractionalWidth(1), heightDimension: .estimated(48))
             let sectionHeader =
             NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+            let sectionEdgeInsets = NSDirectionalEdgeInsets(
+                top: 8,
+                leading: 0,
+                bottom: 0,
+                trailing: 0
+            )
             
             // Guess Select Member
             if sectionIndex == 0  {
                 let vertSpacing: CGFloat = 10
-                
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -161,12 +160,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 
-                section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 8,
-                    leading: 0,
-                    bottom: 0,
-                    trailing: 0
-                )
+                section.contentInsets = sectionEdgeInsets
                 
                 return section
             } else  {
@@ -187,12 +181,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 
-                section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 8,
-                    leading: 0,
-                    bottom: 0,
-                    trailing: 0
-                )
+                section.contentInsets = sectionEdgeInsets
                 
                 return section
             }

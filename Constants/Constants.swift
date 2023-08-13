@@ -35,3 +35,9 @@ struct TakenByText {
 enum QuizKind {
     case personal, member
 }
+
+enum SupplementaryViewKind {
+    static let sectionHeader = "sectionHeader"
+    static let topLine = "topLine"
+    static let bottomLine = "bottomLine"
+}

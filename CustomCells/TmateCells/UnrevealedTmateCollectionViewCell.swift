@@ -17,5 +17,7 @@ class UnrevealedTmateCollectionViewCell: UICollectionViewCell {
         usernameLabel.text = username
         quizTitleLabel.text = quizTitle
         timePassedLabel.text = timePassed
+        
+        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }
 }

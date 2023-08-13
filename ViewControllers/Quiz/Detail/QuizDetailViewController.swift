@@ -18,6 +18,7 @@ class QuizDetailViewController: UIViewController {
     var takenByText: String!
     
     @IBOutlet var quizTitleLabel: UILabel!
+    @IBOutlet var resultGroupButton: UIButton!
     @IBOutlet var myResultLabel: UILabel!
     @IBOutlet var resultDetailButton: UIButton!
     @IBOutlet var takeQuizButton: UIButton!
@@ -99,6 +100,13 @@ class QuizDetailViewController: UIViewController {
                 return outgoing
             }
         }
+        resultGroupButton.setTitle(quiz?.resultGroup.rawValue.capitalized, for: [])
+        resultGroupButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            return outgoing
+        }
+        
     }
     
     @IBAction func showQuiz(_ sender: UIButton) {

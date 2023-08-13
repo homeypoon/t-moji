@@ -110,6 +110,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         navigationItem.hidesBackButton = true
         
+        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -122,7 +124,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
-            guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
             
             switch item {
             case .unrevealedMember(let tmate, let userQuizHistory):
@@ -143,6 +144,21 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
         
+        dataSource.supplementaryViewProvider = { (collectionView, category, indexPath) in
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
+            let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            
+            switch section {
+            case .unrevealedMembers:
+                sectionHeader.configure(title: "To be Guessed", colorName: "Text")
+            case .revealedMembers:
+                sectionHeader.configure(title: "Guessed T-mates", colorName: "Text")
+            }
+            
+            return sectionHeader
+        }
+        
         return dataSource
     }
     
@@ -151,26 +167,63 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
+            let horzSpacing: CGFloat = 20
+            
+            let sectionHeaderItemSize =
+            NSCollectionLayoutSize(widthDimension:
+                    .fractionalWidth(1), heightDimension: .estimated(48))
+            let sectionHeader =
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+            
+            let sectionEdgeInsets = NSDirectionalEdgeInsets(
+                top: 8,
+                leading: 0,
+                bottom: 0,
+                trailing: 0
+            )
+            
             // Guess Select Member
             if sectionIndex == 0  {
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
+                let vertSpacing: CGFloat = 10
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
                 
                 let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = sectionEdgeInsets
                 
                 return section
             } else  {
                 // Revealed Select Member
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
+                let vertSpacing: CGFloat = 10
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(115))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
+            
                 let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = sectionEdgeInsets
                 
                 return section
             }

@@ -28,7 +28,8 @@ class EditProfileTableViewController: UITableViewController {
     
     // Enable save button only when the username text field is not empty
     func updateSaveButtonState() {
-        let shouldEnableSaveButton = usernameTextField.text?.isEmpty == false
+        let shouldEnableSaveButton = usernameTextField.text?.isEmpty == false && usernameTextField.text?.trimmingCharacters(in: .whitespaces) != user?.username
+        
         saveButton.isEnabled = shouldEnableSaveButton
     }
     
@@ -53,10 +54,15 @@ class EditProfileTableViewController: UITableViewController {
     // Prepare for the saveUnwind segue by updating User object
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
+        
+        print("any")
                 
         guard segue.identifier == "saveUnwind", let uid = Auth.auth().currentUser?.uid else { return }
+        print("saveunwind")
+        print("usernameTextField.text? \(usernameTextField.text)")
+        print("user?.username \(user?.username)")
         
-        let username = usernameTextField.text!
+        let username = usernameTextField.text!.trimmingCharacters(in: .whitespaces)
         let bio = bioTextView.text
         
         if user != nil {
@@ -66,17 +72,7 @@ class EditProfileTableViewController: UITableViewController {
             user = User(uid: uid ,username: username, bio: bio)
         }
         
-        // Check username availability before saving
-            checkUsernameAvailability(username: username) { isAvailable in
-                if isAvailable {
-                    // Username is unique, proceed with saving
-                    self.addUser(user: self.user!)
-                } else {
-                    // Username is not unique, show error
-                    self.presentErrorAlert(with: "Username is already taken.")
-                    print("error")
-                }
-            }
+        addUser(user: user!)
     }
     
     func addUser(user: User) {
