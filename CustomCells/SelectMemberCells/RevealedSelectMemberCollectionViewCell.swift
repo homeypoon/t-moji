@@ -19,6 +19,8 @@ class RevealedSelectMemberCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = resultType?.emoji
         usernameLabel.text = username
         timePassedLabel.text = timePassed
+        
+        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }
     
 }

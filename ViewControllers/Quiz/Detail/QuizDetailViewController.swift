@@ -19,20 +19,18 @@ class QuizDetailViewController: UIViewController {
     
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var myResultLabel: UILabel!
-    @IBOutlet var resultEmojiLabel: UILabel!
     @IBOutlet var resultDetailButton: UIButton!
     @IBOutlet var takeQuizButton: UIButton!
     @IBOutlet var guessForTmatesButton: UIButton!
-    @IBOutlet var takeQuizPriceLabel: UILabel!
-    @IBOutlet var guessForTmatesPriceLabel: UILabel!
-    @IBOutlet var questionMarkLabel: UILabel!
-    @IBOutlet var dollarCountLabel: UILabel!
-    @IBOutlet var heartCountLabel: UILabel!
+    @IBOutlet var quizDetailStackView: UIStackView!
+    @IBOutlet var takenByTextLabel: UILabel!
+    
     
     @IBOutlet var quizButtons: [UIButton]!
     
     var isRetakeQuiz: Bool?
     
+    @IBOutlet var resultStackView: UIStackView!
     var takeQuizState: Int!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,7 +43,6 @@ class QuizDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
         updateButtonFont()
         updateUIText()
     }
@@ -60,26 +57,21 @@ class QuizDetailViewController: UIViewController {
         
         if takeQuizState == ButtonState.takeQuiz {
             myResultLabel.isHidden = true
-            resultEmojiLabel.isHidden = true
             resultDetailButton.isHidden = true
-            questionMarkLabel.isHidden = false
+            resultStackView.isHidden = true
             
-            takeQuizPriceLabel.text = "Free"
             takeQuizButton.setTitle("Take Quiz", for: [])
         } else if takeQuizState == ButtonState.retakeQuiz {
             myResultLabel.isHidden = false
-            resultEmojiLabel.isHidden = false
             resultDetailButton.isHidden = false
-            questionMarkLabel.isHidden = true
+            resultStackView.isHidden = false
             
-            resultEmojiLabel.text = "\(currentUserResultType?.emoji ?? " ")"
-            takeQuizPriceLabel.text = "\(Price.retakeQuiz) 💸"
+            myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
             takeQuizButton.setTitle("Retake Quiz", for: [])
         }
         
         quizTitleLabel.text = quiz?.title
-        dollarCountLabel.text = "💸 \(currentUser.dollarCount)"
-        heartCountLabel.text = "💗 \(currentUser.heartCount)"
+        takenByTextLabel.text = takenByText
         
         // If no t-mates have taken quiz
         if takenByText == TakenByText.noTmates {
@@ -93,6 +85,11 @@ class QuizDetailViewController: UIViewController {
             print("false")
         }
         guessForTmatesButton.configuration?.subtitle = takenByText
+        
+        quizDetailStackView.layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
+        quizDetailStackView.isLayoutMarginsRelativeArrangement = true
+        
+        quizDetailStackView.applyRoundedCornerAndShadow(borderType: .big)
     }
     
     private func updateButtonFont() {
@@ -109,17 +106,7 @@ class QuizDetailViewController: UIViewController {
 
         isRetakeQuiz = takeQuizState == ButtonState.retakeQuiz
         if isRetakeQuiz! {
-            let dollarCountAfterCost = currentUser.dollarCount - Price.retakeQuiz
-            
-            // User has enough dollars
-            if dollarCountAfterCost >= 0 {
-                sender.isEnabled = false
-                animateDeductionAndPerformSegue(animateTo: "💸 \(dollarCountAfterCost)") {
-                    sender.isEnabled = true
-                }
-            } else {
-                presentRetakeAlert(withTitle: "Not Enough 💸", withMessage: "Retaking the quiz requires 💸\(Price.retakeQuiz)")
-            }
+            self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
         } else {
             performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
         }
@@ -129,25 +116,6 @@ class QuizDetailViewController: UIViewController {
         performSegue(withIdentifier: "selectMember", sender: nil)
     }
     
-    func animateDeductionAndPerformSegue(animateTo newValue: String, completion: @escaping () -> Void) {
-        // Animate the deduction
-        UIView.animate(withDuration: 0.3, animations: {
-            self.dollarCountLabel.transform = CGAffineTransform(scaleX: 1.2, y: 1.2) // Scale up
-            self.dollarCountLabel.textColor = .red // Change color
-            self.takeQuizButton.transform = CGAffineTransform(scaleX: 1.05, y: 1.05) // Scale up
-        }) { _ in
-            self.dollarCountLabel.text = newValue
-            UIView.animate(withDuration: 0.3, delay: 0.3, animations: {
-                self.dollarCountLabel.transform = .identity // Reset scale
-                self.dollarCountLabel.textColor = .black // Reset color
-                self.takeQuizButton.transform = .identity // Reset scale
-            }) { _ in
-                // After the second animation, perform the segue
-                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
-                completion()
-            }
-        }
-    }
     
     func presentRetakeAlert(withTitle title: String, withMessage message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -224,8 +192,7 @@ class QuizDetailViewController: UIViewController {
             personalQuizVC.currentUser = currentUser
             personalQuizVC.quiz = quiz
         } else if segue.identifier == "showResultDetails" {
-            let navController = segue.destination as! UINavigationController
-            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
+            let quizResultVC = segue.destination as! QuizResultCollectionViewController
             quizResultVC.quiz = self.quiz
             quizResultVC.currentUser = self.currentUser
             

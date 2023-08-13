@@ -11,25 +11,30 @@ import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
+enum SupplementaryViewKind {
+    static let sectionHeader = "sectionHeader"
+    static let topLine = "topLine"
+    static let bottomLine = "bottomLine"
+}
 
 class SelectMemberCollectionViewController: UICollectionViewController {
     
     var quiz: Quiz?
     var currentUser: User!
     var quizHistory: QuizHistory!
-
+    
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
-
+    
     enum ViewModel {
         enum Section: Hashable {
             case memberSelections
             case guessedMembers
         }
-
+        
         enum Item: Hashable {
             case memberSelection(tmate: User, userQuizHistory: UserQuizHistory)
             case guessedMember(tmate: User, userQuizHistory: UserQuizHistory)
-
+            
             func hash(into hasher: inout Hasher) {
                 switch self {
                 case .memberSelection(let tmate, let userQuizHistory):
@@ -40,7 +45,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     hasher.combine(userQuizHistory)
                 }
             }
-
+            
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
                 case (.memberSelection(let lTmate, let lUserQuizHistory), .memberSelection(let rTmate, let rUserQuizHistory)):
@@ -51,20 +56,20 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     return false
                 }
             }
-
+            
         }
     }
-
+    
     struct Model {
         var userMasterTmates = [User]()
     }
-
+    
     var dataSource: DataSourceType!
     var model = Model()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-                
+        
         fetchQuizHistory { [weak self] in
             if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                 print("masterGroupmatesIDs\(masterGroupmatesIDs)")
@@ -78,17 +83,19 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
         collectionView.collectionViewLayout = createLayout()
     }
     
-
+    
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
-
+            
             switch item {
             case .memberSelection(let tmate, let userQuizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSelectMember", for: indexPath) as! GuessSelectMemberCollectionViewCell
@@ -103,56 +110,113 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             }
         }
         
+        dataSource.supplementaryViewProvider = { (collectionView, category, indexPath) in
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
+            let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            
+            switch section {
+            case .guessedMembers:
+                sectionHeader.configure(title: "Guessed Results", colorName: "Text")
+            case .memberSelections:
+                sectionHeader.configure(title: "Unguessed Results", colorName: "Text")
+            }
+            
+            return sectionHeader
+        }
+        
         return dataSource
     }
-
+    
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            let horzSpacing: CGFloat = 12
+            
+            let sectionHeaderItemSize =
+            NSCollectionLayoutSize(widthDimension:
+                    .fractionalWidth(1), heightDimension: .estimated(48))
+            let sectionHeader =
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
             
             // Guess Select Member
             if sectionIndex == 0  {
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let vertSpacing: CGFloat = 10
+                
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
-                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
+                
                 let section = NSCollectionLayoutSection(group: group)
-
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 0,
+                    bottom: 0,
+                    trailing: 0
+                )
+                
                 return section
             } else  {
-                // Revealed Select Member
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let vertSpacing: CGFloat = 10
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
-                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+                let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
+                
                 let section = NSCollectionLayoutSection(group: group)
-
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 0,
+                    bottom: 0,
+                    trailing: 0
+                )
+                
                 return section
             }
         }
     }
-
+    
+    
+    
     func updateCollectionView() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
-
+        
         sectionIDs.append(.memberSelections)
         sectionIDs.append(.guessedMembers)
-
-
+        
+        
         print("model.usersss \(model.userMasterTmates)")
-
+        
         for userMasterTmate in model.userMasterTmates {
-
+            
             // if the userMasterTmate has completed the quiz
             if quizHistory!.completedUsers.contains(userMasterTmate.uid) {
-
+                
                 // Ensure the userMasterTmate has a matching quiz history
                 if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
                     // if user has guessed
@@ -164,15 +228,15 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 }
             }
         }
-
+        
         print("myitems \(itemsBySection)")
-
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
-
+    
     func fetchQuizHistory(completion: @escaping () -> Void) {
         guard let quizID = quiz?.id else {return}
-
+        
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
@@ -190,15 +254,15 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             }
         }
     }
-
+    
     private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
-
+        
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
-
+                
                 for document in querySnapshot!.documents {
                     print("new")
                     do {
@@ -214,7 +278,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             }
         }
     }
-
+    
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -230,7 +294,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             case .guessedMember(let tmate, let userQuizHistory):
                 self.performSegue(withIdentifier: "showResultFromSelectMember", sender: (tmate, userQuizHistory))
                 print("tmatee \(tmate)")
-
+                
             }
         }
     }
@@ -249,7 +313,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 guessQuizVC.userQuizHistory = userQuizHistory
             }
             
-            self.navigationController?.popViewController(animated: true)
+            //            self.navigationController?.popViewController(animated: true)
         } else if segue.identifier == "showResultFromSelectMember" {
             let quizResultVC = segue.destination as! QuizResultCollectionViewController
             
@@ -258,7 +322,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 let userQuizHistory = senderInfo.1
                 
                 print("tmatee2 \(tmate)")
-
+                
                 quizResultVC.quiz = self.quiz
                 quizResultVC.currentUser = tmate
                 quizResultVC.userQuizHistory = userQuizHistory

@@ -15,5 +15,7 @@ class GuessSelectMemberCollectionViewCell: UICollectionViewCell {
         
         usernameLabel.text = username
         timePassedLabel.text = timePassed
+        
+        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }
 }

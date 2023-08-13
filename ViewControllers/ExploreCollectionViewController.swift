@@ -93,6 +93,7 @@ class ExploreCollectionViewController: UICollectionViewController {
         let vertSpacing: CGFloat = 10
         let horzSpacing: CGFloat = 12
         
+        
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
@@ -126,17 +127,22 @@ class ExploreCollectionViewController: UICollectionViewController {
             var currentUserResultType: ResultType? = nil
             
             if let quizHistory = model.quizHistories.first(where: { $0.quizID == quiz.id }) {
+                
                 guard let user = model.user else {
                     continue
                 }
                 print("quiz hish \(quizHistory)")
                 
+                print("compleuser\(quizHistory.completedUsers)")
                 let userHasCompletedQuiz = quizHistory.completedUsers.contains(user.uid)
+                
+                print("userHasCompletedQuiza \(userHasCompletedQuiz)")
                 
                 if userHasCompletedQuiz {
                     completeState = true
                     currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
+                
                 
                 if let completedTmates = model.completedTmates[quiz.id]?.filter({ $0.uid != user.uid }), !completedTmates.isEmpty {
                     
@@ -253,6 +259,8 @@ class ExploreCollectionViewController: UICollectionViewController {
     // Get groups whose membersIDs contains the current user's id
     func fetchQuizHistories(currentUser: User, completion: @escaping () -> Void) {
         
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
         FirestoreService.shared.db.collection("quizHistories").getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(with: error.localizedDescription)
@@ -264,8 +272,9 @@ class ExploreCollectionViewController: UICollectionViewController {
                     do {
                         var quizHistory = try document.data(as: QuizHistory.self)
                         
-                            quizHistory.completedUsers = quizHistory.completedUsers.filter { currentUser.masterGroupmatesIDs.contains($0) }
-                            print("filtered")
+                        quizHistory.completedUsers = quizHistory.completedUsers.filter { userID in
+                            currentUser.masterGroupmatesIDs.contains(userID) || userID == currentUid }
+                        print("filtered")
                         print("mastergorupmatedsid \(currentUser.masterGroupmatesIDs)")
                         print("quizHistory \(quizHistory)")
                         self.model.quizHistories.append(quizHistory)

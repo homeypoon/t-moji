@@ -16,6 +16,8 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
     
     
     func configure(quiz: Quiz, completeState: Bool, currentUserResultType: ResultType?, takenByText: String) {
+        print(completeState)
+        print(currentUserResultType)
         
         resultGroupButton.layer.cornerRadius = 8
         completeStateButton.layer.cornerRadius = 8
@@ -45,16 +47,6 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         }
         takenByOthersLabel.text = takenByText
         
-        self.contentView.layer.cornerRadius = 8.0
-        self.contentView.layer.borderWidth = 0.5
-        self.contentView.layer.borderColor = UIColor.gray.cgColor
-        self.contentView.layer.masksToBounds = true
-
-        self.layer.shadowColor = UIColor.gray.cgColor
-        self.layer.shadowOffset = CGSize(width: 1, height: 1)
-        self.layer.shadowRadius = 1
-        self.layer.shadowOpacity = 0.5
-        self.layer.masksToBounds = false
-        self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
+        self.applyRoundedCornerAndShadow(borderType: .big)
     }
 }
