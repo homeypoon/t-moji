@@ -7,14 +7,21 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
+enum QuizResultType {
+    case ownRetake, ownQuiz, checkOtherResult, checkOwnResult
+}
+
 class QuizResultCollectionViewController: UICollectionViewController {
+    var quizResultType: QuizResultType?
+    
     var quiz: Quiz?
     var group: Group?
     var members = [User]() // test delete
-    var currentUser: User?
+    var resultUser: User?
     var userQuizHistory: UserQuizHistory?
     
     var quizHistory: QuizHistory?
@@ -23,18 +30,23 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
+            case quizSummary
             case currentUserResult
             case membersResults
             case otherTmatesResults
         }
         
         enum Item: Hashable, Comparable {
+            case quizSummary(currentUser: User, quizHistory: UserQuizHistory)
             case currentUserResult(member: User, quizHistory: UserQuizHistory)
             case revealedResult(member: User, quizHistory: UserQuizHistory)
             case unrevealedResult(member: User)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
+                case .quizSummary(let currentUser, let quizHistory):
+                    hasher.combine(currentUser)
+                    hasher.combine(quizHistory)
                 case .currentUserResult(let member, let quizHistory):
                     hasher.combine(member)
                     hasher.combine(quizHistory)
@@ -50,6 +62,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
             
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
+                case (.quizSummary(let lMember, let lQuizHistory), .quizSummary(let rMember, let rQuizHistory)):
+                    return lMember == rMember && lQuizHistory == rQuizHistory
                 case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
                     return lMember == rMember && lQuizHistory == rQuizHistory
                 case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
@@ -65,6 +79,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     struct Model {
         var userMasterTmates = [User]()
+        var currentUser: User?
     }
     
     var dataSource: DataSourceType!
@@ -75,14 +90,17 @@ class QuizResultCollectionViewController: UICollectionViewController {
         super.viewWillAppear(animated)
         
         fetchQuizHistory { [weak self] in
-            if let masterGroupmatesIDs = self?.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
-                print("masterGroupmatesIDsjkfjsdjfdf\(masterGroupmatesIDs)")
-                self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+            
+            self?.fetchUser {
+                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
+                    print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+                }
             }
         }
         
         
-        updateCollectionView()
+//        updateCollectionView()
     }
     
     
@@ -100,6 +118,17 @@ class QuizResultCollectionViewController: UICollectionViewController {
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
             
             switch item {
+            case .quizSummary(let currentUser, _):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuizSummary", for: indexPath) as! QuizSummaryCollectionViewCell
+                                
+                if self.quizResultType == .ownRetake {
+                    cell.configure(quizTitle: self.quiz?.title, isRetake: true, withPoints: currentUser.points)
+                } else if self.quizResultType == .ownQuiz {
+                    cell.configure(quizTitle: self.quiz?.title, isRetake: false, withPoints: currentUser.points)
+                }
+                
+                
+                return cell
             case .currentUserResult(_, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CurrentUserResult", for: indexPath) as! CurrentUserResultCollectionViewCell
                 
@@ -130,26 +159,43 @@ class QuizResultCollectionViewController: UICollectionViewController {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
-            // Current User Result
-            if sectionIndex == 0  {
+            switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
+                
+            case .quizSummary:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(410))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
                 return section
-            } else  {
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
+            case .currentUserResult:
+                // Quiz Result
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                // Here we use 'count' parameter to specify the number of items per group, which is 2 in this case.
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(340))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2) // Use count: 2 to have two items per group.
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
+                
+                return section
+            default:
+                let itemSize =
+                NSCollectionLayoutSize(widthDimension:
+                        .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize =
+                NSCollectionLayoutSize(widthDimension:
+                        .fractionalWidth(0.75), heightDimension: .estimated(250))
+                
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .groupPagingCentered
                 
                 return section
             }
@@ -161,8 +207,19 @@ class QuizResultCollectionViewController: UICollectionViewController {
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
+        
+        sectionIDs.append(.quizSummary)
+        
+        if self.quizResultType == .ownQuiz || self.quizResultType == .ownRetake {
+            if let currentUser = self.model.currentUser {
+                itemsBySection[.quizSummary] = [ViewModel.Item.quizSummary(currentUser: currentUser, quizHistory: userQuizHistory!)]
+            }
+        } else {
+            itemsBySection[.quizSummary] = []
+        }
+        
         sectionIDs.append(.currentUserResult)
-        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: currentUser!, quizHistory: userQuizHistory!)]
+        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: resultUser!, quizHistory: userQuizHistory!)]
         
         sectionIDs.append(.membersResults)
         sectionIDs.append(.otherTmatesResults)
@@ -262,6 +319,46 @@ class QuizResultCollectionViewController: UICollectionViewController {
         }
     }
     
+    private func fetchUser(completion: @escaping () -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        let docRef = FirestoreService.shared.db.collection("users").document(userID)
+        
+        docRef.getDocument(as: User.self) { result in
+            switch result {
+            case .success(let user):
+                
+                var points = 0
+                if self.quizResultType == .ownQuiz {
+                    points = Points.takeQuiz
+                    
+                } else if self.quizResultType == .ownRetake {
+                    points = Points.takeQuiz
+                }
+                
+                
+                self.model.currentUser?.points += points
+                self.model.currentUser = user
+                
+                completion()
+                
+                if self.quizResultType == .ownQuiz || self.quizResultType == .ownRetake {
+                    
+                    
+                    docRef.updateData([
+                        "points": FieldValue.increment(Int64(points))
+                    ])
+                }
+                
+
+            case .failure(let error):
+                // Handle the error appropriately
+                self.presentErrorAlert(with: error.localizedDescription)
+                completion()
+            }
+        }
+    }
+    
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -283,6 +380,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
             }
         }
     }
+    
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)

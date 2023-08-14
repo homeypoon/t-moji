@@ -313,8 +313,9 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 print("tmatee2 \(tmate)")
                 
                 quizResultVC.quiz = self.quiz
-                quizResultVC.currentUser = tmate
+                quizResultVC.resultUser = tmate
                 quizResultVC.userQuizHistory = userQuizHistory
+                quizResultVC.quizResultType = .checkOtherResult
             }
         }
     }

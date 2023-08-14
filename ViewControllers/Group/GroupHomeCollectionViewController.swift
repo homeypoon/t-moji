@@ -327,9 +327,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 print("tmatee2 \(tmate)")
                 
                 quizResultVC.quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })
-                quizResultVC.currentUser = tmate
+                quizResultVC.resultUser = tmate
                 quizResultVC.userQuizHistory = userQuizHistory
                 quizResultVC.group = group
+                quizResultVC.quizResultType = .checkOtherResult
             }
         } else if segue.identifier == "showGroupSettings" {
             let groupSettingsVC = segue.destination as! GroupSettingsViewController
@@ -343,7 +344,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        guard let membersIDs = group?.membersIDs.filter({ $0 != currentUid }) else { return }
+        guard let membersIDs = group?.membersIDs.filter({ $0 != currentUid }),
+              !membersIDs.isEmpty
+        else { return }
         
         self.model.members.removeAll()
         self.model.userQuizHistoriesDict.removeAll()

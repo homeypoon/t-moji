@@ -126,6 +126,7 @@ extension UILabel {
     }
     
     func applyStyle(labelType: LabelType) {
+        print("applying label point")
         self.layer.cornerRadius = 13.0
         self.layer.borderWidth = 3.0
         self.layer.backgroundColor = UIColor.green.cgColor

@@ -241,8 +241,9 @@ class PersonalQuizViewController: UIViewController {
         
         let quizResultVC = segue.destination as! QuizResultCollectionViewController
         quizResultVC.quiz = self.quiz
-        quizResultVC.currentUser = self.currentUser
+        quizResultVC.resultUser = self.currentUser
         quizResultVC.userQuizHistory = self.userQuizHistory
+        quizResultVC.quizResultType = isRetakeQuiz ? .ownRetake : .ownQuiz
         
         self.navigationController?.popViewController(animated: true)
     }

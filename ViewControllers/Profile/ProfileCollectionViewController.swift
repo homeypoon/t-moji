@@ -350,8 +350,9 @@ class ProfileCollectionViewController: UICollectionViewController {
             if let senderInfo = sender as? (UserQuizHistory) {
                 let userQuizHistory = senderInfo
                 quizResultVC.quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })
-                quizResultVC.currentUser = self.user
+                quizResultVC.resultUser = self.user
                 quizResultVC.userQuizHistory = userQuizHistory
+                quizResultVC.quizResultType = .checkOwnResult
             }
         }
     }

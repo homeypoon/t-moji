@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
@@ -28,18 +29,23 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
+            case guessSummary
             case currentUserResult
             case membersResults
             case otherTmatesResults
         }
         
         enum Item: Hashable, Comparable {
+            case guessSummary(currentUser: User, quizHistory: UserQuizHistory)
             case currentUserResult(member: User, quizHistory: UserQuizHistory)
             case revealedResult(member: User, quizHistory: UserQuizHistory)
             case unrevealedResult(member: User)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
+                case .guessSummary(let currentUser, let quizHistory):
+                    hasher.combine(currentUser)
+                    hasher.combine(quizHistory)
                 case .currentUserResult(let member, let quizHistory):
                     hasher.combine(member)
                     hasher.combine(quizHistory)
@@ -70,6 +76,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     struct Model {
         var userMasterTmates = [User]()
+        var currentUser: User?
     }
     
     var dataSource: DataSourceType!
@@ -81,13 +88,15 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
         fetchQuizHistory { [weak self] in
             
-            if let masterGroupmatesIDs = self?.guessedUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
-                print("masterGroupmatesIDs\(masterGroupmatesIDs)")
-                self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+            self?.fetchUser {
+                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.guessedUser?.uid }), !masterGroupmatesIDs.isEmpty {
+                    print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+                }
             }
         }
         
-        updateCollectionView()
+//        updateCollectionView()
     }
     
     
@@ -106,10 +115,15 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
             
             
             switch item {
+            case .guessSummary(let currentUser, let quizHistory):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSummary", for: indexPath) as! GuessSummaryCollectionViewCell
+                cell.configure(quizTitle: self.quiz?.title, isCorrect: (self.guessedResultType == quizHistory.finalResult), withPoints: currentUser.points)
+                
+                return cell
+
             case .currentUserResult(_, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessResult", for: indexPath) as! GuessResultCollectionViewCell
-                
-                cell.configure(quizTitle: self.quiz?.title, resultType: quizHistory.finalResult, guessedResultType: self.guessedResultType, username: self.guessedUser?.username)
+                cell.configure(resultType: quizHistory.finalResult, guessedResultType: self.guessedResultType, username: self.guessedUser?.username)
                 
                 return cell
             case .revealedResult(let member, let quizHistory):
@@ -136,28 +150,44 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
-            // Current User Result
+            // Guess Summary
             if sectionIndex == 0  {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(505))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
                 return section
-            } else  {
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            } else if sectionIndex == 1  {
+                // Guess Result
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                    
+                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
+                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                    
+                    let section = NSCollectionLayoutSection(group: group)
+                    
+                    return section
+            } else {
+                let itemSize =
+                       NSCollectionLayoutSize(widthDimension:
+                      .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                // Here we use 'count' parameter to specify the number of items per group, which is 2 in this case.
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(340))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2) // Use count: 2 to have two items per group.
+                    let groupSize =
+                       NSCollectionLayoutSize(widthDimension:
+                       .fractionalWidth(0.75), heightDimension: .estimated(250))
+                
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
+                    section.orthogonalScrollingBehavior = .groupPagingCentered
                 
-                return section
+                    return section
             }
         }
     }
@@ -166,6 +196,12 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
+        
+        sectionIDs.append(.guessSummary)
+        
+        if let currentUser = self.model.currentUser {
+            itemsBySection[.guessSummary] = [ViewModel.Item.guessSummary(currentUser: currentUser, quizHistory: userQuizHistory!)]
+        }
         
         sectionIDs.append(.currentUserResult)
         itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: guessedUser!, quizHistory: userQuizHistory!)]
@@ -265,6 +301,33 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                     }
                 }
                 self.updateCollectionView()
+            }
+        }
+    }
+    
+    private func fetchUser(completion: @escaping () -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        let docRef = FirestoreService.shared.db.collection("users").document(userID)
+        
+        docRef.getDocument(as: User.self) { result in
+            switch result {
+            case .success(let user):
+                let points = self.guessedResultType == self.userQuizHistory?.finalResult ? Points.guessCorrect : Points.guessIncorrect
+                
+                
+                self.model.currentUser = user
+                self.model.currentUser?.points += points
+                
+                completion()
+                
+                docRef.updateData([
+                    "points": FieldValue.increment(Int64(points))
+                ])
+            case .failure(let error):
+                // Handle the error appropriately
+                self.presentErrorAlert(with: error.localizedDescription)
+                completion()
             }
         }
     }

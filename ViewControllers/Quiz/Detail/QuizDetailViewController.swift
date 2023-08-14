@@ -201,9 +201,12 @@ class QuizDetailViewController: UIViewController {
         } else if segue.identifier == "showResultDetails" {
             let quizResultVC = segue.destination as! QuizResultCollectionViewController
             quizResultVC.quiz = self.quiz
-            quizResultVC.currentUser = self.currentUser
+            quizResultVC.resultUser = self.currentUser
             
             quizResultVC.userQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == self.quiz?.id })
+            
+            quizResultVC.quizResultType = .checkOwnResult
+            
         } else if segue.identifier == "selectMember" {
             let selectMemberVC = segue.destination as! SelectMemberCollectionViewController
             selectMemberVC.quiz = quiz
