@@ -20,13 +20,11 @@ class ProfileCollectionViewController: UICollectionViewController {
     enum ViewModel {
         enum Section: Hashable, Comparable {
             case profileInfo
-            case rankings
             case userEmojis
             case userQuizHistory
         }
         enum Item: Hashable {
             case profile(user: User)
-            case ranking(globalRanking: Int, tmateRanking: Int)
             case emoji(resultType: ResultType)
             case userQuizHistory(userQuizHistory: UserQuizHistory)
             
@@ -34,9 +32,6 @@ class ProfileCollectionViewController: UICollectionViewController {
                 switch self {
                 case .profile(let user):
                     hasher.combine(user)
-                case .ranking(let globalRanking, let tmateRanking):
-                    hasher.combine(globalRanking)
-                    hasher.combine(tmateRanking)
                 case .emoji(let resultType):
                     hasher.combine(resultType)
                 case .userQuizHistory(let quizHistory):
@@ -50,8 +45,6 @@ class ProfileCollectionViewController: UICollectionViewController {
                     return lUser == rUser
                 case (.emoji(let lEmoji), .emoji(let rEmoji)):
                     return lEmoji == rEmoji
-                case (.ranking(let lGlobalRanking, let lTmateRanking), .ranking(let rGlobalRanking, let rTmateRanking)):
-                    return lGlobalRanking == rGlobalRanking && lTmateRanking == rTmateRanking
                 case (.userQuizHistory(let lQuizHistory), .userQuizHistory(let rQuizHistory)):
                     return lQuizHistory == rQuizHistory
                 default:
@@ -75,7 +68,6 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         checkForExistingProfile()
     }
     
@@ -126,12 +118,12 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
         self.model.userQuizHistory.removeAll()
-
+        
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
                 self.user = user
-                
+
                 self.model.userQuizHistory = user.userQuizHistory
                 self.updateCollectionView()
                 
@@ -149,13 +141,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             case .profile(let user):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileInfo", for: indexPath) as! ProfileInfoCollectionViewCell
                 
-                cell.configure(withUsername: user.username, withBio: user.bio, withPoints: user.points)
-                
-                return cell
-            case .ranking(let globalRanking, let tmateRanking):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Ranking", for: indexPath) as! ProfileRankingCollectionViewCell
-                
-//                cell.configure(withUsername: user.username, withBio: user.bio)
+                cell.configure(withUsername: user.username, withPoints: user.points)
                 
                 return cell
             case .emoji(let resultType):
@@ -163,15 +149,12 @@ class ProfileCollectionViewController: UICollectionViewController {
                 
                 cell.configure(withEmoji: resultType.emoji)
                 
-//                content.text = "\(resultType.emoji)"
-                
-                
                 return cell
             case .userQuizHistory(let userQuizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileQuizHistory", for: indexPath) as! ProfileQuizHistoryCollectionViewCell
                 let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
-            
-                    cell.configure(withQuizTitle: quizTitle, withResultType: userQuizHistory.finalResult, withTimePassed:  Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
+                
+                cell.configure(withQuizTitle: quizTitle, withResultType: userQuizHistory.finalResult, withTimePassed:  Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
             }
@@ -185,8 +168,6 @@ class ProfileCollectionViewController: UICollectionViewController {
             switch section {
             case .profileInfo:
                 sectionHeader.configure(title: "Guessed Results", colorName: "Text")
-            case .rankings:
-                sectionHeader.configure(title: "Rankings", colorName: "Text")
             case .userEmojis:
                 sectionHeader.configure(title: "Emoji Collection", colorName: "Text")
             case .userQuizHistory:
@@ -214,60 +195,64 @@ class ProfileCollectionViewController: UICollectionViewController {
             NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
             let sectionEdgeInsets = NSDirectionalEdgeInsets(
                 top: 8,
-                leading: 0,
-                bottom: 0,
+                leading: 8,
+                bottom: 40,
                 trailing: 0
             )
             
             // Profile info
             if sectionIndex == 0  {
+                let vertSpacing: CGFloat = 20
+                let infoHorzSpacing: CGFloat = 36
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(170))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: infoHorzSpacing,
+                    bottom: vertSpacing,
+                    trailing: infoHorzSpacing
+                )
                 
                 let section = NSCollectionLayoutSection(group: group)
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 36,
+                    leading: 0,
+                    bottom: 0,
+                    trailing: 0
+                )
                 
                 return section
-            } else if sectionIndex == 8  {
-                // ranking
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            } else if sectionIndex == 1  {
+                // emoji
+                let vertSpacing: CGFloat = 20
 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(120))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(40), heightDimension: .absolute(50))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                group.interItemSpacing = .fixed(horzSpacing)
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
                 section.boundarySupplementaryItems = [sectionHeader]
-                section.contentInsets = sectionEdgeInsets
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 20,
+                    bottom: 24,
+                    trailing: 20
+                )
                 
-                return section
-            } else if sectionIndex == 1 {
-                // emoji section
-                let availableWidth = environment.container.effectiveContentSize.width - 20 // 10pt leading + 10pt trailing contentInsets
-                let minimumItemWidth: CGFloat = 64 // Set the minimum desired width for each item
-                
-                // Calculate the number of items that can fit within the available width
-                let numberOfItemsInRow = max(1, Int(availableWidth / minimumItemWidth))
-                
-                // Calculate the actual item width based on the number of items
-                let itemWidth = (availableWidth - CGFloat(numberOfItemsInRow - 1) * 4) / CGFloat(numberOfItemsInRow)
-                
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth), heightDimension: .absolute(64)) // Set a fixed height here (e.g., 48 points)
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(48)) // Use the same fixed height for the group
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
-                
-                section.boundarySupplementaryItems = [sectionHeader]
-                section.contentInsets = sectionEdgeInsets
-
                 return section
             } else {
                 // user history
@@ -281,24 +266,30 @@ class ProfileCollectionViewController: UICollectionViewController {
                 
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
-                    leading: horzSpacing,
+                    leading: 0,
                     bottom: vertSpacing,
-                    trailing: horzSpacing
+                    trailing: 0
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
-                
-                section.contentInsets = sectionEdgeInsets
-                
+                                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: horzSpacing,
+                    bottom: 10,
+                    trailing: horzSpacing
+                )
+                                
                 return section
             }
         }
     }
     
     func updateCollectionView() {
-        guard let user = user else { return }
-
+        guard let user = self.user else { return }
+        print("collection view user \(user)")
+        
         var sectionIDs = [ViewModel.Section]()
         
         sectionIDs.append(.profileInfo)
@@ -321,7 +312,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         sectionIDs.append(.userQuizHistory)
         itemsBySection[.userQuizHistory] = quizHistoryItems
-                
+        
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
     }
     
@@ -335,7 +326,8 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     @IBAction func unwindToProfileCollectionVC(segue: UIStoryboardSegue) {
         guard segue.identifier == "saveUnwind" else { return }
-                
+        self.fetchUser()
+        dismiss(animated: false, completion: nil)
     }
     
     
@@ -374,12 +366,5 @@ class ProfileCollectionViewController: UICollectionViewController {
             }
         }
     }
-
-}
-
-
-extension ProfileCollectionViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 40, height: 40) // Return any non-zero size here
-    }
+    
 }

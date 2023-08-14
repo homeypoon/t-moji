@@ -27,23 +27,25 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             
             func hash(into hasher: inout Hasher) {
                 switch self {
-                case .topThreeTmates(let tmate, _):
+                case .topThreeTmates(let tmate, let ordinal):
                     hasher.combine(tmate)
-                case .remainingTmates(let tmate, _):
+                    hasher.combine(ordinal)
+                case .remainingTmates(let tmate, let ordinal):
                     hasher.combine(tmate)
+                    hasher.combine(ordinal)
                 }
             }
             
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
                 switch (lhs, rhs) {
-                case (.topThreeTmates(let lTmate, _), .topThreeTmates(let rTmate, _)):
-                    return lTmate == rTmate
-                case (.remainingTmates(let lTmate, _), .remainingTmates(let rTmate, _)):
-                    return lTmate == rTmate
-                case (.remainingTmates(let lTmate, _), .topThreeTmates(let rTmate, _)):
-                    return lTmate == rTmate
-                case (.topThreeTmates(let lTmate, _), .remainingTmates(let rTmate, _)):
-                    return lTmate == rTmate
+                case (.topThreeTmates(let lTmate, let lOrdinal), .topThreeTmates(let rTmate, let rOrdinal)):
+                    return lTmate == rTmate && lOrdinal == rOrdinal
+                case (.remainingTmates(let lTmate, let lOrdinal), .remainingTmates(let rTmate, let rOrdinal)):
+                    return lTmate == rTmate && lOrdinal == rOrdinal
+                case (.remainingTmates(let lTmate, let lOrdinal), .topThreeTmates(let rTmate, let rOrdinal)):
+                    return lTmate == rTmate && lOrdinal == rOrdinal
+                case (.topThreeTmates(let lTmate, let lOrdinal), .remainingTmates(let rTmate, let rOrdinal)):
+                    return lTmate == rTmate && lOrdinal == rOrdinal
                 }
             }
         }
@@ -68,7 +70,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             self.fetchGlobalUsers()
         }
         
-        updateCollectionView()
     }
     
     override func viewDidLoad() {
@@ -93,19 +94,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         updateCollectionView()
     }
     
-    // Method to update rankings for teammates
-    func updateRankingsForTmates() {
-        // Update teamMembers array based on points
-        print("self group mates\(self.model.currentUser?.masterGroupmatesIDs)")
-        if let masterGroupmatesIDs = self.model.currentUser?.masterGroupmatesIDs {
-            
-            model.sortedUserMasterTmates = model.sortedGlobalUsers.filter { user in
-                Array(Set(masterGroupmatesIDs)).contains(user.uid)
-            }
-            
-            print("master group mates\(masterGroupmatesIDs)")
-        }
-    }
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
@@ -186,6 +174,27 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         }
     }
     
+    // Method to update rankings for teammates
+    func updateRankingsForTmates() {
+        // Update teamMembers array based on points
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        print("self group mates\(self.model.currentUser?.masterGroupmatesIDs)")
+        if let masterGroupmatesIDs = self.model.currentUser?.masterGroupmatesIDs {
+            
+            print("model.sortedgloballll \(model.sortedGlobalUsers)")
+            model.sortedUserMasterTmates = model.sortedGlobalUsers.filter { user in
+                user.masterGroupmatesIDs.contains(currentUid) || user.uid == currentUid
+            }
+            
+            print("master group mates\(model.sortedUserMasterTmates)")
+        } else {
+            if let currentUser = self.model.currentUser {
+                model.sortedUserMasterTmates = [currentUser]
+            }
+    
+        }
+    }
+    
     func updateCollectionView() {
         // Sort the user master team members by points in descending order
         
@@ -219,9 +228,12 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         var previousUserPoints: Int?
 
         for (index, user) in sortedUsers.enumerated() {
-            if let previousPoints = previousUserPoints, user.points != previousPoints {
+            if let previousPoints = previousUserPoints, user.points != previousPoints, index != 0 {
                 currentRanking += 1
             }
+            
+            print("indexxx \(index) user \(user) ranking \(currentRanking)")
+
             
             let item: ViewModel.Item
             
@@ -282,6 +294,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             switch result {
             case .success(let user):
                 completion(user)
+                self.updateCollectionView()
                 
             case .failure(let error):
                 // Handle the error appropriately

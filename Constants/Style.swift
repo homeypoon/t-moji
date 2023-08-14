@@ -136,17 +136,17 @@ extension UILabel {
         switch borderedLabelType {
         case .profileEmoji:
             self.layer.cornerRadius = 18.0
-            //            self.contentView.layer.borderWidth = 0.1
-            //            self.contentView.layer.borderColor = UIColor.gray.cgColor
-            self.layer.masksToBounds = true
-            
-            self.layer.shadowColor = UIColor.black.cgColor
-            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-            self.layer.shadowRadius = 2
-            self.layer.shadowOpacity = 0.5
-            self.layer.masksToBounds = false
-            
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+                   self.layer.borderWidth = 1.0 // Increase the border width for a stronger border
+                   self.layer.borderColor = UIColor.black.cgColor // Change the border color if needed
+                   self.layer.masksToBounds = true
+                   
+                   self.layer.shadowColor = UIColor.black.cgColor
+                   self.layer.shadowOffset = CGSize(width: 4, height: 8)
+                   self.layer.shadowRadius = 2
+                   self.layer.shadowOpacity = 0.5
+                   self.layer.masksToBounds = false
+                   
+                   self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
         }
         
     }
@@ -161,8 +161,8 @@ extension UIProgressView {
         self.transform = .identity
         self.transform = self.transform.scaledBy(x: 1, y: 4.5)
         
-//        self.progressTintColor = UIColor.green
-//        self.trackTintColor = UIColor.lightGray
+        //        self.progressTintColor = UIColor.green
+        //        self.trackTintColor = UIColor.lightGray
         
         self.layer.cornerRadius = 12.0
         self.layer.masksToBounds = true

@@ -13,6 +13,6 @@ class ProfileEmojiCollectionViewCell: UICollectionViewCell {
     func configure(withEmoji emoji: String) {
         emojiLabel.text = emoji
         
-        emojiLabel.applyRoundedCornerAndShadow(borderedLabelType: .profileEmoji)
+        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }
 }

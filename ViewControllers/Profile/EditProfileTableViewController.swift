@@ -12,7 +12,6 @@ class EditProfileTableViewController: UITableViewController {
     var user: User?
 
     @IBOutlet var usernameTextField: UITextField!
-    @IBOutlet var bioTextView: UITextView!
     @IBOutlet var saveButton: UIBarButtonItem!
     
     override func viewDidLoad() {
@@ -20,7 +19,6 @@ class EditProfileTableViewController: UITableViewController {
         
         if let user = user {
             usernameTextField.text = user.username
-            bioTextView.text = user.bio
         }
         
         updateSaveButtonState()
@@ -61,15 +59,13 @@ class EditProfileTableViewController: UITableViewController {
         guard segue.identifier == "saveUnwind", let uid = Auth.auth().currentUser?.uid else { return }
         
         let username = usernameTextField.text!.trimmingCharacters(in: .whitespaces)
-        let bio = bioTextView.text.trimmingCharacters(in: .whitespaces)
-        
-        let profileInfoChanged = (username != user?.username || bio != user?.bio)
+       
+        let profileInfoChanged = username != user?.username
         
         if user != nil {
             user?.username = username
-            user?.bio = bio
         } else {
-            user = User(uid: uid ,username: username, bio: bio)
+            user = User(uid: uid ,username: username)
         }
         
         if profileInfoChanged {
@@ -85,7 +81,6 @@ class EditProfileTableViewController: UITableViewController {
         
         do {
             try collectionRef.document(userId).setData(from: user)
-            dismiss(animated: false, completion: nil)
         }
         catch {
             dismiss(animated: false, completion: nil)

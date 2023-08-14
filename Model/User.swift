@@ -14,10 +14,8 @@ struct User {
     typealias IsGuessCorrect = Bool
     typealias GroupID = String
     
-    
     var uid: String
     var username: String = ""
-    var bio: String? = ""
     
     @ServerTimestamp var joinTimestamp: Timestamp?
     
