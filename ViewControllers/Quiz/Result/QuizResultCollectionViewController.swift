@@ -107,6 +107,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -132,7 +134,9 @@ class QuizResultCollectionViewController: UICollectionViewController {
             case .currentUserResult(_, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CurrentUserResult", for: indexPath) as! CurrentUserResultCollectionViewCell
                 
-                cell.configure(withQuizTitle: self.quiz?.title, withResultType: quizHistory.finalResult)
+                let memberUsername = (self.quizResultType == .checkOtherResult) ? self.resultUser?.username : nil
+                
+                cell.configure(withQuizTitle: self.quiz?.title, withResultType: quizHistory.finalResult, memberUsername: memberUsername)
                 print("configured current ")
                 
                 return cell
@@ -151,11 +155,48 @@ class QuizResultCollectionViewController: UICollectionViewController {
             }
         }
         
+        dataSource.supplementaryViewProvider = { (collectionView, category, indexPath) in
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
+            let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            
+            if section == .membersResults {
+                if let group = self.group {
+                    sectionHeader.configure(title: "\(group.name) T-mates Results", colorName: "Text")
+                }
+            } else if section == .otherTmatesResults {
+                if let group = self.group {
+                    sectionHeader.configure(title: "Other T-mates Results", colorName: "Text")
+                } else {
+                    sectionHeader.configure(title: "T-mates Results", colorName: "Text")
+                }
+            } else {
+                sectionHeader.configure(title: "", colorName: "Text")
+            }
+            
+            return sectionHeader
+        }
+        
         return dataSource
     }
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
+        
+        let horzSpacing: CGFloat = 20
+        
+        let sectionHeaderItemSize =
+        NSCollectionLayoutSize(widthDimension:
+                .fractionalWidth(1), heightDimension: .estimated(48))
+        let sectionHeader =
+        NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+        
+        let sectionEdgeInsets = NSDirectionalEdgeInsets(
+            top: 8,
+            leading: 0,
+            bottom: 0,
+            trailing: 0
+        )
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
@@ -170,17 +211,21 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
+                section.boundarySupplementaryItems = [sectionHeader]
+                
                 return section
             case .currentUserResult:
                 // Quiz Result
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(380))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
+                section.boundarySupplementaryItems = [sectionHeader]
+                                
                 return section
             default:
                 let itemSize =
@@ -196,6 +241,8 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
+                
+                section.boundarySupplementaryItems = [sectionHeader]
                 
                 return section
             }
@@ -214,8 +261,6 @@ class QuizResultCollectionViewController: UICollectionViewController {
             if let currentUser = self.model.currentUser {
                 itemsBySection[.quizSummary] = [ViewModel.Item.quizSummary(currentUser: currentUser, quizHistory: userQuizHistory!)]
             }
-        } else {
-            itemsBySection[.quizSummary] = []
         }
         
         sectionIDs.append(.currentUserResult)
@@ -246,6 +291,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 } else {
                     // Ensure the userMasterTmate has a matching quiz history
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                        
                         // if user has guessed
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
                             itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: userMasterTmate, quizHistory: matchingQuizHistory))
@@ -256,6 +302,20 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 }
                 
             }
+        }
+        
+        if quizResultType == .checkOtherResult {
+            // if the current user has completed the quiz
+            if quizHistory!.completedUsers.contains(currentUid), let currentUser = model.currentUser, let matchingQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+                
+                if let group = self.group {
+                    itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
+                } else {
+                    itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
+                }
+                
+            }
+              
         }
         
         // Sort and update the dataSource

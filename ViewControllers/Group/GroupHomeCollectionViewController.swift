@@ -65,7 +65,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         var userQuizHistoriesDict = [User: [UserQuizHistory]]()
         
         var quizHistories = [QuizHistory]()
-        
     }
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>

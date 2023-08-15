@@ -12,8 +12,11 @@ import FirebaseAuth
 private let reuseIdentifier = "Cell"
 
 class ProfileCollectionViewController: UICollectionViewController {
+    @IBOutlet var settingsBarButton: UIBarButtonItem!
+    @IBOutlet var editProfileBarButton: UIBarButtonItem!
     
     var user: User?
+    var otherUser: User?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -27,6 +30,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             case profile(user: User)
             case emoji(resultType: ResultType)
             case userQuizHistory(userQuizHistory: UserQuizHistory)
+            case hiddenUserQuizHistory(userQuizHistory: UserQuizHistory)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -35,6 +39,8 @@ class ProfileCollectionViewController: UICollectionViewController {
                 case .emoji(let resultType):
                     hasher.combine(resultType)
                 case .userQuizHistory(let quizHistory):
+                    hasher.combine(quizHistory)
+                case .hiddenUserQuizHistory(let quizHistory):
                     hasher.combine(quizHistory)
                 }
             }
@@ -47,6 +53,23 @@ class ProfileCollectionViewController: UICollectionViewController {
                     return lEmoji == rEmoji
                 case (.userQuizHistory(let lQuizHistory), .userQuizHistory(let rQuizHistory)):
                     return lQuizHistory == rQuizHistory
+                case (.hiddenUserQuizHistory(let lQuizHistory), .hiddenUserQuizHistory(let rQuizHistory)):
+                    return lQuizHistory == rQuizHistory
+                default:
+                    return false
+                }
+            }
+            
+            static func < (lhs: Item, rhs: Item) -> Bool {
+                switch (lhs, rhs) {
+                case (.hiddenUserQuizHistory(let lUserQuizHistory), .hiddenUserQuizHistory( let rUserQuizHistory)):
+                    return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
+                case (.userQuizHistory(let lUserQuizHistory), .userQuizHistory(let rUserQuizHistory)):
+                    return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
+                case (.hiddenUserQuizHistory(_), .userQuizHistory(_)):
+                    return true
+                case (.userQuizHistory(_), .hiddenUserQuizHistory(_)):
+                    return false
                 default:
                     return false
                 }
@@ -56,11 +79,11 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     struct Model {
-        var userQuizHistory = [UserQuizHistory]()
-        
-        var resultTypes: [ResultType] {
-            return userQuizHistory.map { $0.finalResult }
-        }
+        var quizHistories = [QuizHistory]()
+    }
+    
+    func getResultTypes(userQuizHistories: [UserQuizHistory])-> [ResultType] {
+        return userQuizHistories.map { $0.finalResult }
     }
     
     var dataSource: DataSourceType!
@@ -68,7 +91,21 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        checkForExistingProfile()
+        
+        if otherUser == nil {
+            self.navigationItem.leftBarButtonItem = self.settingsBarButton
+            self.navigationItem.rightBarButtonItem = self.editProfileBarButton
+            self.tabBarController?.navigationItem.hidesBackButton = true
+            checkForExistingProfile()
+        } else {
+            self.navigationItem.leftBarButtonItem = nil
+            self.navigationItem.rightBarButtonItem = nil
+            self.tabBarController?.navigationItem.hidesBackButton = false
+            
+            if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
+                fetchQuizHistory(completedQuizIDs: completedQuizIDs)
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -117,14 +154,12 @@ class ProfileCollectionViewController: UICollectionViewController {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
-        self.model.userQuizHistory.removeAll()
         
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
                 self.user = user
 
-                self.model.userQuizHistory = user.userQuizHistory
                 self.updateCollectionView()
                 
             case .failure(let error):
@@ -152,9 +187,18 @@ class ProfileCollectionViewController: UICollectionViewController {
                 return cell
             case .userQuizHistory(let userQuizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileQuizHistory", for: indexPath) as! ProfileQuizHistoryCollectionViewCell
+                
                 let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
                 
                 cell.configure(withQuizTitle: quizTitle, withResultType: userQuizHistory.finalResult, withTimePassed:  Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
+                
+                return cell
+            case .hiddenUserQuizHistory(let userQuizHistory):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileHiddenQuizHistory", for: indexPath) as! ProfileHiddenQuizHistoryCollectionViewCell
+                
+                let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
+                
+                cell.configure(withQuizTitle: quizTitle, withTimePassed:  Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
             }
@@ -287,15 +331,17 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     func updateCollectionView() {
-        guard let user = self.user else { return }
-        print("collection view user \(user)")
         
+        guard let profileUser = otherUser != nil ? otherUser : self.user, let currentUid = Auth.auth().currentUser?.uid else { return }
+        print("collection view profileUser \(profileUser)")
+
+
         var sectionIDs = [ViewModel.Section]()
         
         sectionIDs.append(.profileInfo)
-        var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: user)]]
+        var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: profileUser)]]
         
-        let resultTypeItems = model.resultTypes.reduce(into: [ViewModel.Item]()) { partial, resultType in
+        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
             let item = ViewModel.Item.emoji(resultType: resultType)
             partial.append(item)
         }
@@ -304,8 +350,23 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         itemsBySection[.userEmojis] = resultTypeItems
         
+        for userQuizHistory in profileUser.userQuizHistory {
+            if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
+               quizHistory.completedUsers.contains(profileUser.uid) {
+                    
+                    if let matchingQuizHistory = profileUser.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                            itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.userQuizHistory(userQuizHistory: matchingQuizHistory))
+                        } else {
+                            itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.hiddenUserQuizHistory(userQuizHistory: matchingQuizHistory))
+                        }
+                    }
+                }
+            }
         
-        let quizHistoryItems = model.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
+        let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
+            
+            
             let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
             partial.append(item)
         }
@@ -314,6 +375,27 @@ class ProfileCollectionViewController: UICollectionViewController {
         itemsBySection[.userQuizHistory] = quizHistoryItems
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        print("itemsbyseeection \(itemsBySection)")
+    }
+    
+    func fetchQuizHistory(completedQuizIDs: [Int]) {
+
+        self.model.quizHistories.removeAll()
+        
+        FirestoreService.shared.db.collection("quizHistories").whereField("quizID", in: completedQuizIDs).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        self.model.quizHistories.append(try document.data(as: QuizHistory.self))
+                    } catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                self.updateCollectionView()
+            }
+        }
     }
     
     
@@ -348,11 +430,20 @@ class ProfileCollectionViewController: UICollectionViewController {
             let quizResultVC = segue.destination as! QuizResultCollectionViewController
             
             if let senderInfo = sender as? (UserQuizHistory) {
+                
                 let userQuizHistory = senderInfo
                 quizResultVC.quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })
-                quizResultVC.resultUser = self.user
+                
+                if otherUser != nil {
+                    quizResultVC.resultUser = otherUser
+                    quizResultVC.quizResultType = .checkOtherResult
+                } else {
+                    quizResultVC.resultUser = self.user
+                    quizResultVC.quizResultType = .checkOwnResult
+                }
+                
                 quizResultVC.userQuizHistory = userQuizHistory
-                quizResultVC.quizResultType = .checkOwnResult
+                
             }
         }
     }

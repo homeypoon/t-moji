@@ -254,6 +254,33 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         print(itemsBySection)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .remainingTmates(let tmate, _):
+                self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+                
+            case .topThreeTmates(let tmate, _):
+                self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "showLeaderboardUserProfile" {
+            let profileVC = segue.destination as! ProfileCollectionViewController
+            
+            if let senderInfo = sender as? User {
+                let tmate = senderInfo
+                
+                profileVC.otherUser = tmate
+                print("other userrr\(tmate)")
+            }
+        }
+    }
+    
     
     // Helper function to convert a number to its ordinal representation
     func ordinalNumber(from number: Int) -> String {

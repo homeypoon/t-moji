@@ -14,13 +14,17 @@ class CurrentUserResultCollectionViewCell: UICollectionViewCell {
     @IBOutlet var resultIsLabel: UILabel!
     
     
-    func configure(withQuizTitle quizTitle: String?, withResultType resultType: ResultType) {
+    func configure(withQuizTitle quizTitle: String?, withResultType resultType: ResultType, memberUsername: String?) {
         
         emojiLabel.text = "\(resultType.emoji)"
         resultNameLabel.text = "\(resultType.rawValue.capitalized)"
         resultDescriptionLabel.text = resultType.message
         
-        resultIsLabel.text = "Your Result is..."
+        if let username = memberUsername {
+            resultIsLabel.text = "\(username) got..."
+        } else {
+            resultIsLabel.text = "Your Result is..."
+        }
         
         // else resultIsLabel.text = "\(user) is..."
     }

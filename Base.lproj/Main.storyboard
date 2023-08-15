@@ -164,6 +164,9 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" title="Leaderboard" largeTitleDisplayMode="always" id="WIA-ZN-8jL"/>
+                    <connections>
+                        <segue destination="CUi-1Q-bk3" kind="show" identifier="showLeaderboardUserProfile" id="Uhf-ds-Jba"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZUs-jx-oKp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1378,6 +1381,66 @@
                                     <outlet property="timePassedLabel" destination="0Uu-wa-tpl" id="bTF-Ii-FvW"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ProfileHiddenQuizHistory" id="Xz3-PW-IIw" customClass="ProfileHiddenQuizHistoryCollectionViewCell" customModule="T_moji" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="333" width="393" height="82"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="77a-D5-OVr">
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="82"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HKV-fC-CFo">
+                                            <rect key="frame" x="22" y="8" width="349" height="66"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="Yw8-fQ-Dhb">
+                                                    <rect key="frame" x="0.0" y="0.0" width="292.33333333333331" height="66"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="751" text="Quiz Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FkJ-vG-rsb">
+                                                            <rect key="frame" x="0.0" y="0.0" width="84.666666666666671" height="46.666666666666664"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="~2 days ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6OK-rm-rUW">
+                                                            <rect key="frame" x="0.0" y="46.666666666666664" width="87.666666666666671" height="19.333333333333336"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="fZi-Au-3xj">
+                                                    <rect key="frame" x="292.33333333333331" y="0.0" width="56.666666666666686" height="66"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="? " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W5V-xP-jE7">
+                                                            <rect key="frame" x="0.0" y="14.000000000000004" width="25" height="38.333333333333343"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="32"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Pqi-Qq-Fgo">
+                                                            <rect key="frame" x="41" y="22" width="15.666666666666664" height="22.333333333333329"/>
+                                                            <color key="tintColor" systemColor="separatorColor"/>
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                                        </imageView>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                        </stackView>
+                                    </subviews>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="HKV-fC-CFo" secondAttribute="trailing" constant="22" id="NCp-wv-bKm"/>
+                                        <constraint firstItem="HKV-fC-CFo" firstAttribute="top" secondItem="77a-D5-OVr" secondAttribute="top" constant="8" id="PtL-m5-WSv"/>
+                                        <constraint firstItem="HKV-fC-CFo" firstAttribute="leading" secondItem="77a-D5-OVr" secondAttribute="leading" constant="22" id="lYy-t9-G1e"/>
+                                        <constraint firstAttribute="bottom" secondItem="HKV-fC-CFo" secondAttribute="bottom" constant="8" id="rpp-cD-BBw"/>
+                                    </constraints>
+                                </collectionViewCellContentView>
+                                <size key="customSize" width="393" height="82"/>
+                                <connections>
+                                    <outlet property="quizTitleLabel" destination="FkJ-vG-rsb" id="K96-pS-Di6"/>
+                                    <outlet property="timePassedLabel" destination="6OK-rm-rUW" id="Igv-Lx-F8T"/>
+                                </connections>
+                            </collectionViewCell>
                         </cells>
                         <connections>
                             <outlet property="dataSource" destination="CUi-1Q-bk3" id="B6p-1e-dpz"/>
@@ -1398,6 +1461,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="editProfileBarButton" destination="gL5-4E-1Mt" id="fP3-zG-gg0"/>
+                        <outlet property="settingsBarButton" destination="aDL-Jm-HVM" id="KCU-Kq-akN"/>
                         <segue destination="KRf-gy-dvM" kind="show" identifier="resultFromProfile" id="ytG-9c-ZQX"/>
                     </connections>
                 </collectionViewController>
@@ -1452,13 +1517,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Quiz Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ud-xd-IV8">
-                                <rect key="frame" x="20" y="123" width="353" height="0.0"/>
+                                <rect key="frame" x="20" y="123" width="353" height="24"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="24"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="9xX-5V-XOd">
-                                <rect key="frame" x="23.666666666666657" y="225.66666666666666" width="345.66666666666674" height="278.33333333333337"/>
+                                <rect key="frame" x="23.666666666666657" y="274.66666666666674" width="345.66666666666674" height="278.33333333333326"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="6Un-FU-sCV">
                                         <rect key="frame" x="0.0" y="0.0" width="345.66666666666669" height="135"/>
@@ -1538,7 +1603,7 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pfa-XH-xWb">
-                                <rect key="frame" x="23.666666666666657" y="552" width="345.66666666666674" height="48"/>
+                                <rect key="frame" x="23.666666666666657" y="601" width="345.66666666666674" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="n2r-vY-ADV"/>
                                 </constraints>
@@ -1551,7 +1616,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="752" text="Which sxx do you think xx got?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1he-pu-ZFQ">
-                                <rect key="frame" x="20" y="147" width="353" height="46.666666666666657"/>
+                                <rect key="frame" x="20" y="171" width="353" height="71.666666666666686"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -2506,7 +2571,8 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="ytG-9c-ZQX"/>
-        <segue reference="c0W-xN-dL4"/>
+        <segue reference="7on-uK-SsX"/>
+        <segue reference="Uhf-ds-Jba"/>
         <segue reference="vIK-zN-fSk"/>
     </inferredMetricsTieBreakers>
     <resources>
