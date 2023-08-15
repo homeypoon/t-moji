@@ -1464,6 +1464,7 @@
                         <outlet property="editProfileBarButton" destination="gL5-4E-1Mt" id="fP3-zG-gg0"/>
                         <outlet property="settingsBarButton" destination="aDL-Jm-HVM" id="KCU-Kq-akN"/>
                         <segue destination="KRf-gy-dvM" kind="show" identifier="resultFromProfile" id="ytG-9c-ZQX"/>
+                        <segue destination="eZe-Do-Vmq" kind="show" identifier="guessFromProfile" id="07G-sr-qaN"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DsF-HX-Em3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1615,7 +1616,7 @@
                                     <action selector="submitButtonPressed:" destination="eZe-Do-Vmq" eventType="touchUpInside" id="h5g-jk-C2c"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="752" text="Which sxx do you think xx got?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1he-pu-ZFQ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="752" text="Which one do you think user got?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1he-pu-ZFQ">
                                 <rect key="frame" x="20" y="171" width="353" height="71.666666666666686"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                 <nil key="textColor"/>
@@ -2571,7 +2572,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="ytG-9c-ZQX"/>
-        <segue reference="7on-uK-SsX"/>
+        <segue reference="07G-sr-qaN"/>
         <segue reference="Uhf-ds-Jba"/>
         <segue reference="vIK-zN-fSk"/>
     </inferredMetricsTieBreakers>

@@ -41,6 +41,8 @@ class GuessQuizViewController: UIViewController {
         super.viewDidLoad()
         
         updateUI()
+        
+        print("Userquizhistorryyyyyy\(quiz)")
 
         // Do any additional setup after loading the view.
     }
@@ -155,14 +157,14 @@ class GuessQuizViewController: UIViewController {
         
         guard segue.identifier == "submitMemberQuiz" else { return }
         
-        let navController = segue.destination as! GuessResultCollectionViewController
+        let guessResultVC = segue.destination as! GuessResultCollectionViewController
         
-        navController.group = self.group
-        navController.quiz = self.quiz
-        navController.members = self.members
-        navController.guessedUser = self.guessedMember
-        navController.userQuizHistory = self.userQuizHistory
-        navController.guessedResultType = self.guessedResultType
+        guessResultVC.group = self.group
+        guessResultVC.quiz = self.quiz
+        guessResultVC.members = self.members
+        guessResultVC.guessedUser = self.guessedMember
+        guessResultVC.userQuizHistory = self.userQuizHistory
+        guessResultVC.guessedResultType = self.guessedResultType
         
         self.navigationController?.popViewController(animated: true)
     }

@@ -159,7 +159,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             switch result {
             case .success(let user):
                 self.user = user
-
+                
                 self.updateCollectionView()
                 
             case .failure(let error):
@@ -273,7 +273,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             } else if sectionIndex == 1  {
                 // emoji
                 let vertSpacing: CGFloat = 20
-
+                
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(40), heightDimension: .absolute(50))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
@@ -317,14 +317,14 @@ class ProfileCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
-                                
+                
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 8,
                     leading: horzSpacing,
                     bottom: 10,
                     trailing: horzSpacing
                 )
-                                
+                
                 return section
             }
         }
@@ -334,8 +334,8 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         guard let profileUser = otherUser != nil ? otherUser : self.user, let currentUid = Auth.auth().currentUser?.uid else { return }
         print("collection view profileUser \(profileUser)")
-
-
+        
+        
         var sectionIDs = [ViewModel.Section]()
         
         sectionIDs.append(.profileInfo)
@@ -350,36 +350,44 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         itemsBySection[.userEmojis] = resultTypeItems
         
-        for userQuizHistory in profileUser.userQuizHistory {
-            if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
-               quizHistory.completedUsers.contains(profileUser.uid) {
+        sectionIDs.append(.userQuizHistory)
+        
+        if otherUser != nil {
+            
+            for userQuizHistory in profileUser.userQuizHistory {
+                if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
+                   quizHistory.completedUsers.contains(profileUser.uid) {
                     
                     if let matchingQuizHistory = profileUser.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                            print("\(userQuizHistory.quizID) .userquizhistory not hidennn")
                             itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.userQuizHistory(userQuizHistory: matchingQuizHistory))
                         } else {
+                            print("\(userQuizHistory.quizID) .hiddennn")
                             itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.hiddenUserQuizHistory(userQuizHistory: matchingQuizHistory))
                         }
                     }
                 }
             }
-        
-        let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
+        } else {
             
+            let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
+                
+                
+                let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
+                partial.append(item)
+            }
             
-            let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
-            partial.append(item)
+            itemsBySection[.userQuizHistory] = quizHistoryItems
         }
         
-        sectionIDs.append(.userQuizHistory)
-        itemsBySection[.userQuizHistory] = quizHistoryItems
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         print("itemsbyseeection \(itemsBySection)")
     }
     
     func fetchQuizHistory(completedQuizIDs: [Int]) {
-
+        
         self.model.quizHistories.removeAll()
         
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", in: completedQuizIDs).getDocuments { (querySnapshot, error) in
@@ -443,16 +451,36 @@ class ProfileCollectionViewController: UICollectionViewController {
                 }
                 
                 quizResultVC.userQuizHistory = userQuizHistory
-                
             }
+            
+        } else if segue.identifier == "guessFromProfile" {
+            print("i'm in")
+            let guessQuizVC = segue.destination as! GuessQuizViewController
+            
+            print("senderinfooo \(sender)")
+            
+            if let senderInfo = sender as? UserQuizHistory {
+                let userQuizHistory = senderInfo
+                
+                print("myquizhiosoo\(userQuizHistory)")
+                
+                guessQuizVC.guessedMember = otherUser
+                guessQuizVC.userQuizHistory = userQuizHistory
+            }
+            
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         if let item = dataSource.itemIdentifier(for: indexPath) {
             switch item {
             case .userQuizHistory(let userQuizHistory):
                 self.performSegue(withIdentifier: "resultFromProfile", sender: userQuizHistory)
+            case .hiddenUserQuizHistory(let userQuizHistory):
+                self.performSegue(withIdentifier: "guessFromProfile", sender: userQuizHistory)
+                print("yes")
+                print("quizhhisofdodsf \(userQuizHistory)")
             default:
                 break
             }

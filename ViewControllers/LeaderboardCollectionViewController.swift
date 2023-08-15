@@ -258,10 +258,15 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         if let item = dataSource.itemIdentifier(for: indexPath) {
             switch item {
             case .remainingTmates(let tmate, _):
-                self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+                if tmate.uid != model.currentUser?.uid {
+                    self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+                    
+                }
                 
             case .topThreeTmates(let tmate, _):
-                self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+                if tmate.uid != model.currentUser?.uid {
+                    self.performSegue(withIdentifier: "showLeaderboardUserProfile", sender: tmate)
+                }
             }
         }
     }
