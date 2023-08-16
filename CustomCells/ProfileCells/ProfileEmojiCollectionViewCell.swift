@@ -10,8 +10,13 @@ import UIKit
 class ProfileEmojiCollectionViewCell: UICollectionViewCell {
     @IBOutlet var emojiLabel: UILabel!
     
-    func configure(withEmoji emoji: String) {
-        emojiLabel.text = emoji
+    func configure(withResultType resultType: ResultType, isHidden: Bool) {
+        if !isHidden {
+            emojiLabel.text = resultType.emoji
+        } else {
+            emojiLabel.text = "?"
+        }
+        
         
         self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }

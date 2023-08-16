@@ -28,7 +28,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
         enum Item: Hashable {
             case profile(user: User)
-            case emoji(resultType: ResultType)
+            case emoji(resultType: ResultType, isHidden: Bool)
             case userQuizHistory(userQuizHistory: UserQuizHistory)
             case hiddenUserQuizHistory(userQuizHistory: UserQuizHistory)
             
@@ -36,7 +36,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 switch self {
                 case .profile(let user):
                     hasher.combine(user)
-                case .emoji(let resultType):
+                case .emoji(let resultType, _):
                     hasher.combine(resultType)
                 case .userQuizHistory(let quizHistory):
                     hasher.combine(quizHistory)
@@ -49,7 +49,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 switch (lhs, rhs) {
                 case (.profile(let lUser), .profile(let rUser)):
                     return lUser == rUser
-                case (.emoji(let lEmoji), .emoji(let rEmoji)):
+                case (.emoji(let lEmoji, _), .emoji(let rEmoji, _)):
                     return lEmoji == rEmoji
                 case (.userQuizHistory(let lQuizHistory), .userQuizHistory(let rQuizHistory)):
                     return lQuizHistory == rQuizHistory
@@ -92,12 +92,16 @@ class ProfileCollectionViewController: UICollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Current User Profile
         if otherUser == nil {
+            self.tabBarController?.tabBar.isHidden = false
             self.navigationItem.leftBarButtonItem = self.settingsBarButton
             self.navigationItem.rightBarButtonItem = self.editProfileBarButton
             self.tabBarController?.navigationItem.hidesBackButton = true
             checkForExistingProfile()
         } else {
+            // Other User Profile
+            self.tabBarController?.tabBar.isHidden = true
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.rightBarButtonItem = nil
             self.tabBarController?.navigationItem.hidesBackButton = false
@@ -179,10 +183,10 @@ class ProfileCollectionViewController: UICollectionViewController {
                 cell.configure(withUsername: user.username, withPoints: user.points)
                 
                 return cell
-            case .emoji(let resultType):
+            case .emoji(let resultType, let isHidden):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserEmoji", for: indexPath) as! ProfileEmojiCollectionViewCell
                 
-                cell.configure(withEmoji: resultType.emoji)
+                cell.configure(withResultType: resultType, isHidden: isHidden)
                 
                 return cell
             case .userQuizHistory(let userQuizHistory):
@@ -341,15 +345,13 @@ class ProfileCollectionViewController: UICollectionViewController {
         sectionIDs.append(.profileInfo)
         var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: profileUser)]]
         
-        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
-            let item = ViewModel.Item.emoji(resultType: resultType)
-            partial.append(item)
-        }
+//        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
+//            let item = ViewModel.Item.emoji(resultType: resultType)
+//            partial.append(item)
+//        }
         
         sectionIDs.append(.userEmojis)
-        
-        itemsBySection[.userEmojis] = resultTypeItems
-        
+                
         sectionIDs.append(.userQuizHistory)
         
         if otherUser != nil {
@@ -362,23 +364,34 @@ class ProfileCollectionViewController: UICollectionViewController {
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
                             print("\(userQuizHistory.quizID) .userquizhistory not hidennn")
                             itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.userQuizHistory(userQuizHistory: matchingQuizHistory))
+                            itemsBySection[.userEmojis, default: []].append(ViewModel.Item.emoji(resultType: userQuizHistory.finalResult, isHidden: false))
                         } else {
                             print("\(userQuizHistory.quizID) .hiddennn")
                             itemsBySection[.userQuizHistory, default: []].append(ViewModel.Item.hiddenUserQuizHistory(userQuizHistory: matchingQuizHistory))
+                            
+                            itemsBySection[.userEmojis, default: []].append(ViewModel.Item.emoji(resultType: userQuizHistory.finalResult, isHidden: true))
                         }
                     }
                 }
             }
         } else {
             
+            let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
+                let item = ViewModel.Item.emoji(resultType: resultType, isHidden: false)
+                partial.append(item)
+            }
+            
+            itemsBySection[.userEmojis] = resultTypeItems
+
+            
             let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
-                
                 
                 let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
                 partial.append(item)
             }
             
             itemsBySection[.userQuizHistory] = quizHistoryItems
+            
         }
         
         
