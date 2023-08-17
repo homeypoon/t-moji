@@ -281,11 +281,21 @@ class PersonalQuizViewController: UIViewController {
         let collectionRef = FirestoreService.shared.db.collection("users")
         
         do {
+            var points = 0
+            if !isRetakeQuiz {
+                self.currentUser?.points += Points.takeQuiz
+                
+            } else {
+                self.currentUser?.points += Points.retakeQuiz
+            }
+            
             try collectionRef.document(userId).setData(from: self.currentUser)
+            
             completion()
         }
         catch {
             presentErrorAlert(with: error.localizedDescription)
+            completion()
         }
     }
     

@@ -9,7 +9,8 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 
-class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, GroupSettingsCellDelegate {
+class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, GroupSettingsCellDelegate, AddTmatesButtonTableViewCellDelegate {
+        
     
     func manageMemberButtonTapped(sender: GroupSettingsTableViewCell) {
         if let indexPath = tableView.indexPath(for: sender) {
@@ -25,38 +26,40 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        print("membersss \(members)")
+        
+        fetchGroup()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = self.group?.name
         
         tableView.delegate = self
         tableView.dataSource = self
         
-        members = Array(Set(members))
-        
-        members.sort(by: { $0.uid == group?.leader ? true : $1.uid == group?.leader ? false : $0.username < $1.username })
-        
-        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return members.count
+        return members.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GroupSettingsCell", for: indexPath) as! GroupSettingsTableViewCell
-        
-        cell.delegate = self
-        
-        let member = members[indexPath.row]
-        
-        cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
-        
-        
-        return cell
+        if indexPath.row < members.count {
+                // Group settings cells
+                let cell = tableView.dequeueReusableCell(withIdentifier: "GroupSettingsCell", for: indexPath) as! GroupSettingsTableViewCell
+                cell.delegate = self
+                let member = members[indexPath.row]
+                cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
+                return cell
+            } else {
+                
+                // Add tmates button
+                let cell = tableView.dequeueReusableCell(withIdentifier: "AddTmatesButtonCell", for: indexPath) as! AddTmatesButtonTableViewCell
+                cell.delegate = self
+                
+                return cell
+            }
     }
     
     func presentErrorAlert(with message: String) {
@@ -153,4 +156,84 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         return ProfileCollectionViewController(coder: coder, user: member)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "showAddTmates" {
+//            let navController = segue.destination as! UINavigationController
+//            let addUsersVC = navController.topViewController as! AddUsersCollectionViewController
+            
+            let addUsersVC = segue.destination as! AddUsersCollectionViewController
+            
+            addUsersVC.group = group
+            
+            guard let currentUid = Auth.auth().currentUser?.uid else { return }
+            addUsersVC.membersIDs = members.map { $0.uid }
+            
+//            addUsersVC
+                
+//                guessQuizVC.guessedMember = tmate
+//                guessQuizVC.userQuizHistory = userQuizHistory
+//                guessQuizVC.group = group
+            
+        }
+    }
+    
+    func addTmatesButtonTapped() {
+        performSegue(withIdentifier: "showAddTmates", sender: nil)
+    }
+    
+    private func fetchGroup() {
+        guard let groupID = group?.id else { return }
+        
+        let docRef = FirestoreService.shared.db.collection("groups").document(groupID)
+        
+        docRef.getDocument(as: Group.self) { result in
+            switch result {
+            case .success(let group):
+                
+                self.group = group
+                self.navigationItem.title = self.group?.name
+                
+                self.fetchMembers(membersIDs: group.membersIDs)
+                
+            case .failure(let error):
+                // Handle the error appropriately
+                self.presentErrorAlert(with: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func fetchMembers(membersIDs: [String]) {
+        self.members.removeAll()
+        
+        guard !membersIDs.isEmpty else { return }
+        
+        print("membersIDS in fetchuser \(membersIDs)")
+        
+        FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        let member = try document.data(as: User.self)
+                        if !self.members.contains(member) {
+                            self.members.append(member)
+                        }
+                    }
+                    catch {
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                
+                self.members.sort(by: { $0.uid == self.group?.leader ? true : $1.uid == self.group?.leader ? false : $0.username < $1.username })
+                self.tableView.reloadData()
+                print("reload")
+            }
+        }
+    }
+
+    @IBAction func unwindToGroupSettings(segue: UIStoryboardSegue) {
+    }
 }

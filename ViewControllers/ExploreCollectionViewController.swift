@@ -72,6 +72,24 @@ class ExploreCollectionViewController: UICollectionViewController {
         collectionView.collectionViewLayout = createLayout()
     }
     
+    // Reset quiz histories
+    func addQuizHistories() {
+        
+        for quiz in QuizData.quizzes {
+            
+            let collectionRef = FirestoreService.shared.db.collection("quizHistories")
+            
+            do {
+               
+                try collectionRef.document("\(quiz.id)").setData(from:  QuizHistory(quizID: quiz.id))
+            }
+            catch {
+                dismiss(animated: false, completion: nil)
+                presentErrorAlert(with: error.localizedDescription)
+            }
+        }
+        
+    }
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in

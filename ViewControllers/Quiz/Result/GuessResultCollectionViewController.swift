@@ -313,17 +313,9 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(let user):
-                let points = self.guessedResultType == self.userQuizHistory?.finalResult ? Points.guessCorrect : Points.guessIncorrect
-                
-                
                 self.model.currentUser = user
-                self.model.currentUser?.points += points
-                
                 completion()
                 
-                docRef.updateData([
-                    "points": FieldValue.increment(Int64(points))
-                ])
             case .failure(let error):
                 // Handle the error appropriately
                 self.presentErrorAlert(with: error.localizedDescription)

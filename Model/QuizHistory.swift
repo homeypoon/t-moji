@@ -12,5 +12,5 @@ struct QuizHistory: Codable {
     
     var quizID: Int
     
-    var completedUsers: [UserID]
+    var completedUsers: [UserID] = []
 }

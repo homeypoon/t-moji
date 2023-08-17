@@ -17,9 +17,9 @@ struct Price {
 }
 
 struct Points {
-    static let takeQuiz = 3
+    static let takeQuiz = 5
     static let retakeQuiz = 1
-    static let guessCorrect = 5
+    static let guessCorrect = 3
     static let guessIncorrect = 1
 }
 
@@ -38,6 +38,8 @@ enum QuizKind {
 
 enum SupplementaryViewKind {
     static let sectionHeader = "sectionHeader"
+    static let searchBar = "searchBar"
+    
     static let topLine = "topLine"
     static let bottomLine = "bottomLine"
 }

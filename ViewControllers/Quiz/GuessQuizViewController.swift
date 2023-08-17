@@ -7,7 +7,7 @@
 
 import UIKit
 import FirebaseAuth
-import FirebaseStorage
+import FirebaseFirestore
 
 class GuessQuizViewController: UIViewController {
     @IBOutlet var quizTitleLabel: UILabel!
@@ -116,8 +116,10 @@ class GuessQuizViewController: UIViewController {
         default:
             break
         }
-        updateUser {
-            self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+        fetchUser {
+            self.updateUser {
+                self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+            }
         }
     }
     
@@ -148,6 +150,35 @@ class GuessQuizViewController: UIViewController {
         catch {
             Helper.presentErrorAlert(on: self, with: error.localizedDescription)
         }
+    }
+    
+    private func fetchUser(completion: @escaping () -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        let docRef = FirestoreService.shared.db.collection("users").document(userID)
+        
+        docRef.getDocument(as: User.self) { result in
+            switch result {
+            case .success(_):
+                let points = self.guessedResultType == self.userQuizHistory?.finalResult ? Points.guessCorrect : Points.guessIncorrect
+                
+                docRef.updateData([
+                    "points": FieldValue.increment(Int64(points))
+                ])
+                completion()
+            case .failure(let error):
+                // Handle the error appropriately
+                self.presentErrorAlert(with: error.localizedDescription)
+                completion()
+            }
+        }
+    }
+    
+    func presentErrorAlert(with message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
     }
     
     

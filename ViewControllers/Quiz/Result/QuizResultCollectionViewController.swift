@@ -388,28 +388,9 @@ class QuizResultCollectionViewController: UICollectionViewController {
             switch result {
             case .success(let user):
                 
-                var points = 0
-                if self.quizResultType == .ownQuiz {
-                    points = Points.takeQuiz
-                    
-                } else if self.quizResultType == .ownRetake {
-                    points = Points.takeQuiz
-                }
-                
-                
-                self.model.currentUser?.points += points
                 self.model.currentUser = user
                 
                 completion()
-                
-                if self.quizResultType == .ownQuiz || self.quizResultType == .ownRetake {
-                    
-                    
-                    docRef.updateData([
-                        "points": FieldValue.increment(Int64(points))
-                    ])
-                }
-                
 
             case .failure(let error):
                 // Handle the error appropriately

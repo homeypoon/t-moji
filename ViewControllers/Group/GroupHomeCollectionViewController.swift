@@ -61,7 +61,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     }
     
     struct Model {
-        var members = [User]()
+        var tmates = [User]()
+        var groupMembers = [User]()
         var userQuizHistoriesDict = [User: [UserQuizHistory]]()
         
         var quizHistories = [QuizHistory]()
@@ -188,7 +189,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
@@ -210,7 +211,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(100))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
@@ -333,21 +334,21 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         } else if segue.identifier == "showGroupSettings" {
             let groupSettingsVC = segue.destination as! GroupSettingsViewController
-            groupSettingsVC.members = self.model.members
             groupSettingsVC.group = self.group
         }
     }
+    
     
     // Get all users in the group membersIDs array
     private func fetchUsers() {
         
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        guard let membersIDs = group?.membersIDs.filter({ $0 != currentUid }),
-              !membersIDs.isEmpty
+        guard let membersIDs = group?.membersIDs, !membersIDs.isEmpty
         else { return }
         
-        self.model.members.removeAll()
+        self.model.groupMembers.removeAll()
+        self.model.tmates.removeAll()
         self.model.userQuizHistoriesDict.removeAll()
         
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
@@ -359,18 +360,21 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     do {
                         let member = try document.data(as: User.self)
                         
-                        self.model.members.append(member)
+                        self.model.groupMembers.append(member)
                         
-                        let memberQuizHistory = member.userQuizHistory
-                        
-                        var quizHistory = [UserQuizHistory]()
-                        
-                        for memQuizHistory in memberQuizHistory {
-                            quizHistory.append(memQuizHistory)
+                        if member.uid != currentUid {
+                            self.model.tmates.append(member)
+                            
+                            let memberQuizHistory = member.userQuizHistory
+                            
+                            var quizHistory = [UserQuizHistory]()
+                            
+                            for memQuizHistory in memberQuizHistory {
+                                quizHistory.append(memQuizHistory)
+                            }
+                            
+                            self.model.userQuizHistoriesDict[member] = quizHistory
                         }
-                        
-                        self.model.userQuizHistoriesDict[member] = quizHistory
-                        
                     }
                     catch {
                         self.presentErrorAlert(with: error.localizedDescription)

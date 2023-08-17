@@ -23,9 +23,7 @@ struct User {
     
     var groupsIDs: [GroupID] = []
     var userQuizHistory: [UserQuizHistory] = []
-    
-    var isSelected: Bool = false
-    
+        
     var dollarCount: Int = 0
     var heartCount: Int = 0
     

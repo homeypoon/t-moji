@@ -12,19 +12,27 @@ import FirebaseFirestore
 class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, PotentialGroupMemberCellDelegate {
     func addToGroupButtonTapped(sender: PotentialGroupMemberTableViewCell) {
         if let indexPath = tableView.indexPath(for: sender) {
-            var user = users[indexPath.row]
-            user.isSelected.toggle()
-            users[indexPath.row] = user
-            tableView.reloadRows(at: [indexPath], with: .automatic)
+            let user = users[indexPath.row]
+            userSelectedState[user.uid] = !(userSelectedState[user.uid] ?? false) // Toggle selected state
+            tableView.reloadData()
             updateSaveButtonState()
         }
     }
     
+    
+    
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var createGroupButton: UIBarButtonItem!
     @IBOutlet var groupNameTextField: UITextField!
+    @IBOutlet var usersSearchBar: UISearchBar!
     
     var users = [User]()
+    private var allUsers = [User]()
+    
+    private var selectedUsers = [User]()
+    var unselectedUsers = [User]()
+    
+    private var userSelectedState: [String: Bool] = [:]
     
     var group: Group?
     
@@ -33,6 +41,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         tableView.delegate = self
         tableView.dataSource = self
+        usersSearchBar.delegate = self
         
         fetchUsers()
         
@@ -41,7 +50,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     
     // Enable save button when group name is not empty and at least one member is selected
     func updateSaveButtonState() {
-        let shouldEnableSaveButton = groupNameTextField.text?.isEmpty == false && users.contains { $0.isSelected }
+        let shouldEnableSaveButton = groupNameTextField.text?.isEmpty == false && users.contains { userSelectedState[$0.uid] ?? false }
         createGroupButton.isEnabled = shouldEnableSaveButton
     }
     
@@ -60,28 +69,37 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         }
     }
     
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Sort users array based on selected state
+        users.sort { (user1, user2) in
+            let isSelected1 = userSelectedState[user1.uid] ?? false
+            let isSelected2 = userSelectedState[user2.uid] ?? false
+            return isSelected1 && !isSelected2
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "PotentialGroupMember", for: indexPath) as! PotentialGroupMemberTableViewCell
         
         cell.delegate = self
         
         let user = users[indexPath.row]
         cell.usernameLabel?.text = user.username
-        
-        cell.addToGroupButton.isSelected = user.isSelected
+        cell.addToGroupButton.isSelected = userSelectedState[user.uid] ?? false // Use dictionary value
         
         return cell
     }
+    
     
     // Get all users in the app (temporary - later filter for only friended users)
     private func fetchUsers() {
         
         guard let uid = Auth.auth().currentUser?.uid else { return }
         self.users.removeAll()
+        self.allUsers.removeAll()
         
         FirestoreService.shared.db.collection("users").whereField(FieldPath.documentID(), isNotEqualTo: uid).getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -90,9 +108,9 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                 for document in querySnapshot!.documents {
                     do {
                         var user = try document.data(as: User.self)
-                        
-                        user.isSelected = false
+                        self.userSelectedState[user.uid] = false
                         self.users.append(user)
+                        self.allUsers.append(user)
                         
                     }
                     catch {
@@ -160,9 +178,9 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         let groupName = groupNameTextField.text!
-        var membersIDs = users
-            .filter { $0.isSelected }
-            .compactMap { $0.uid }
+        var membersIDs = userSelectedState
+            .filter { $0.value }
+            .map { $0.key }
         
         membersIDs.append(userID)
         
@@ -173,5 +191,29 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
         groupHomeVC.group = self.group
     }
+}
+
+extension AddGroupMembersViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            users = allUsers // Restore the original list when search text is empty
+        } else {
+            selectedUsers = users.filter { userSelectedState[$0.uid] ?? false }
+            
+            let filteredUsers = allUsers.filter { $0.username.lowercased().contains(searchText.lowercased()) }
+            
+            users = selectedUsers + filteredUsers.filter { !selectedUsers.contains($0) }
+            
+        }
+        tableView.reloadData()
+    }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
+        searchBar.resignFirstResponder()
+        selectedUsers = users.filter { userSelectedState[$0.uid] ?? false }
+        
+        users = allUsers // Restore the original list when search is canceled
+        tableView.reloadData()
+    }
 }
