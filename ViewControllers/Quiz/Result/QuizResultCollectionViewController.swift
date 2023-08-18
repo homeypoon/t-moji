@@ -318,14 +318,13 @@ class QuizResultCollectionViewController: UICollectionViewController {
             // if the current user has completed the quiz
             if quizHistory!.completedUsers.contains(currentUid), let currentUser = model.currentUser, let matchingQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
                 
-                if let group = self.group {
+                if self.group != nil {
                     itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
                 } else {
                     itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
                 }
                 
             }
-              
         }
         
         // Sort and update the dataSource

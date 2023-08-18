@@ -59,18 +59,18 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 }
             }
             
-//            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
-//                switch (lhs, rhs) {
-//                case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
-//                    return lMember == rMember && lQuizHistory == rQuizHistory
-//                case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
-//                    return lMember == rMember && lQuizHistory == rQuizHistory
-//                case (.unrevealedResult(let lMember), .unrevealedResult(let rMember)):
-//                    return lMember == rMember
-//                default:
-//                    return false
-//                }
-//            }
+            //            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
+            //                switch (lhs, rhs) {
+            //                case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
+            //                    return lMember == rMember && lQuizHistory == rQuizHistory
+            //                case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
+            //                    return lMember == rMember && lQuizHistory == rQuizHistory
+            //                case (.unrevealedResult(let lMember), .unrevealedResult(let rMember)):
+            //                    return lMember == rMember
+            //                default:
+            //                    return false
+            //                }
+            //            }
         }
     }
     
@@ -85,7 +85,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-                
+        
         fetchQuizHistory { [weak self] in
             
             self?.fetchUser {
@@ -96,7 +96,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
             }
         }
         
-//        updateCollectionView()
+        //        updateCollectionView()
     }
     
     
@@ -120,7 +120,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 cell.configure(quizTitle: self.quiz?.title, isCorrect: (self.guessedResultType == quizHistory.finalResult), withPoints: currentUser.points)
                 
                 return cell
-
+                
             case .currentUserResult(_, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessResult", for: indexPath) as! GuessResultCollectionViewCell
                 cell.configure(resultType: quizHistory.finalResult, guessedResultType: self.guessedResultType, username: self.guessedUser?.username)
@@ -163,31 +163,31 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 return section
             } else if sectionIndex == 1  {
                 // Guess Result
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                    
-                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
-                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                    
-                    let section = NSCollectionLayoutSection(group: group)
-                    
-                    return section
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                let section = NSCollectionLayoutSection(group: group)
+                
+                return section
             } else {
                 let itemSize =
-                       NSCollectionLayoutSize(widthDimension:
-                      .fractionalWidth(1), heightDimension: .fractionalWidth(1))
-                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                NSCollectionLayoutSize(widthDimension:
+                        .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                    let groupSize =
-                       NSCollectionLayoutSize(widthDimension:
-                       .fractionalWidth(0.75), heightDimension: .estimated(250))
+                let groupSize =
+                NSCollectionLayoutSize(widthDimension:
+                        .fractionalWidth(0.75), heightDimension: .estimated(250))
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
-                    section.orthogonalScrollingBehavior = .groupPagingCentered
+                section.orthogonalScrollingBehavior = .groupPagingCentered
                 
-                    return section
+                return section
             }
         }
     }
@@ -240,6 +240,16 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                     }
                 }
                 
+            }
+        }
+        
+        // if the current user has completed the quiz
+        if quizHistory!.completedUsers.contains(currentUid), let currentUser = model.currentUser, let matchingQuizHistory = currentUser.userQuizHistory.first(where: { $0.quizID == quiz?.id }) {
+            
+            if self.group != nil {
+                itemsBySection[.membersResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
+            } else {
+                itemsBySection[.otherTmatesResults, default: []].append(ViewModel.Item.revealedResult(member: currentUser, quizHistory: matchingQuizHistory))
             }
         }
         
@@ -349,9 +359,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
-        print("popping")
-        
+                
         if segue.identifier == "guessToRevealFromGuess" {
             let memberQuizVC = segue.destination as! GuessQuizViewController
             
@@ -363,7 +371,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 memberQuizVC.group = self.group
             }
             
-                        
+            
             self.navigationController?.popViewController(animated: true)
         }
     }
