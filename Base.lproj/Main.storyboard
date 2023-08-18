@@ -283,7 +283,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qe7-gj-A5y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="eNb-Gy-9VG" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="7327.480916030534" y="2953.5211267605637"/>
+            <point key="canvasLocation" x="8254.1984732824421" y="2953.5211267605637"/>
         </scene>
         <!--Explore-->
         <scene sceneID="V6K-8o-Hgh">
@@ -524,13 +524,13 @@
                         <outletCollection property="quizButtons" destination="LL4-fA-GjF" collectionClass="NSMutableArray" id="ke7-RW-GMe"/>
                         <outletCollection property="quizButtons" destination="CeB-eq-45x" collectionClass="NSMutableArray" id="50H-oe-tVg"/>
                         <segue destination="hlY-lH-rQv" kind="show" identifier="showPersonalQuiz" id="QTX-jx-ITe"/>
-                        <segue destination="KRf-gy-dvM" kind="show" identifier="showResultDetails" id="Bwj-UY-ATU"/>
+                        <segue destination="tI7-pJ-KT3" kind="show" identifier="showResultDetails" id="Bwj-UY-ATU"/>
                         <segue destination="Z10-sR-UCs" kind="show" identifier="selectMember" id="w7A-D2-0rE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HRB-i6-Mfv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3238.9312977099235" y="2926.7605633802818"/>
+            <point key="canvasLocation" x="4165.6488549618316" y="2926.7605633802818"/>
         </scene>
         <!--Guess For T-mates-->
         <scene sceneID="cI2-IG-0Q0">
@@ -677,12 +677,12 @@
                     <navigationItem key="navigationItem" title="Guess For T-mates" id="kY3-fS-hkF"/>
                     <connections>
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="guessForTmate" id="7on-uK-SsX"/>
-                        <segue destination="KRf-gy-dvM" kind="show" identifier="showResultFromSelectMember" id="cE2-nE-uHa"/>
+                        <segue destination="tI7-pJ-KT3" kind="show" identifier="showResultFromSelectMember" id="cE2-nE-uHa"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aGt-cN-jnC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4061.8320610687019" y="3034.5070422535214"/>
+            <point key="canvasLocation" x="5915.2671755725187" y="3034.5070422535214"/>
         </scene>
         <!--Add Users Collection View Controller-->
         <scene sceneID="r4u-3B-xE9">
@@ -847,7 +847,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qkA-Z0-fFA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="8DU-fh-q7M" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1694" y="4174"/>
+            <point key="canvasLocation" x="3547.3282442748091" y="4173.2394366197186"/>
         </scene>
         <!--Add Group Members View Controller-->
         <scene sceneID="og1-8e-u7f">
@@ -976,7 +976,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Ll-sZ-QVL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="Idp-tg-7MF" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2555" y="3835"/>
+            <point key="canvasLocation" x="4408.3969465648852" y="3834.5070422535214"/>
         </scene>
         <!--Group Home Collection View Controller-->
         <scene sceneID="KP1-F2-Bde">
@@ -1193,25 +1193,22 @@
                             <outlet property="delegate" destination="ey2-CB-G97" id="18V-MF-6Fr"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="eJn-QQ-Amg">
-                        <barButtonItem key="leftBarButtonItem" title="&lt; Home" id="aBI-eN-abL">
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="eJn-QQ-Amg">
+                        <barButtonItem key="rightBarButtonItem" image="gearshape.fill" catalog="system" id="NZZ-Up-Gds">
+                            <color key="tintColor" name="AccentColor"/>
                             <connections>
-                                <segue destination="XYV-58-EoS" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="8I7-d6-urn"/>
+                                <action selector="onGroupSettingsClick:" destination="ey2-CB-G97" id="3qQ-RQ-3y2"/>
                             </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="           " id="NZZ-Up-Gds">
-                            <color key="tintColor" systemColor="systemBackgroundColor"/>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="21h-sn-w79" kind="show" identifier="showGroupSettings" id="cJn-wE-zpc"/>
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="showGuessQuiz" id="0Pe-Oy-V1F"/>
-                        <segue destination="KRf-gy-dvM" kind="show" identifier="showRevealedResults" id="ZLO-ql-kZX"/>
+                        <segue destination="tI7-pJ-KT3" kind="show" identifier="showRevealedResults" id="ZLO-ql-kZX"/>
                         <segue destination="CUi-1Q-bk3" kind="show" identifier="showTmateProfile" id="PuQ-E1-i1W"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuF-VP-MsG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="XYV-58-EoS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-31.297709923664122" y="2744.3661971830988"/>
         </scene>
@@ -1304,14 +1301,14 @@
                             <tableViewSection id="kqg-vB-Nfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34.333332061767578"/>
+                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="33.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="33.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="33.666666666666664"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" style="UICTFontTextStyleCallout"/>
@@ -1657,13 +1654,13 @@
                     <connections>
                         <outlet property="editProfileBarButton" destination="gL5-4E-1Mt" id="fP3-zG-gg0"/>
                         <outlet property="settingsBarButton" destination="aDL-Jm-HVM" id="KCU-Kq-akN"/>
-                        <segue destination="KRf-gy-dvM" kind="show" identifier="resultFromProfile" id="ytG-9c-ZQX"/>
+                        <segue destination="tI7-pJ-KT3" kind="show" identifier="resultFromProfile" id="ytG-9c-ZQX"/>
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="guessFromProfile" id="07G-sr-qaN"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DsF-HX-Em3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5170.2290076335876" y="2967.605633802817"/>
+            <point key="canvasLocation" x="6096.9465648854957" y="2967.605633802817"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="eyt-gH-Jli">
@@ -1682,7 +1679,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KNY-C0-TUZ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6443.5114503816794" y="2967.605633802817"/>
+            <point key="canvasLocation" x="7370.2290076335876" y="2967.605633802817"/>
         </scene>
         <!--Se-->
         <scene sceneID="5n4-hp-3FU">
@@ -1706,7 +1703,7 @@
         <!--Guess Quiz View Controller-->
         <scene sceneID="jTb-sd-LBw">
             <objects>
-                <viewController id="eZe-Do-Vmq" customClass="GuessQuizViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GuessQuizViewController" id="eZe-Do-Vmq" customClass="GuessQuizViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ByX-s2-eTU">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1848,12 +1845,12 @@
                         <outletCollection property="multiChoiceButtons" destination="3rh-RR-7V6" collectionClass="NSMutableArray" id="4GJ-ke-fhX"/>
                         <outletCollection property="multiChoiceButtons" destination="NhB-6a-KDj" collectionClass="NSMutableArray" id="yEG-59-WRf"/>
                         <outletCollection property="multiChoiceButtons" destination="3DR-8h-aEQ" collectionClass="NSMutableArray" id="inq-a6-yb7"/>
-                        <segue destination="mJe-QB-QTq" kind="show" identifier="submitMemberQuiz" id="xxA-7A-N9X"/>
+                        <segue destination="1qC-ZX-dNd" kind="show" identifier="submitMemberQuiz" id="xxA-7A-N9X"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gw9-xT-Uv1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-993" y="2744"/>
+            <point key="canvasLocation" x="-1192" y="2488"/>
         </scene>
         <!--Quiz Result-->
         <scene sceneID="uDz-Vd-d6G">
@@ -2148,7 +2145,13 @@
                         </connections>
                     </collectionView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Quiz Result" largeTitleDisplayMode="never" id="s6l-g3-f9A"/>
+                    <navigationItem key="navigationItem" title="Quiz Result" largeTitleDisplayMode="never" id="s6l-g3-f9A">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="Tmm-ry-enq">
+                            <connections>
+                                <action selector="dismissResultPressed:" destination="KRf-gy-dvM" id="ZCN-dN-8LJ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="guessToRevealFromPersonal" id="c0W-xN-dL4"/>
@@ -2156,7 +2159,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EX1-a7-ejN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1228.2442748091603" y="3562.6760563380285"/>
+            <point key="canvasLocation" x="-301.52671755725191" y="3562.6760563380285"/>
         </scene>
         <!--Group Settings View Controller-->
         <scene sceneID="9Zc-hv-ETc">
@@ -2269,7 +2272,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kGu-Bt-wiw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="3PC-l7-MNj" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="904.58015267175574" y="4069.7183098591549"/>
+            <point key="canvasLocation" x="2758.0152671755723" y="4069.7183098591549"/>
         </scene>
         <!--Personal Quiz View Controller-->
         <scene sceneID="g7T-mV-w5X">
@@ -2450,17 +2453,17 @@
                         <outletCollection property="multiChoiceButtons" destination="ZOE-8r-239" collectionClass="NSMutableArray" id="NK0-aD-qGc"/>
                         <outletCollection property="multiChoiceButtons" destination="pOE-N4-y1X" collectionClass="NSMutableArray" id="c9x-SY-Oz8"/>
                         <outletCollection property="multiChoiceButtons" destination="Ge6-g4-Sbl" collectionClass="NSMutableArray" id="CYW-OT-hDS"/>
-                        <segue destination="KRf-gy-dvM" kind="show" identifier="showPersonalResults" id="RGZ-EK-3ye"/>
+                        <segue destination="tI7-pJ-KT3" kind="show" identifier="showPersonalResults" id="RGZ-EK-3ye"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KMg-pR-yfB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3221" y="3646"/>
+            <point key="canvasLocation" x="5072.5190839694651" y="3645.7746478873241"/>
         </scene>
         <!--Guess Result-->
         <scene sceneID="a4F-WE-28e">
             <objects>
-                <collectionViewController id="mJe-QB-QTq" customClass="GuessResultCollectionViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="GuessResultCollectionViewController" id="mJe-QB-QTq" customClass="GuessResultCollectionViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="SYG-hh-LbK">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2753,7 +2756,13 @@
                         </connections>
                     </collectionView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Guess Result" largeTitleDisplayMode="never" id="XCQ-pp-Phw"/>
+                    <navigationItem key="navigationItem" title="Guess Result" largeTitleDisplayMode="never" id="XCQ-pp-Phw">
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="73H-kh-cuV">
+                            <connections>
+                                <action selector="dismissGuessResultPressed:" destination="mJe-QB-QTq" id="zJd-ad-7KO"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="guessToRevealFromGuess" id="dfi-qW-nKs"/>
@@ -2761,7 +2770,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V7m-Eh-SPS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-225" y="3646"/>
+            <point key="canvasLocation" x="569" y="4101"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="k1X-6V-5G6">
@@ -2780,10 +2789,49 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iih-ye-5NH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1610" y="3139"/>
+            <point key="canvasLocation" x="3461.8320610687019" y="3138.7323943661972"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="HJK-wD-KCV">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="tI7-pJ-KT3" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="wRm-dV-gLD"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HO4-Cq-Wcp">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="KRf-gy-dvM" kind="relationship" relationship="rootViewController" id="KDi-AD-AcA"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7uX-Ft-nz9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1228.2442748091603" y="3562.6760563380285"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="bCw-ET-PrF">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1qC-ZX-dNd" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="2OW-6K-Aqi"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="TMM-Dt-niZ">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="56"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="mJe-QB-QTq" kind="relationship" relationship="rootViewController" id="gkd-rV-4cQ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oR5-O2-PbD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1240" y="3958"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="cJn-wE-zpc"/>
         <segue reference="ZLO-ql-kZX"/>
         <segue reference="0Pe-Oy-V1F"/>
         <segue reference="PuQ-E1-i1W"/>
@@ -2802,6 +2850,9 @@
         <image name="person.fill" catalog="system" width="128" height="120"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
         <image name="trophy.fill" catalog="system" width="128" height="128"/>
+        <namedColor name="AccentColor">
+            <color red="1" green="0.79199999570846558" blue="0.15700000524520874" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="Blue">
             <color red="0.29803921568627451" green="0.6470588235294118" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

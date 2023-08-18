@@ -88,6 +88,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+//        navigationItem. = true
         
         fetchQuizHistory { [weak self] in
             
@@ -340,6 +341,9 @@ class QuizResultCollectionViewController: UICollectionViewController {
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }        
     }
     
     
@@ -445,8 +449,10 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 guessQuizVC.guessedMember = guessedMember
                 guessQuizVC.userQuizHistory = userQuizHistory
                 guessQuizVC.group = self.group
+                guessQuizVC.fromResultVC = true
             }
             
+
             self.navigationController?.popViewController(animated: true)
         }
     }

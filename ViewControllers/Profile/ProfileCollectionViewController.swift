@@ -397,6 +397,10 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         print("itemsbyseeection \(itemsBySection)")
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     func fetchQuizHistory(completedQuizIDs: [Int]) {
@@ -448,7 +452,8 @@ class ProfileCollectionViewController: UICollectionViewController {
             let detailController = navController.topViewController as! EditProfileTableViewController
             detailController.user = user
         } else if segue.identifier == "resultFromProfile" {
-            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            let navController = segue.destination as! UINavigationController
+            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
             
             if let senderInfo = sender as? (UserQuizHistory) {
                 

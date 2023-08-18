@@ -221,6 +221,10 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         print("myitems \(itemsBySection)")
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     func fetchQuizHistory(completion: @escaping () -> Void) {
@@ -304,7 +308,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             
             //            self.navigationController?.popViewController(animated: true)
         } else if segue.identifier == "showResultFromSelectMember" {
-            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            let navController = segue.destination as! UINavigationController
+            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
             
             if let senderInfo = sender as? (User, UserQuizHistory) {
                 let tmate = senderInfo.0

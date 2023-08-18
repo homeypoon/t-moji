@@ -265,6 +265,10 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         print("itemsbysiredction \(itemsBySection)")
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     
@@ -361,19 +365,29 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         super.prepare(for: segue, sender: sender)
                 
         if segue.identifier == "guessToRevealFromGuess" {
-            let memberQuizVC = segue.destination as! GuessQuizViewController
+            let guessQuizVC = segue.destination as! GuessQuizViewController
             
             if let senderInfo = sender as? (User) {
                 let member = senderInfo
-                memberQuizVC.members = self.members
-                memberQuizVC.guessedMember = member
-                memberQuizVC.userQuizHistory = userQuizHistory
-                memberQuizVC.group = self.group
+                guessQuizVC.members = self.members
+                guessQuizVC.guessedMember = member
+                guessQuizVC.userQuizHistory = userQuizHistory
+                guessQuizVC.group = self.group
+                guessQuizVC.fromResultVC = true
             }
             
             
             self.navigationController?.popViewController(animated: true)
         }
+    }
+    
+    @IBAction func dismissGuessResultPressed(_ sender: UIBarButtonItem) {
+        self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)
+
+//        self.dismiss(animated: true)
+//        self.navigationController?.popToRootViewController(animated: true)
+        print("dismiss")
+
     }
     
 }

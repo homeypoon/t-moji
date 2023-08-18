@@ -77,7 +77,8 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         
         let segmentedControl = UISegmentedControl(items: ["Global", "T-mates"])
-        segmentedControl.selectedSegmentIndex = 0  // Set the default selected segment index
+        segmentedControl.selectedSegmentIndex = 0
+        
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
         
         // Add the segmented control to the navigation bar
@@ -253,6 +254,9 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
         print(itemsBySection)
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

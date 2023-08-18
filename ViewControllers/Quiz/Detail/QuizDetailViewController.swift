@@ -199,7 +199,8 @@ class QuizDetailViewController: UIViewController {
             personalQuizVC.currentUser = currentUser
             personalQuizVC.quiz = quiz
         } else if segue.identifier == "showResultDetails" {
-            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            let navController = segue.destination as! UINavigationController
+            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
             quizResultVC.quiz = self.quiz
             quizResultVC.resultUser = self.currentUser
             

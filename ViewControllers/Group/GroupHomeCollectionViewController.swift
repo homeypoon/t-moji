@@ -83,12 +83,14 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         var quizHistories = [QuizHistory]()
         
         var currentUser: User?
+        
     }
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
     var dataSource: DataSourceType!
     var model = Model()
+    var selectedSegmentIndex: Int = 0
     
     init?(coder: NSCoder, group: Group) {
         self.group = group
@@ -108,6 +110,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             self.fetchGroup { [weak self] group in
                 // Update the group variable with the fetched group data
                 self?.group = group
+                self?.navigationItem.title = self?.group.name
                 
                 // Fetch users after getting the group data
                 self?.fetchUsers()
@@ -118,14 +121,18 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let button =  UIButton(type: .custom)
-        button.frame = CGRect(x: 0, y: 0, width: 2000, height: 40)
-        button.setTitle(group?.name, for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(clickOnButton), for: .touchUpInside)
-        navigationItem.titleView = button
+            
+        navigationItem.hidesBackButton = false
         
-        navigationItem.hidesBackButton = true
+        navigationItem.title = group.name
+        
+        let segmentedControl = UISegmentedControl(items: ["Guesses", "T-mates"])
+        segmentedControl.selectedSegmentIndex = 0
+        
+        segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
+        
+        // Add the segmented control to the navigation bar
+        navigationItem.titleView = segmentedControl
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -135,7 +142,14 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         collectionView.collectionViewLayout = createLayout()
     }
     
-    @objc func clickOnButton() {
+    @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
+        selectedSegmentIndex = sender.selectedSegmentIndex
+
+        updateCollectionView()
+    }
+    
+    
+    @IBAction func onGroupSettingsClick(_ sender: Any) {
         performSegue(withIdentifier: "showGroupSettings", sender: nil)
     }
     
@@ -286,44 +300,58 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
-        sectionIDs.append(.unrevealedMembers)
-        sectionIDs.append(.revealedMembers)
-        sectionIDs.append(.tmateEmojis)
-        
-        
-        for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
-            var userMasterTmateResultTypes = [ResultType?]()
+        switch selectedSegmentIndex {
+        case 0:
+            sectionIDs.append(.unrevealedMembers)
+            sectionIDs.append(.revealedMembers)
             
-            for userQuizHistory in userQuizHistories {
-                if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
-                   quizHistory.completedUsers.contains(userMasterTmate.uid) {
-                    
+            for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
+                
+                for userQuizHistory in userQuizHistories {
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
                             itemsBySection[.revealedMembers, default: []].append(ViewModel.Item.revealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
-                            userMasterTmateResultTypes.append(userQuizHistory.finalResult)
-                            
                         } else {
                             itemsBySection[.unrevealedMembers, default: []].append(ViewModel.Item.unrevealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
-                            userMasterTmateResultTypes.append(nil)
                         }
                     }
                 }
             }
-            itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: userMasterTmate, resultTypes: userMasterTmateResultTypes, isCurrentUser: false))
+            
+            itemsBySection[.unrevealedMembers] = itemsBySection[.unrevealedMembers]?.sorted()
+            itemsBySection[.revealedMembers] = itemsBySection[.revealedMembers]?.sorted()
+        case 1:
+            sectionIDs.append(.tmateEmojis)
+            
+            if let currentUser = model.currentUser {
+                itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: currentUser, resultTypes: currentUser.userQuizHistory.map { $0.finalResult }, isCurrentUser: true))
+            }
+            
+            for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
+                var userMasterTmateResultTypes = [ResultType?]()
+                
+                for userQuizHistory in userQuizHistories {
+                    if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
+                       quizHistory.completedUsers.contains(userMasterTmate.uid) {
+                        
+                        userMasterTmateResultTypes.append(userQuizHistory.finalResult)
+                    }
+                }
+                itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: userMasterTmate, resultTypes: userMasterTmateResultTypes, isCurrentUser: false))
+            }
+            
+            itemsBySection[.tmateEmojis] = itemsBySection[.tmateEmojis]?.sorted(by: >)
+        default:
+            break
         }
-        
-        if let currentUser = model.currentUser {
-            itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: currentUser, resultTypes: currentUser.userQuizHistory.map { $0.finalResult }, isCurrentUser: true))
-        }
-        
-        itemsBySection[.unrevealedMembers] = itemsBySection[.unrevealedMembers]?.sorted()
-        itemsBySection[.revealedMembers] = itemsBySection[.revealedMembers]?.sorted()
-        itemsBySection[.tmateEmojis] = itemsBySection[.tmateEmojis]?.sorted()
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
-    
+
     func fetchQuizHistory(completion: @escaping () -> Void) {
         self.model.quizHistories.removeAll()
         
@@ -371,6 +399,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "showGuessQuiz" {
+            
             let guessQuizVC = segue.destination as! GuessQuizViewController
             
             if let senderInfo = sender as? (User, UserQuizHistory) {
@@ -383,7 +412,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
             
         } else if segue.identifier == "showRevealedResults" {
-            let quizResultVC = segue.destination as! QuizResultCollectionViewController
+            let navController = segue.destination as! UINavigationController
+            let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
             
             if let senderInfo = sender as? (User, UserQuizHistory) {
                 let tmate = senderInfo.0

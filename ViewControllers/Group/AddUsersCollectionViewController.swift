@@ -242,6 +242,10 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
 
 
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     

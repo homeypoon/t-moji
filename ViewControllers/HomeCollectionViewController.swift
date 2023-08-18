@@ -122,6 +122,10 @@ class HomeCollectionViewController: UICollectionViewController {
         let sectionIDs = itemsBySection.keys.sorted()
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
     
     func presentErrorAlert(with message: String) {

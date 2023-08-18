@@ -48,7 +48,7 @@ class PersonalQuizViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
-        self.navigationItem.hidesBackButton = true
+//        self.navigationItem.hidesBackButton = true
     }
     
     override func viewDidLoad() {
@@ -239,13 +239,24 @@ class PersonalQuizViewController: UIViewController {
         
         guard segue.identifier == "showPersonalResults" else { return }
         
-        let quizResultVC = segue.destination as! QuizResultCollectionViewController
+        let navController = segue.destination as! UINavigationController
+        let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
+        
+//        let quizResultVC = segue.destination as! QuizResultCollectionViewController
         quizResultVC.quiz = self.quiz
         quizResultVC.resultUser = self.currentUser
         quizResultVC.userQuizHistory = self.userQuizHistory
         quizResultVC.quizResultType = isRetakeQuiz ? .ownRetake : .ownQuiz
         
+//        presentingViewController?.dismiss(animated: true, completion: nil)
+
+//        self.dismiss(animated: true)
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        navigationController?.isNavigationBarHidden = false
     }
     
     func addQuizHistory(completion: @escaping () -> Void) {

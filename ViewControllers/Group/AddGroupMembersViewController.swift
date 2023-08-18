@@ -117,7 +117,9 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
                     
-                    self.tableView.reloadData()
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                     
                 }
             }
@@ -205,7 +207,11 @@ extension AddGroupMembersViewController: UISearchBarDelegate {
             users = selectedUsers + filteredUsers.filter { !selectedUsers.contains($0) }
             
         }
-        tableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+        
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -214,6 +220,8 @@ extension AddGroupMembersViewController: UISearchBarDelegate {
         selectedUsers = users.filter { userSelectedState[$0.uid] ?? false }
         
         users = allUsers // Restore the original list when search is canceled
-        tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }

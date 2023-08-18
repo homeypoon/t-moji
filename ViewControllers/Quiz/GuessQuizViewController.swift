@@ -20,6 +20,8 @@ class GuessQuizViewController: UIViewController {
     
     @IBOutlet var multiChoiceButtons: [UIButton]!
     
+    var fromResultVC: Bool?
+    
     var quiz: Quiz?
     var group: Group?
     var userQuizHistory: UserQuizHistory?
@@ -188,7 +190,9 @@ class GuessQuizViewController: UIViewController {
         
         guard segue.identifier == "submitMemberQuiz" else { return }
         
-        let guessResultVC = segue.destination as! GuessResultCollectionViewController
+        let navController = segue.destination as! UINavigationController
+        let guessResultVC = navController.topViewController as! GuessResultCollectionViewController
+
         
         guessResultVC.group = self.group
         guessResultVC.quiz = self.quiz
@@ -197,6 +201,9 @@ class GuessQuizViewController: UIViewController {
         guessResultVC.userQuizHistory = self.userQuizHistory
         guessResultVC.guessedResultType = self.guessedResultType
         
+        
+        
         self.navigationController?.popViewController(animated: true)
+        
     }
 }
