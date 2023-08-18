@@ -89,7 +89,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         fetchQuizHistory { [weak self] in
             
             self?.fetchUser {
-                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.guessedUser?.uid }), !masterGroupmatesIDs.isEmpty {
+                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                     print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
                 }
@@ -214,7 +214,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         for userMasterTmate in model.userMasterTmates {
             
             // if the userMasterTmate has completed the quiz
-            if quizHistory!.completedUsers.contains(userMasterTmate.uid) {
+            if quizHistory!.completedUsers.contains(userMasterTmate.uid) && userMasterTmate.uid != self.guessedUser?.uid {
                 
                 // If userMasterTmate in the current group
                 if let group = group, group.membersIDs.contains(userMasterTmate.uid) {

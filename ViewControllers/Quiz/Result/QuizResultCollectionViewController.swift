@@ -91,12 +91,22 @@ class QuizResultCollectionViewController: UICollectionViewController {
         
         fetchQuizHistory { [weak self] in
             
+            guard let currentUid = Auth.auth().currentUser?.uid else { return }
+            //
+            
             self?.fetchUser {
-                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
-                    print("masterGroupmatesIDs\(masterGroupmatesIDs)")
+                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
+                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
                 }
             }
+            
+//            self?.fetchUser {
+//                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
+//                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
+//                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+//                }
+//            }
         }
         
         
@@ -274,7 +284,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
         for userMasterTmate in model.userMasterTmates {
             
             // if the userMasterTmate has completed the quiz
-            if quizHistory!.completedUsers.contains(userMasterTmate.uid) {
+            if quizHistory!.completedUsers.contains(userMasterTmate.uid) && userMasterTmate.uid != self.resultUser?.uid {
                 
                 // If userMasterTmate in the current group
                 if let group = group, group.membersIDs.contains(userMasterTmate.uid) {
