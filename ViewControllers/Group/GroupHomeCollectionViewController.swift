@@ -16,11 +16,12 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     var group: Group!
     
     enum ViewModel {
-        enum Section: Hashable, Comparable {
+        enum Section: Hashable {
             case unrevealedMembers
-            case revealedMembers
+            case revealedMembers(quizTitle: String)
             case tmateEmojis
         }
+        
         enum Item: Hashable, Comparable {
             case unrevealedMember(tmate: User, userQuizHistory: UserQuizHistory)
             case revealedMember(tmate: User, userQuizHistory: UserQuizHistory)
@@ -165,11 +166,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 cell.configure(withUsername: tmate.username, withQuizTitle: quizTitle, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 return cell
             case .revealedMember(let tmate, let userQuizHistory):
-                let quizTitle = QuizData.quizzes.first(where: { $0.id == userQuizHistory.quizID })?.title
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedTmate", for: indexPath) as! RevealedTmateCollectionViewCell
                 
-                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withQuizTitle: quizTitle, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
+                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
             case .tmateEmoji(tmate: let tmate, resultTypes: let resultTypes, let isCurrentUser):
@@ -190,8 +190,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             switch section {
             case .unrevealedMembers:
                 sectionHeader.configure(title: "To be Guessed", colorName: "Text")
-            case .revealedMembers:
-                sectionHeader.configure(title: "Guessed T-mates", colorName: "Text")
+            case .revealedMembers(let quizTitle):
+                
+                sectionHeader.configure(title: quizTitle, colorName: "Text")
             case .tmateEmojis:
                 sectionHeader.configure(title: "Tmates Emoji Collection", colorName: "Text")
             }
@@ -253,7 +254,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
@@ -303,14 +304,25 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         switch selectedSegmentIndex {
         case 0:
             sectionIDs.append(.unrevealedMembers)
-            sectionIDs.append(.revealedMembers)
+            
+            let uniqueQuizIDs = fetchUniqueQuizIDs()
+                                
+                for quizID in uniqueQuizIDs {
+                    let quizTitle = QuizData.quizzes.first(where: { $0.id == quizID })?.title ?? "Guessed Tmates"
+                    sectionIDs.append(.revealedMembers(quizTitle: quizTitle))
+                }
+                
             
             for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
+
                 
                 for userQuizHistory in userQuizHistories {
+
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
-                            itemsBySection[.revealedMembers, default: []].append(ViewModel.Item.revealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
+                            let quizTitle = QuizData.quizzes.first(where: { $0.id == matchingQuizHistory.quizID })?.title ?? "Guessed Tmates"
+                            
+                            itemsBySection[.revealedMembers(quizTitle: quizTitle), default: []].append(ViewModel.Item.revealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                         } else {
                             itemsBySection[.unrevealedMembers, default: []].append(ViewModel.Item.unrevealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                         }
@@ -318,8 +330,22 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 }
             }
             
-            itemsBySection[.unrevealedMembers] = itemsBySection[.unrevealedMembers]?.sorted()
-            itemsBySection[.revealedMembers] = itemsBySection[.revealedMembers]?.sorted()
+            // Sort the section IDs based on quiz titles
+            sectionIDs.sort { (section1, section2) -> Bool in
+                switch (section1, section2) {
+                case (.unrevealedMembers, _):
+                    // .unrevealedMembers should always come first
+                    return true
+                case let (.revealedMembers(quizTitle1), .revealedMembers(quizTitle2)):
+                    // Sort revealed sections based on quiz titles
+                    return quizTitle1.localizedCompare(quizTitle2) == .orderedAscending
+                default:
+                    return false
+                }
+            }
+            
+            itemsBySection[.unrevealedMembers] = itemsBySection[.unrevealedMembers]?.sorted(by: >)
+            
         case 1:
             sectionIDs.append(.tmateEmojis)
             
@@ -351,6 +377,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             self.collectionView.reloadData()
         }
     }
+    
+    
 
     func fetchQuizHistory(completion: @escaping () -> Void) {
         self.model.quizHistories.removeAll()
@@ -372,6 +400,23 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
     }
+    
+    func fetchUniqueQuizIDs() -> [Int] {
+        var uniqueQuizIDs = Set<Int>()
+        
+        for userQuizHistory in model.currentUser?.userQuizHistory ?? [] {
+            uniqueQuizIDs.insert(userQuizHistory.quizID)
+        }
+        
+        for (_, userQuizHistories) in model.userQuizHistoriesDict {
+            for userQuizHistory in userQuizHistories {
+                uniqueQuizIDs.insert(userQuizHistory.quizID)
+            }
+        }
+        
+        return Array(uniqueQuizIDs)
+    }
+
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)

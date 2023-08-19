@@ -99,12 +99,6 @@ struct QuizData {
         // Fruit Quiz
         // CHANGE NEEDED
         Quiz(id: 2, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, questions: [
-            Question(text: "Which is your favourite genre?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Fantasy", correspondingResult: ResultType.apple),
-                Answer(text: "Action", correspondingResult: ResultType.banana),
-                Answer(text: "Comedy", correspondingResult: ResultType.orange),
-                Answer(text: "Romance", correspondingResult: ResultType.strawberry)
-            ]),
             Question(text: "Tea or Coffee?", type: .ranged, possibleAnswers: [
                 Answer(text: "Tea", correspondingResult: ResultType.pineapple),
                 Answer(text: "Slightly Tea", correspondingResult: ResultType.apple),

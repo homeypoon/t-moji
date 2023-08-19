@@ -97,18 +97,26 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     
     
     func createDataSource() -> DataSourceType {
+        
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
+            
+
+            
             switch item {
             case .topThreeTmates(let tmate, let ordinal):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopThreeLeaderboard", for: indexPath) as! TopThreeLeaderboardCollectionViewCell
                 
-                cell.configure(withOrdinal: ordinal, withUsername: tmate.username, withPoints: tmate.points)
-                
+                if let currentUid = Auth.auth().currentUser?.uid {
+                    cell.configure(withOrdinal: ordinal, withUsername: tmate.username, withPoints: tmate.points, isCurrentUser: tmate.uid == currentUid)
+                }
+
                 return cell
             case .remainingTmates(let tmate, let ordinal):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RemainingLeaderboard", for: indexPath) as! RemainingLeaderboardCollectionViewCell
                 
-                cell.configure(withOrdinal: ordinal, withUsername: tmate.username, withPoints: tmate.points)
+                if let currentUid = Auth.auth().currentUser?.uid {
+                    cell.configure(withOrdinal: ordinal, withUsername: tmate.username, withPoints: tmate.points, isCurrentUser: tmate.uid == currentUid)
+                }
                 
                 return cell
             }

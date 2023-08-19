@@ -51,7 +51,7 @@ enum ResultType: String {
         case .strawberry:
             return "You have a passionate and lively personality. Your enthusiasm for life is infectious, and you inspire others with your zest and energy. Your optimism and determination propel you towards success."
         case .mango:
-            return "You have a bold and exotic personality that draws people in. Your energy for life make you an unforgettable presence, and you always bring a touch of excitement to any situation."
+            return "You have a bold and exotic personality that draws people in. Your energy for life makes you an unforgettable presence, and you always bring a touch of excitement to any situation."
         case .pineapple:
             return "You have a warm and welcoming personality that makes everyone feel at ease. Your hospitality and generosity are your strengths, and you have a way of turning ordinary moments into special memories."
             
