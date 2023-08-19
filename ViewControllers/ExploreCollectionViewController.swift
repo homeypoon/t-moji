@@ -47,6 +47,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     
     var dataSource: DataSourceType!
     var model = Model()
+    var selectedSegmentIndex: Int = 0
+
     
     var searchController: UISearchController!
     
@@ -62,28 +64,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         navigationItem.searchController = searchController
         definesPresentationContext = true
     }
-    
-    //    func updateSearchResults(for searchController: UISearchController) {
-    //        guard let searchText = searchController.searchBar.text?.lowercased() else {
-    //            // No search text, handle as needed
-    //            return
-    //        }
-    //
-    //        // Filter your data based on the search text
-    //            let filteredQuizzes = QuizData.quizzes.filter { quiz in
-    //                return quiz.title.lowercased().contains(searchText) // Adjust the property you want to search by
-    //            }
-    //
-    //            // Create a new section with the filtered quizzes and update the collection view's data source
-    //            let filteredSection = ViewModel.Section.quizzes
-    //            var itemsBySection: [ViewModel.Section: [ViewModel.Item]] = [
-    //                filteredSection: filteredQuizzes.map { ViewModel.Item.quiz(quiz: $0, quizHistory: nil, completeState: false, currentUserResultType: nil, takenByText: "") }
-    //            ]
-    //
-    //            dataSource.applySnapshotUsing(sectionIds: [filteredSection], itemsBySection: itemsBySection)
-    //        // Filter your data based on searchText and update the collection view's data source
-    //        // Reload the collection view or apply snapshot changes
-    //    }
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text?.lowercased() else {
@@ -129,6 +109,21 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         collectionView.collectionViewLayout = createLayout()
         
         setUpSearchController()
+        
+        let segmentedControl = UISegmentedControl(items: ["All", "Not Taken"])
+        segmentedControl.selectedSegmentIndex = 0
+        
+        segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
+        
+        navigationItem.titleView = segmentedControl
+    }
+    
+    @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
+        selectedSegmentIndex = sender.selectedSegmentIndex
+
+        print("in segmented value change")
+        
+        updateCollectionView()
     }
     
     // Reset quiz histories
@@ -204,12 +199,16 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         sectionIDs.append(.quizzes)
         
-        let quizzes: [Quiz]!
+        var quizzes: [Quiz]!
         
         if let filteredQuizzes {
             quizzes = filteredQuizzes
         } else {
             quizzes = QuizData.quizzes
+        }
+        
+        if let user = model.user, selectedSegmentIndex == 1 {
+            quizzes = QuizData.quizzes.filter { _ in !model.quizHistories.flatMap{$0.completedUsers}.contains(user.uid) }
         }
         
         for quiz in quizzes {
@@ -234,7 +233,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                     completeState = true
                     currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == quiz.id })?.finalResult
                 }
-                
                 
                 if let completedTmates = model.completedTmates[quiz.id]?.filter({ $0.uid != user.uid }), !completedTmates.isEmpty {
                     

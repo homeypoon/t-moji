@@ -81,7 +81,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
         
-        // Add the segmented control to the navigation bar
         navigationItem.titleView = segmentedControl
         
         dataSource = createDataSource()
