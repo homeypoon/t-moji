@@ -63,9 +63,10 @@ class PersonalQuizViewController: UIViewController {
         for button in multiChoiceButtons {
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
                 return outgoing
             }
+            button.titleLabel?.textAlignment = .center
         }
         
         submitButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
