@@ -192,6 +192,8 @@ class GuessQuizViewController: UIViewController {
         
         let navController = segue.destination as! UINavigationController
         let guessResultVC = navController.topViewController as! GuessResultCollectionViewController
+        
+        guessResultVC.modalPresentationStyle = .fullScreen
 
         
         guessResultVC.group = self.group
@@ -200,7 +202,6 @@ class GuessQuizViewController: UIViewController {
         guessResultVC.guessedUser = self.guessedMember
         guessResultVC.userQuizHistory = self.userQuizHistory
         guessResultVC.guessedResultType = self.guessedResultType
-        
         
         
         self.navigationController?.popViewController(animated: true)

@@ -9,7 +9,7 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
-class ExploreCollectionViewController: UICollectionViewController {
+class ExploreCollectionViewController: UICollectionViewController, UISearchBarDelegate, UISearchResultsUpdating {
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -48,6 +48,63 @@ class ExploreCollectionViewController: UICollectionViewController {
     var dataSource: DataSourceType!
     var model = Model()
     
+    var searchController: UISearchController!
+    
+    func setUpSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.delegate = self
+        
+        // Customize search bar appearance
+        searchController.searchBar.placeholder = "Search Quizzes"
+        
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
+    //    func updateSearchResults(for searchController: UISearchController) {
+    //        guard let searchText = searchController.searchBar.text?.lowercased() else {
+    //            // No search text, handle as needed
+    //            return
+    //        }
+    //
+    //        // Filter your data based on the search text
+    //            let filteredQuizzes = QuizData.quizzes.filter { quiz in
+    //                return quiz.title.lowercased().contains(searchText) // Adjust the property you want to search by
+    //            }
+    //
+    //            // Create a new section with the filtered quizzes and update the collection view's data source
+    //            let filteredSection = ViewModel.Section.quizzes
+    //            var itemsBySection: [ViewModel.Section: [ViewModel.Item]] = [
+    //                filteredSection: filteredQuizzes.map { ViewModel.Item.quiz(quiz: $0, quizHistory: nil, completeState: false, currentUserResultType: nil, takenByText: "") }
+    //            ]
+    //
+    //            dataSource.applySnapshotUsing(sectionIds: [filteredSection], itemsBySection: itemsBySection)
+    //        // Filter your data based on searchText and update the collection view's data source
+    //        // Reload the collection view or apply snapshot changes
+    //    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text?.lowercased() else {
+            // No search text, handle as needed
+            return
+        }
+        
+        if searchText.isEmpty {
+            // No search text, display all quizzes
+            updateCollectionView()
+        } else {
+            // Filter your data based on the search text
+            let filteredQuizzes = QuizData.quizzes.filter { quiz in
+                return quiz.title.lowercased().contains(searchText) // Adjust the property you want to search by
+            }
+            
+            // Update the collection view with filtered results
+            updateCollectionView(filteredQuizzes: filteredQuizzes)
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
@@ -70,6 +127,8 @@ class ExploreCollectionViewController: UICollectionViewController {
         collectionView.dataSource = dataSource
         
         collectionView.collectionViewLayout = createLayout()
+        
+        setUpSearchController()
     }
     
     // Reset quiz histories
@@ -80,7 +139,7 @@ class ExploreCollectionViewController: UICollectionViewController {
             let collectionRef = FirestoreService.shared.db.collection("quizHistories")
             
             do {
-               
+                
                 try collectionRef.document("\(quiz.id)").setData(from:  QuizHistory(quizID: quiz.id))
             }
             catch {
@@ -117,7 +176,14 @@ class ExploreCollectionViewController: UICollectionViewController {
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(160))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+        
+        var group: NSCollectionLayoutGroup!
+        
+        if #available(iOS 16.0, *) {
+            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+        } else {
+            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+        }
         group.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
             leading: 0,
@@ -131,14 +197,22 @@ class ExploreCollectionViewController: UICollectionViewController {
         return UICollectionViewCompositionalLayout(section: section)
     }
     
-    func updateCollectionView() {
+    func updateCollectionView(filteredQuizzes: [Quiz]? = nil) {
         print("updating colleciton view explore")
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
         sectionIDs.append(.quizzes)
         
-        for quiz in QuizData.quizzes {
+        let quizzes: [Quiz]!
+        
+        if let filteredQuizzes {
+            quizzes = filteredQuizzes
+        } else {
+            quizzes = QuizData.quizzes
+        }
+        
+        for quiz in quizzes {
             //            var takenByText = TakenByText.noTmates
             var takenByText = ""
             var completeState = false
@@ -205,6 +279,7 @@ class ExploreCollectionViewController: UICollectionViewController {
             self.collectionView.reloadData()
         }
     }
+    
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)

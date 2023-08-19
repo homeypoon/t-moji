@@ -88,7 +88,6 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        navigationItem. = true
         
         fetchQuizHistory { [weak self] in
             

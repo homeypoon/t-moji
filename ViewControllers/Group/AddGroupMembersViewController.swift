@@ -24,7 +24,6 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var createGroupButton: UIBarButtonItem!
     @IBOutlet var groupNameTextField: UITextField!
-    @IBOutlet var usersSearchBar: UISearchBar!
     
     var users = [User]()
     private var allUsers = [User]()
@@ -41,7 +40,6 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         tableView.delegate = self
         tableView.dataSource = self
-        usersSearchBar.delegate = self
         
         fetchUsers()
         
