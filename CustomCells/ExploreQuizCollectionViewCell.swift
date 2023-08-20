@@ -22,8 +22,8 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         resultGroupButton.layer.cornerRadius = 8
         completeStateButton.layer.cornerRadius = 8
         
-        resultGroupButton.tintColor = .systemTeal
-        completeStateButton.tintColor = .systemPurple
+        resultGroupButton.tintColor = UIColor(named: "primaryPurple")
+        completeStateButton.tintColor = UIColor(named: "primaryRed")
         resultGroupButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = UIFont.systemFont(ofSize: 14, weight: .bold)

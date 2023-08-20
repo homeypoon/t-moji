@@ -44,20 +44,31 @@ class GuessQuizViewController: UIViewController {
         
         updateUI()
         
-        print("Userquizhistorryyyyyy\(quiz)")
-
-        // Do any additional setup after loading the view.
     }
     
 
     func updateUI() {
         for button in multiChoiceButtons {
+            button.tintColor = UIColor(named: "primaryLightOrange")
+            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+            
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
                 return outgoing
             }
+            
+            button.titleLabel?.textAlignment = .center
         }
+        
+        submitButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+            return outgoing
+        }
+        
+        submitButton.tintColor = UIColor(named: "primaryRed")
+        submitButton.setTitleColor(UIColor(named: "white"), for: [])
 
         if let quizHistory = userQuizHistory,
            let member = guessedMember {
@@ -95,11 +106,13 @@ class GuessQuizViewController: UIViewController {
     @IBAction func multiChoiceButtonTapped(_ sender: UIButton) {
         // Reset the color of all buttons
         for button in multiChoiceButtons {
-            button.tintColor = .systemTeal
+            button.tintColor = UIColor(named: "primaryLightOrange")
+            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
         }
         
         // Set the selected button's color
-        sender.tintColor = .systemBlue
+        sender.tintColor = UIColor(named: "primaryDarkOrange")
+        sender.setTitleColor(UIColor(named: "white"), for: [])
         
         selectedButton = sender
     }

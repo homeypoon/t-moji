@@ -66,6 +66,7 @@ class PersonalQuizViewController: UIViewController {
                 outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
                 return outgoing
             }
+            
             button.titleLabel?.textAlignment = .center
         }
         
@@ -114,15 +115,16 @@ class PersonalQuizViewController: UIViewController {
         
         
         for button in multiChoiceButtons {
-            button.tintColor = .systemTeal
+            button.tintColor = UIColor(named: "primaryLightBlue")
+            button.setTitleColor(UIColor(named: "darkBlueText"), for: [])
         }
         selectedButton = nil
         
         rangedSlider.setValue(0.5, animated: false)
-        multiChoiceButton1.setTitle(answers[0].text, for: .normal)
-        multiChoiceButton2.setTitle(answers[1].text, for: .normal)
-        multiChoiceButton3.setTitle(answers[2].text, for: .normal)
-        multiChoiceButton4.setTitle(answers[3].text, for: .normal)
+        multiChoiceButton1.setTitle(answers[0].text, for: [])
+        multiChoiceButton2.setTitle(answers[1].text, for: [])
+        multiChoiceButton3.setTitle(answers[2].text, for: [])
+        multiChoiceButton4.setTitle(answers[3].text, for: [])
     }
     
     func updateRangeStack(using answers: [Answer]) {
@@ -134,11 +136,14 @@ class PersonalQuizViewController: UIViewController {
     @IBAction func multiChoiceButtonTapped(_ sender: UIButton) {
         // Reset the color of all buttons
         for button in multiChoiceButtons {
-            button.tintColor = .systemTeal
+            button.tintColor = UIColor(named: "primaryLightBlue")
+            button.setTitleColor(UIColor(named: "darkBlueText"), for: [])
         }
         
         // Set the selected button's color
-        sender.tintColor = .systemBlue
+        sender.tintColor = UIColor(named: "primaryDarkBlue")
+        
+        sender.setTitleColor(UIColor(named: "white"), for: [])
         
         selectedButton = sender
     }
