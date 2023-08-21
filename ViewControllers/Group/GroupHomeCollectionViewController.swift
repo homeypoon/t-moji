@@ -227,24 +227,31 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
                 
             case .unrevealedMembers:
-                let vertSpacing: CGFloat = 10
+                let vertSpacing: CGFloat = 12
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
-                    leading: horzSpacing,
+                    leading: 0,
                     bottom: vertSpacing,
-                    trailing: horzSpacing
+                    trailing: 0
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 section.contentInsets = sectionEdgeInsets
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
                 
                 return section
             case .revealedMembers:
@@ -256,17 +263,23 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+                
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
-                    leading: horzSpacing,
+                    leading: 0,
                     bottom: vertSpacing,
-                    trailing: horzSpacing
+                    trailing: 0
                 )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 
-                section.contentInsets = sectionEdgeInsets
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: horzSpacing,
+                    bottom: vertSpacing,
+                    trailing: horzSpacing
+                )
                 
                 return section
                 
@@ -277,18 +290,35 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
+                } else {
+                    group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 2)
+                }
+                
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
+                    leading: 0,
+                    bottom: vertSpacing,
+                    trailing: 0
+                )
+                
+                group.interItemSpacing = .fixed(16)
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 20,
                     leading: horzSpacing,
                     bottom: vertSpacing,
                     trailing: horzSpacing
                 )
                 
-                let section = NSCollectionLayoutSection(group: group)
-                section.boundarySupplementaryItems = [sectionHeader]
-                
-                section.contentInsets = sectionEdgeInsets
+                section.interGroupSpacing = 16
                 
                 return section
             }

@@ -11,6 +11,21 @@ import FirebaseAuth
 
 private let reuseIdentifier = "Cell"
 
+class SectionBackgroundView: UICollectionReusableView {
+    
+    override func didMoveToSuperview() {
+        backgroundColor = .systemGray6
+        translatesAutoresizingMaskIntoConstraints = true
+        backgroundColor = .white
+        layer.cornerRadius = 15
+        clipsToBounds = true
+        layer.cornerRadius = 10.0
+        layer.borderWidth = 2.0
+        layer.borderColor = UIColor.black.cgColor
+    }
+}
+
+
 class ProfileCollectionViewController: UICollectionViewController {
     @IBOutlet var settingsBarButton: UIBarButtonItem!
     @IBOutlet var editProfileBarButton: UIBarButtonItem!
@@ -112,10 +127,13 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
     }
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
@@ -208,8 +226,10 @@ class ProfileCollectionViewController: UICollectionViewController {
             }
         }
         
-        dataSource.supplementaryViewProvider = { (collectionView, category, indexPath) in
+        dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) in
+            
             let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
             
             let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
             
@@ -232,7 +252,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
-        return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
             let horzSpacing: CGFloat = 20
             
@@ -241,12 +261,6 @@ class ProfileCollectionViewController: UICollectionViewController {
                     .fractionalWidth(1), heightDimension: .estimated(48))
             let sectionHeader =
             NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
-            let sectionEdgeInsets = NSDirectionalEdgeInsets(
-                top: 8,
-                leading: 8,
-                bottom: 40,
-                trailing: 0
-            )
             
             // Profile info
             if sectionIndex == 0  {
@@ -258,50 +272,62 @@ class ProfileCollectionViewController: UICollectionViewController {
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(170))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
-                group.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
-                    leading: infoHorzSpacing,
-                    bottom: vertSpacing,
-                    trailing: infoHorzSpacing
-                )
+                
+//                group.contentInsets = NSDirectionalEdgeInsets(
+//                    top: 0,
+//                    leading: infoHorzSpacing,
+//                    bottom: vertSpacing,
+//                    trailing: infoHorzSpacing
+//                )
                 
                 let section = NSCollectionLayoutSection(group: group)
+                
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 36,
+                    top: 0,
                     leading: 0,
-                    bottom: 0,
+                    bottom: 40,
                     trailing: 0
                 )
-                
+                    
                 return section
             } else if sectionIndex == 1  {
                 // emoji
                 let vertSpacing: CGFloat = 20
                 
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(40), heightDimension: .absolute(50))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                group.interItemSpacing = .fixed(horzSpacing)
-                group.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
-                    leading: horzSpacing,
-                    bottom: vertSpacing,
-                    trailing: horzSpacing
-                )
                 
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                group.interItemSpacing = .fixed(12)
+                                
                 let section = NSCollectionLayoutSection(group: group)
                 
                 section.boundarySupplementaryItems = [sectionHeader]
-                section.contentInsets = NSDirectionalEdgeInsets(
+                
+                let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
+                
+                backgroundItem.contentInsets = NSDirectionalEdgeInsets(
                     top: 8,
                     leading: 20,
-                    bottom: 24,
+                    bottom: 16,
                     trailing: 20
-                )
+                    )
+
+                section.decorationItems = [backgroundItem]
                 
+                section.interGroupSpacing = 12
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 12,
+                    leading: 40,
+                    bottom: 40,
+                    trailing: 40
+                )
+
                 return section
+                
             } else {
                 // user history
                 let vertSpacing: CGFloat = 10
@@ -318,7 +344,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 } else {
                     group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
                 }
-
+                
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: 0,
@@ -328,6 +354,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
+                
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 8,
@@ -339,6 +366,9 @@ class ProfileCollectionViewController: UICollectionViewController {
                 return section
             }
         }
+        
+        layout.register(SectionBackgroundView.self, forDecorationViewOfKind: SupplementaryViewKind.sectionBackgroundView)
+        return layout
     }
     
     func updateCollectionView() {
@@ -352,13 +382,13 @@ class ProfileCollectionViewController: UICollectionViewController {
         sectionIDs.append(.profileInfo)
         var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: profileUser)]]
         
-//        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
-//            let item = ViewModel.Item.emoji(resultType: resultType)
-//            partial.append(item)
-//        }
+        //        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
+        //            let item = ViewModel.Item.emoji(resultType: resultType)
+        //            partial.append(item)
+        //        }
         
         sectionIDs.append(.userEmojis)
-                
+        
         sectionIDs.append(.userQuizHistory)
         
         if otherUser != nil {
@@ -389,7 +419,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             }
             
             itemsBySection[.userEmojis] = resultTypeItems
-
+            
             
             let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
                 

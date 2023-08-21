@@ -19,7 +19,7 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
         levelLabel.applyStyle(labelType: .level)
         levelProgressView.applyStyle(progressType: .levelProgress)
         
-        self.applyRoundedCornerAndShadow(borderType: .big)
+        self.applyRoundedCornerAndShadow(borderType: .profileInfo)
         
         let (correspondingLevel, minPointsForCurrentLevel, maxPointsForCurrentLevel) = Levels.getCorrespondingLevelAndMaxPoints(for: currentPoints)
         print("currentPoints \(currentPoints)")

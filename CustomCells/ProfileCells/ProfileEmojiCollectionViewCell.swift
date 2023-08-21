@@ -17,7 +17,6 @@ class ProfileEmojiCollectionViewCell: UICollectionViewCell {
             emojiLabel.text = "?"
         }
         
-        
         self.applyRoundedCornerAndShadow(borderType: .smallStrong)
     }
 }

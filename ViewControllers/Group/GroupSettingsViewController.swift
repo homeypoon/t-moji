@@ -50,19 +50,18 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if indexPath.row < members.count {
-                // Group settings cells
-                let cell = tableView.dequeueReusableCell(withIdentifier: "GroupSettingsCell", for: indexPath) as! GroupSettingsTableViewCell
-                cell.delegate = self
-                let member = members[indexPath.row]
-                cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
-                return cell
-            } else {
-                
+        if indexPath.row == 0 {
                 // Add tmates button
                 let cell = tableView.dequeueReusableCell(withIdentifier: "AddTmatesButtonCell", for: indexPath) as! AddTmatesButtonTableViewCell
                 cell.delegate = self
-                
+                return cell
+            } else {
+                // Group settings cells
+                let adjustedIndexPath = IndexPath(row: indexPath.row - 1, section: indexPath.section)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "GroupSettingsCell", for: indexPath) as! GroupSettingsTableViewCell
+                cell.delegate = self
+                let member = members[adjustedIndexPath.row]
+                cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
                 return cell
             }
     }

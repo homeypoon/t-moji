@@ -35,7 +35,7 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15)
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0)
         ])
     }
     
