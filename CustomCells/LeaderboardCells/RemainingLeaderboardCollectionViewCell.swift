@@ -25,6 +25,6 @@ class RemainingLeaderboardCollectionViewCell: UICollectionViewCell {
         ordinalLabel.text = ordinal
         pointsLabel.text = "\(points) pts"
         
-        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
 }

@@ -18,6 +18,6 @@ class RevealedTmateCollectionViewCell: UICollectionViewCell {
         timePassedLabel.text = timePassed
         emojiLabel.text = resultType?.emoji
         
-        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
 }

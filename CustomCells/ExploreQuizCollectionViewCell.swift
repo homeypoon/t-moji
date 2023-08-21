@@ -47,6 +47,6 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         }
         takenByOthersLabel.text = takenByText
         
-        self.applyRoundedCornerAndShadow(borderType: .big)
+        self.applyRoundedCornerAndShadow(borderType: .exploreItem)
     }
 }

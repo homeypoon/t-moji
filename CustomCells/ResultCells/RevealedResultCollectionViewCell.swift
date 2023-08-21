@@ -25,5 +25,7 @@ class RevealedResultCollectionViewCell: UICollectionViewCell {
         usernameLabel.text = modifiedUsername
         resultTitleLabel.text = "\(resultType.emoji) \(resultType.rawValue.capitalized)"
         resultDescriptionLabel.text = resultType.message
+        
+        self.applyRoundedCornerAndShadow(borderType: .othersResult)
     }
 }

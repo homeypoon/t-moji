@@ -17,6 +17,6 @@ class ProfileHiddenQuizHistoryCollectionViewCell: UICollectionViewCell {
         quizTitleLabel.text = quizTitle
         timePassedLabel.text = timePassed
         
-        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
 }

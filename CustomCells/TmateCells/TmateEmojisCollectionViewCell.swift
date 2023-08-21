@@ -25,7 +25,7 @@ class TmateEmojisCollectionViewCell: UICollectionViewCell {
         
         // If the result type is nil, it means it's unguessed
         
-        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
     
     func getEmojiList(resultTypes: [ResultType?]) -> String {

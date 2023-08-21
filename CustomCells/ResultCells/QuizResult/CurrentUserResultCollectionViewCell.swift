@@ -26,6 +26,6 @@ class CurrentUserResultCollectionViewCell: UICollectionViewCell {
             resultIsLabel.text = "Your Result is..."
         }
         
-        // else resultIsLabel.text = "\(user) is..."
+        self.applyRoundedCornerAndShadow(borderType: .currentResult)
     }
 }

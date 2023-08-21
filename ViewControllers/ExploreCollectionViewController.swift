@@ -163,7 +163,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         let vertSpacing: CGFloat = 10
-        let horzSpacing: CGFloat = 12
+        let horzSpacing: CGFloat = 16
         
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -179,15 +179,11 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         } else {
             group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
         }
-        group.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: 0,
-            bottom: vertSpacing,
-            trailing: 0
-        )
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 0, trailing: horzSpacing)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 20, trailing: horzSpacing)
+        
+        section.interGroupSpacing = 16
         
         return UICollectionViewCompositionalLayout(section: section)
     }

@@ -92,11 +92,11 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                     print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+                } else {
+                    self?.updateCollectionView()
                 }
             }
         }
-        
-        //        updateCollectionView()
     }
     
     
@@ -155,7 +155,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(265))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -173,10 +173,12 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
                 return section
             } else {
+                // Revealed and Unrevealed Items
                 let itemSize =
                 NSCollectionLayoutSize(widthDimension:
                         .fractionalWidth(1), heightDimension: .fractionalWidth(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
                 
                 let groupSize =
                 NSCollectionLayoutSize(widthDimension:
@@ -184,9 +186,11 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
+                
+                
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .groupPagingCentered
-                
+                                
                 return section
             }
         }

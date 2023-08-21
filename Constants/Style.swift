@@ -10,39 +10,56 @@ import UIKit
 
 extension UICollectionViewCell {
     enum BorderType {
-        case profileInfo, big, smallStrong, smallWeak
+        case topBigBanner, exploreItem, smallItem, currentResult, othersResult
     }
     func applyRoundedCornerAndShadow(borderType: BorderType) {
         switch borderType {
-        case .big:
+        case .exploreItem:
             // explore
-            self.contentView.layer.cornerRadius = 18.0
+            self.contentView.layer.cornerRadius = 12.0
+            self.contentView.layer.borderWidth = 2
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+            self.contentView.layer.masksToBounds = true
+            
+//            self.layer.shadowColor = UIColor.black.cgColor
+//            self.layer.shadowOffset = CGSize(width: 3, height: 1.5)
+//            self.layer.shadowRadius = 1
+//            self.layer.shadowOpacity = 0.8
+//            self.layer.masksToBounds = false
+            
+            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
+        case .smallItem:
+            // guess, leaderboard
+            self.contentView.layer.cornerRadius = 4.0
+            self.contentView.layer.borderWidth = 1
+            self.contentView.layer.borderColor = UIColor.black.cgColor
+            self.contentView.layer.masksToBounds = true
+            
+//            self.layer.shadowColor = UIColor.black.cgColor
+//            self.layer.shadowOffset = CGSize(width: 1.5, height: 0.5)
+//            self.layer.shadowRadius = 1
+//            self.layer.shadowOpacity = 0.8
+//            self.layer.masksToBounds = false
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
+            
+        case .topBigBanner:
+            
+            self.contentView.layer.cornerRadius = 24.0
+            self.contentView.layer.maskedCorners = [ .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             //            self.contentView.layer.borderWidth = 0.1
             //            self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.contentView.layer.masksToBounds = true
             
             self.layer.shadowColor = UIColor.black.cgColor
-            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-            self.layer.shadowRadius = 2
-            self.layer.shadowOpacity = 0.5
+            self.layer.shadowOffset = CGSize(width: 4, height: 6)
+            self.layer.shadowRadius = 1
+            self.layer.shadowOpacity = 0.8
             self.layer.masksToBounds = false
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
-        case .smallStrong:
-            // guess, leaderboard
-            self.contentView.layer.cornerRadius = 8.0
-            self.contentView.layer.borderWidth = 0.4
-            self.contentView.layer.borderColor = UIColor.gray.cgColor // Use a weaker color, like light gray
-            self.contentView.layer.masksToBounds = true
             
-            self.layer.shadowColor = UIColor.gray.cgColor
-            self.layer.shadowOffset = CGSize(width: 1, height: 1)
-            self.layer.shadowRadius = 2
-            self.layer.shadowOpacity = 0.5
-            self.layer.masksToBounds = false
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
-        case .smallWeak:
-            self.contentView.layer.cornerRadius = 8.0
+        case .currentResult:
+            self.contentView.layer.cornerRadius = 4.0
             self.contentView.layer.borderWidth = 0.5
             self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.contentView.layer.masksToBounds = true
@@ -53,39 +70,18 @@ extension UICollectionViewCell {
             self.layer.shadowOpacity = 0.5
             self.layer.masksToBounds = false
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
-        case .profileInfo:
-            
-            self.contentView.layer.cornerRadius = 8.0
-            self.contentView.layer.maskedCorners = [ .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            self.contentView.layer.borderWidth = 1.0
-            self.contentView.layer.borderColor = UIColor.clear.cgColor
+        case .othersResult:
+            self.contentView.layer.cornerRadius = 2.0
+            self.contentView.layer.borderWidth = 0.5
+            self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.contentView.layer.masksToBounds = true
-
-            self.layer.shadowColor = UIColor.black.cgColor
-            self.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-            self.layer.shadowRadius = 2.0
+            
+            self.layer.shadowColor = UIColor.gray.cgColor
+            self.layer.shadowOffset = CGSize(width: 1, height: 1)
+            self.layer.shadowRadius = 1
             self.layer.shadowOpacity = 0.5
             self.layer.masksToBounds = false
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
-//            self.contentView.clipsToBounds = true
-//            self.contentView.cornerRadius = 10
-//            self.contentView.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-            
-//            self.contentView.layer.cornerRadius = 18.0
-//            self.contentView.layer.masksToBounds = true
-//            self.contentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-//            self.contentView.clipsToBounds = true
-//
-//            self.layer.shadowColor = UIColor.black.cgColor
-//            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-//            self.layer.shadowRadius = 2
-//            self.layer.shadowOpacity = 0.5
-//            self.layer.masksToBounds = false
-//
-//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
-//            self.clipsToBounds = true
-//            self.layer.cornerRadius = 10
-            
         }
         
     }
@@ -161,9 +157,9 @@ extension UILabel {
     func applyStyle(labelType: LabelType) {
         print("applying label point")
         self.layer.cornerRadius = 13.0
-        self.layer.borderWidth = 3.0
-        self.layer.backgroundColor = UIColor.green.cgColor
-        self.layer.borderColor = UIColor.green.cgColor
+        self.layer.borderWidth = 0.5
+        self.layer.backgroundColor = UIColor.white.cgColor
+//        self.layer.borderColor = UIColor.green.cgColor
     }
     
     func applyRoundedCornerAndShadow(borderedLabelType: BorderedLabelType) {
@@ -193,11 +189,11 @@ extension UIProgressView {
     
     func applyStyle(progressType: ProgressType) {
         self.transform = .identity
-        self.transform = self.transform.scaledBy(x: 1, y: 4.5)
+        self.transform = self.transform.scaledBy(x: 1, y: 6)
         
-        self.progressTintColor = UIColor(named: "primaryRed")
-        self.trackTintColor = UIColor(named: "primaryLightBlue")
-        
+        self.progressTintColor = UIColor(named: "progressViewTint")
+        self.trackTintColor = UIColor.white
+                
         self.layer.cornerRadius = 12.0
         self.layer.masksToBounds = true
     }

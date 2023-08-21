@@ -98,19 +98,21 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                     print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+                } else {
+                    self?.updateCollectionView()
                 }
             }
             
-//            self?.fetchUser {
-//                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
-//                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
-//                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
-//                }
-//            }
+            //            self?.fetchUser {
+            //                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
+            //                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
+            //                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
+            //                }
+            //            }
         }
         
         
-//        updateCollectionView()
+        //        updateCollectionView()
     }
     
     
@@ -132,7 +134,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
             switch item {
             case .quizSummary(let currentUser, _):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "QuizSummary", for: indexPath) as! QuizSummaryCollectionViewCell
-                                
+                
                 if self.quizResultType == .ownRetake {
                     cell.configure(quizTitle: self.quiz?.title, isRetake: true, withPoints: currentUser.points)
                 } else if self.quizResultType == .ownQuiz {
@@ -201,13 +203,6 @@ class QuizResultCollectionViewController: UICollectionViewController {
         let sectionHeader =
         NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
         
-        let sectionEdgeInsets = NSDirectionalEdgeInsets(
-            top: 8,
-            leading: 0,
-            bottom: 0,
-            trailing: 0
-        )
-        
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
@@ -216,7 +211,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(250))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(265))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -234,8 +229,15 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 20,
+                    bottom: 0,
+                    trailing: 20
+                )
+                
                 section.boundarySupplementaryItems = [sectionHeader]
-                                
+                
                 return section
             default:
                 let itemSize =
@@ -253,6 +255,21 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 section.orthogonalScrollingBehavior = .groupPagingCentered
                 
                 section.boundarySupplementaryItems = [sectionHeader]
+                
+                let availableLayoutWidth =
+                environment.container.effectiveContentSize.width
+                let groupWidth = availableLayoutWidth * 0.75
+                let remainingWidth = availableLayoutWidth - groupWidth
+                let halfOfRemainingWidth = remainingWidth / 2.0
+                let nonCategorySectionItemInset = CGFloat(4)
+                let itemLeadingAndTrailingInset = halfOfRemainingWidth +
+                nonCategorySectionItemInset
+                
+                section.contentInsets = NSDirectionalEdgeInsets(top: 0,
+                                                                leading: itemLeadingAndTrailingInset, bottom: 0,
+                                                                trailing: itemLeadingAndTrailingInset)
+                
+                section.interGroupSpacing = 20
                 
                 return section
             }
@@ -403,7 +420,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 self.model.currentUser = user
                 
                 completion()
-
+                
             case .failure(let error):
                 // Handle the error appropriately
                 self.presentErrorAlert(with: error.localizedDescription)
@@ -451,7 +468,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 guessQuizVC.fromResultVC = true
             }
             
-
+            
             self.navigationController?.popViewController(animated: true)
         }
     }

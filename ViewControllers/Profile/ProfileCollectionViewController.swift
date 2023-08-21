@@ -198,7 +198,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             case .profile(let user):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileInfo", for: indexPath) as! ProfileInfoCollectionViewCell
                 
-                cell.configure(withUsername: user.username, withPoints: user.points)
+                cell.configure(withUsername: user.username, withPoints: user.points, withCorrectGuesses: user.correctGuesses, withWrongGuesses: user.wrongGuesses)
                 
                 return cell
             case .emoji(let resultType, let isHidden):
@@ -269,7 +269,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(170))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(350))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 
@@ -335,7 +335,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(86))
                 
                 var group: NSCollectionLayoutGroup!
                 

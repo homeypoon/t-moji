@@ -31,7 +31,7 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
             pointsDescriptionLabel.text = "Quiz Completed"
         }
         
-        self.applyRoundedCornerAndShadow(borderType: .big)
+        self.applyRoundedCornerAndShadow(borderType: .topBigBanner)
         
         let (correspondingLevel, minPointsForCurrentLevel, maxPointsForCurrentLevel) = Levels.getCorrespondingLevelAndMaxPoints(for: currentPoints)
         print("currentPoints \(currentPoints)")

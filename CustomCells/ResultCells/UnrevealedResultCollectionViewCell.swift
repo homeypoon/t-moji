@@ -24,6 +24,8 @@ class UnrevealedResultCollectionViewCell: UICollectionViewCell {
         }
 
         usernameLabel.text = modifiedUsername
+        
+        self.applyRoundedCornerAndShadow(borderType: .othersResult)
     }
     
 }

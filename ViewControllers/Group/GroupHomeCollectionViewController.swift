@@ -261,7 +261,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 group.contentInsets = NSDirectionalEdgeInsets(
@@ -588,4 +588,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
     }
+    
+    
 }

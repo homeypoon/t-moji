@@ -22,19 +22,19 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
         
         // if guessedResultType == resultType
         if isCorrect {
-            correctLabel.text = "Correct"
+            correctLabel.text = "Correct Guess"
             pointsLabel.text = "+ \(Points.guessCorrect) pts"
             pointsDescriptionLabel.text = "Correct Guess"
         } else {
-            correctLabel.text = "Incorrect"
+            correctLabel.text = "Wrong Guess"
             pointsLabel.text = "+ \(Points.guessIncorrect) pt"
-            pointsDescriptionLabel.text = "Incorrect Guess"
+            pointsDescriptionLabel.text = "Wrong Guess"
         }
         
         levelLabel.applyStyle(labelType: .level)
         levelProgressView.applyStyle(progressType: .levelProgress)
         
-        self.applyRoundedCornerAndShadow(borderType: .big)
+        self.applyRoundedCornerAndShadow(borderType: .topBigBanner)
         
         let (correspondingLevel, minPointsForCurrentLevel, maxPointsForCurrentLevel) = Levels.getCorrespondingLevelAndMaxPoints(for: currentPoints)
         print("currentPoints \(currentPoints)")

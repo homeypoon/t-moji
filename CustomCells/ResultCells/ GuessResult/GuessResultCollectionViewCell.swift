@@ -22,5 +22,7 @@ class GuessResultCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = "\(resultType.emoji)"
         resultNameLabel.text = "\(resultType.rawValue.capitalized)"
         resultDescriptionLabel.text = resultType.message
+        
+        self.applyRoundedCornerAndShadow(borderType: .currentResult)
     }
 }

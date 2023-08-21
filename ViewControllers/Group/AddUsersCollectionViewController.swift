@@ -544,4 +544,5 @@ extension AddUsersCollectionViewController: UISearchBarDelegate {
         model.users = model.allUsers // Restore the original list when search is canceled
         updateCollectionView()
     }
+    
 }

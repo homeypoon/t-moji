@@ -48,7 +48,6 @@ class QuizDetailViewController: UIViewController {
     }
     
     private func updateUIText() {
-        currentUser.dollarCount = 28 // TEMP FOR TESTING
         
         print("updating uitext")
         print("self \(currentUserResultType)")

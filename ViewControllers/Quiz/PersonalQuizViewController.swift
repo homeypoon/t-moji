@@ -206,7 +206,6 @@ class PersonalQuizViewController: UIViewController {
                 // If it's a retake, replace the item at the found index with the new self.userQuizHistory
                 if isRetakeQuiz {
                     currentUser.userQuizHistory[index] = self.userQuizHistory
-                    currentUser.dollarCount -= Price.retakeQuiz
                 }
             } else {
                 // If it's not a retake, append the new userQuizHistory

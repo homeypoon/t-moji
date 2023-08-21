@@ -20,7 +20,7 @@ class RevealedSelectMemberCollectionViewCell: UICollectionViewCell {
         usernameLabel.text = username
         timePassedLabel.text = timePassed
         
-        self.applyRoundedCornerAndShadow(borderType: .smallStrong)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
     
 }
