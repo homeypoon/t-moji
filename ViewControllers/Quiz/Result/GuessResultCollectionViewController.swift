@@ -13,7 +13,16 @@ private let reuseIdentifier = "Cell"
 
 class GuessResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate {
     func guessToRevealPressed(sender: UnrevealedResultCollectionViewCell) {
-        performSegue(withIdentifier: "guessToRevealFromGuess", sender: nil)
+        if let indexPath = collectionView.indexPath(for: sender) {
+            if let item = dataSource.itemIdentifier(for: indexPath) {
+                switch item {
+                case .unrevealedResult(let member):
+                    performSegue(withIdentifier: "guessToRevealFromGuess", sender: member)
+                default:
+                    return
+                }
+            }
+        }
     }
     
     var quiz: Quiz?
@@ -145,6 +154,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
                 
                 cell.configure(withUsername: member.username, isCurrentUser: member.uid == currentUid)
+                cell.delegate = self
                 
                 return cell
             }
@@ -237,10 +247,10 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                         .fractionalWidth(0.75), heightDimension: .estimated(250))
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                                
+                
                 let section = NSCollectionLayoutSection(group: group)
                 section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
-                                
+                
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 let availableLayoutWidth =
@@ -420,19 +430,19 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let item = dataSource.itemIdentifier(for: indexPath) {
-            switch item {
-            case .unrevealedResult(let member):
-                self.performSegue(withIdentifier: "guessToRevealFromGuess", sender: (member))
-            default:
-                return
-            }
-        }
+        //        if let item = dataSource.itemIdentifier(for: indexPath) {
+        //            switch item {
+        //            case .unrevealedResult(let member):
+        //                self.performSegue(withIdentifier: "guessToRevealFromGuess", sender: (member))
+        //            default:
+        //                return
+        //            }
+        //        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-                
+        
         if segue.identifier == "guessToRevealFromGuess" {
             let guessQuizVC = segue.destination as! GuessQuizViewController
             
@@ -452,11 +462,11 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     @IBAction func dismissGuessResultPressed(_ sender: UIBarButtonItem) {
         self.view.window!.rootViewController?.dismiss(animated: true, completion: nil)
-
-//        self.dismiss(animated: true)
-//        self.navigationController?.popToRootViewController(animated: true)
+        
+        //        self.dismiss(animated: true)
+        //        self.navigationController?.popToRootViewController(animated: true)
         print("dismiss")
-
+        
     }
     
 }

@@ -181,9 +181,18 @@ class GuessQuizViewController: UIViewController {
             case .success(_):
                 let points = self.guessedResultType == self.userQuizHistory?.finalResult ? Points.guessCorrect : Points.guessIncorrect
                 
-                docRef.updateData([
-                    "points": FieldValue.increment(Int64(points))
-                ])
+                if self.guessedResultType == self.userQuizHistory?.finalResult {
+                    docRef.updateData([
+                        "points": FieldValue.increment(Int64(points)),
+                        "correctGuesses": FieldValue.increment(Int64(1))
+                    ])
+                } else {
+                    docRef.updateData([
+                        "points": FieldValue.increment(Int64(points)),
+                        "wrongGuesses": FieldValue.increment(Int64(1))
+                    ])
+                }
+               
                 completion()
             case .failure(let error):
                 // Handle the error appropriately

@@ -15,7 +15,21 @@ enum QuizResultType {
     case ownRetake, ownQuiz, checkOtherResult, checkOwnResult
 }
 
-class QuizResultCollectionViewController: UICollectionViewController {
+class QuizResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate {
+    
+    func guessToRevealPressed(sender: UnrevealedResultCollectionViewCell) {
+        if let indexPath = collectionView.indexPath(for: sender) {
+            if let item = dataSource.itemIdentifier(for: indexPath) {
+                switch item {
+                case .unrevealedResult(let tmate):
+                    performSegue(withIdentifier: "guessToRevealFromPersonal", sender: tmate)
+                default:
+                    return
+                }
+            }
+        }
+    }
+    
     var quizResultType: QuizResultType?
     
     var quiz: Quiz?
@@ -152,6 +166,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UnrevealedResult", for: indexPath) as! UnrevealedResultCollectionViewCell
                 
                 cell.configure(withUsername: member.username, isCurrentUser: member.uid == currentUid)
+                cell.delegate = self
                 
                 return cell
             }
@@ -432,14 +447,14 @@ class QuizResultCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let item = dataSource.itemIdentifier(for: indexPath) {
-            switch item {
-            case .unrevealedResult(let member):
-                self.performSegue(withIdentifier: "guessToRevealFromPersonal", sender: (member))
-            default:
-                return
-            }
-        }
+//        if let item = dataSource.itemIdentifier(for: indexPath) {
+//            switch item {
+//            case .unrevealedResult(let member):
+//                self.performSegue(withIdentifier: "guessToRevealFromPersonal", sender: (member))
+//            default:
+//                return
+//            }
+//        }
     }
     
     

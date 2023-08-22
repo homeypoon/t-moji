@@ -157,18 +157,19 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
                 }
 
-                group.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
+                let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
                     leading: horzSpacing,
                     bottom: vertSpacing,
                     trailing: horzSpacing
                 )
                 
-                let section = NSCollectionLayoutSection(group: group)
-                section.boundarySupplementaryItems = [sectionHeader]
+                section.interGroupSpacing = vertSpacing
                 
-                section.contentInsets = sectionEdgeInsets
-                
+                                
                 return section
             } else  {
                 let vertSpacing: CGFloat = 10
@@ -185,17 +186,18 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
                 }
                 
-                group.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
                     leading: horzSpacing,
                     bottom: vertSpacing,
                     trailing: horzSpacing
                 )
                 
-                let section = NSCollectionLayoutSection(group: group)
-                section.boundarySupplementaryItems = [sectionHeader]
-                
-                section.contentInsets = sectionEdgeInsets
+                section.interGroupSpacing = vertSpacing
                 
                 return section
             }

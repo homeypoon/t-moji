@@ -179,14 +179,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 .fractionalWidth(1), heightDimension: .absolute(80))
         let searchBar =
         NSCollectionLayoutBoundarySupplementaryItem(layoutSize: searchBarItemSize, elementKind: SupplementaryViewKind.searchBar, alignment: .bottom)
-        
-        let sectionEdgeInsets = NSDirectionalEdgeInsets(
-            top: 8,
-            leading: 0,
-            bottom: 0,
-            trailing: 0
-        )
-        
+
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
@@ -212,6 +205,15 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
+                
+                section.interGroupSpacing = 12
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: horzSpacing,
+                    bottom: 10,
+                    trailing: horzSpacing
+                )
                 
                 section.boundarySupplementaryItems = [sectionHeader]
                                 

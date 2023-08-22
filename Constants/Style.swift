@@ -13,7 +13,7 @@ extension UICollectionViewCell {
         case topBigBanner, exploreItem, smallItem
         case currentResult, othersResult, profileEmoji
         case topThreeLeaderboard, remainingLeaderboard
-        case homeGroup
+        case homeGroup, tmatesEmojiCollection
     }
     func applyRoundedCornerAndShadow(borderType: BorderType) {
         switch borderType {
@@ -68,17 +68,23 @@ extension UICollectionViewCell {
         case .topThreeLeaderboard:
             self.contentView.layer.cornerRadius = 12.0
             self.contentView.layer.borderWidth = 1.5
-            self.contentView.layer.borderColor = UIColor.black.cgColor
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
         case .remainingLeaderboard:
             self.contentView.layer.cornerRadius = 4.0
             self.contentView.layer.borderWidth = 1.5
-            self.contentView.layer.borderColor = UIColor.black.cgColor
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
         case .homeGroup:
             self.contentView.layer.cornerRadius = 8.0
             self.contentView.layer.borderWidth = 1.5
-            self.contentView.layer.borderColor = UIColor.black.cgColor
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+            self.contentView.layer.masksToBounds = true
+            
+        case .tmatesEmojiCollection:
+            self.contentView.layer.cornerRadius = 24.0
+            self.contentView.layer.borderWidth = 2.5
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
         }
         

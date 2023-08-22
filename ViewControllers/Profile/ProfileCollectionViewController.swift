@@ -456,19 +456,31 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        
         let cell = collectionView.cellForItem(at: indexPath)
-        UIView.animate(withDuration: 0.2) {
-            cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            
-            cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+        
+        let sectionIndex = indexPath.section
+                
+        if self.dataSource.snapshot().sectionIdentifiers[sectionIndex]  == .userQuizHistory {
+                UIView.animate(withDuration: 0.2) {
+                    cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                    
+                    cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+                
+            }
         }
+        
     }
 
     override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
-        UIView.animate(withDuration: 0.2) {
-            cell?.transform = .identity
-            cell?.contentView.backgroundColor = UIColor.white
+        let sectionIndex = indexPath.section
+        
+        if self.dataSource.snapshot().sectionIdentifiers[sectionIndex]  == .userQuizHistory {
+            UIView.animate(withDuration: 0.2) {
+                cell?.transform = .identity
+                cell?.contentView.backgroundColor = UIColor.white
+            }
         }
     }
     

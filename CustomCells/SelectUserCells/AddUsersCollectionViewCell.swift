@@ -21,6 +21,8 @@ class AddUsersCollectionViewCell: UICollectionViewCell {
     func configure(withUsername username: String?, isSelected: Bool) {
         usernameLabel.text = username
         addToGroupButton.isSelected = isSelected
+        
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
     
     @IBAction func addToGroupButtonPressed(_ sender: UIButton) {

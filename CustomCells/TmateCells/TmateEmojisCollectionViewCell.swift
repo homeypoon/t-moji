@@ -24,7 +24,7 @@ class TmateEmojisCollectionViewCell: UICollectionViewCell {
         pointsLabel.text = "\(points) pts"
         emojisLabel.text = getEmojiList(resultTypes: resultTypes)
                 
-        self.applyRoundedCornerAndShadow(borderType: .smallItem)
+        self.applyRoundedCornerAndShadow(borderType: .tmatesEmojiCollection)
     }
     
     func getEmojiList(resultTypes: [ResultType?]) -> String {

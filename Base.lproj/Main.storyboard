@@ -743,8 +743,8 @@
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i61-Co-iab">
                                                     <rect key="frame" x="20" y="12" width="353" height="44"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                                    <color key="textColor" name="Text"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN">
@@ -1304,14 +1304,14 @@
                             <tableViewSection id="kqg-vB-Nfs">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="34.333332061767578"/>
+                                        <rect key="frame" x="0.0" y="215.33333587646484" width="393" height="33.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="34.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="33.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="34.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="33.666666666666664"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" style="UICTFontTextStyleCallout"/>
@@ -1788,7 +1788,7 @@ Accuracy</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Se" id="dhS-bS-v2V"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4Mg-8P-yO9">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -2215,31 +2215,33 @@ Accuracy</string>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Guess to Reveal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ewl-RN-xns">
-                                            <rect key="frame" x="12" y="233.66666666666666" width="250" height="20.333333333333343"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" systemColor="linkColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MbD-55-C27">
+                                            <rect key="frame" x="12" y="219.66666666666666" width="250" height="34.333333333333343"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="Guess To Reveal"/>
+                                            <connections>
+                                                <action selector="guessToRevealButtonPressed:" destination="RNg-mU-3He" eventType="touchUpInside" id="CfM-Ev-39N"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="KhU-1M-1aI" secondAttribute="trailing" constant="12" id="2An-sf-fal"/>
                                         <constraint firstItem="KhU-1M-1aI" firstAttribute="top" secondItem="NN3-0o-8tU" secondAttribute="bottom" constant="15" id="6ZP-3v-FGi"/>
-                                        <constraint firstAttribute="trailing" secondItem="Ewl-RN-xns" secondAttribute="trailing" constant="12" id="94L-fS-HQl"/>
-                                        <constraint firstItem="Ewl-RN-xns" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="12" id="APh-TF-J2K"/>
+                                        <constraint firstItem="MbD-55-C27" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="12" id="7JG-rx-uff"/>
                                         <constraint firstAttribute="trailing" secondItem="NN3-0o-8tU" secondAttribute="trailing" constant="8" id="EKg-fE-Mkx"/>
-                                        <constraint firstItem="Ewl-RN-xns" firstAttribute="top" relation="greaterThanOrEqual" secondItem="PbP-V4-lcZ" secondAttribute="bottom" constant="8" id="MEE-SJ-afG"/>
-                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Ewl-RN-xns" secondAttribute="bottom" constant="12" id="ORf-2K-ARv"/>
+                                        <constraint firstAttribute="trailing" secondItem="MbD-55-C27" secondAttribute="trailing" constant="12" id="Q0r-QA-mgj"/>
                                         <constraint firstItem="NN3-0o-8tU" firstAttribute="top" secondItem="Rez-zm-VMQ" secondAttribute="bottom" constant="10" id="Ro0-dN-Shu"/>
                                         <constraint firstItem="Rez-zm-VMQ" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="12" id="Vm0-2S-5hH"/>
                                         <constraint firstItem="KhU-1M-1aI" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="12" id="W2C-qz-BDS"/>
+                                        <constraint firstAttribute="bottom" secondItem="MbD-55-C27" secondAttribute="bottom" priority="999" constant="24" id="WRu-EU-wAu"/>
                                         <constraint firstItem="NN3-0o-8tU" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="8" id="XAF-vt-P16"/>
-                                        <constraint firstAttribute="bottom" secondItem="Ewl-RN-xns" secondAttribute="bottom" priority="999" constant="24" id="bck-b3-nCi"/>
+                                        <constraint firstItem="MbD-55-C27" firstAttribute="top" relation="greaterThanOrEqual" secondItem="PbP-V4-lcZ" secondAttribute="bottom" constant="8" id="aCG-i2-IXk"/>
                                         <constraint firstAttribute="trailing" secondItem="PbP-V4-lcZ" secondAttribute="trailing" constant="20" id="hrS-k6-bzZ"/>
                                         <constraint firstItem="PbP-V4-lcZ" firstAttribute="top" secondItem="KhU-1M-1aI" secondAttribute="bottom" constant="16" id="htc-DY-Q6o"/>
                                         <constraint firstItem="PbP-V4-lcZ" firstAttribute="leading" secondItem="pYK-ft-ZT6" secondAttribute="leading" constant="20" id="njA-Pj-Vzs"/>
                                         <constraint firstItem="Rez-zm-VMQ" firstAttribute="top" secondItem="pYK-ft-ZT6" secondAttribute="top" constant="8" id="rjm-Ny-OUA"/>
                                         <constraint firstAttribute="trailing" secondItem="Rez-zm-VMQ" secondAttribute="trailing" constant="12" id="sZz-4M-htx"/>
+                                        <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="MbD-55-C27" secondAttribute="bottom" constant="12" id="zmi-T2-wMq"/>
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -2839,12 +2841,14 @@ Accuracy</string>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Guess to Reveal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WQw-0E-sCS">
-                                            <rect key="frame" x="12" y="272.66666666666669" width="167" height="20.333333333333314"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" systemColor="linkColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0DP-9a-H7F">
+                                            <rect key="frame" x="12" y="258.66666666666669" width="167" height="34.333333333333314"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="Guess To Reveal"/>
+                                            <connections>
+                                                <action selector="guessToRevealButtonPressed:" destination="BvD-I6-KLF" eventType="touchUpInside" id="oGT-sW-fy0"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="2oz-nb-i2b" secondAttribute="trailing" constant="8" id="2A0-YV-Kxj"/>
@@ -2855,13 +2859,13 @@ Accuracy</string>
                                         <constraint firstItem="2oz-nb-i2b" firstAttribute="top" secondItem="onA-gh-Gs1" secondAttribute="bottom" constant="10" id="Hxo-jk-l1b"/>
                                         <constraint firstAttribute="trailing" secondItem="J4X-Iy-Ufw" secondAttribute="trailing" constant="12" id="MYU-Pm-pkU"/>
                                         <constraint firstItem="onA-gh-Gs1" firstAttribute="top" secondItem="zyr-Iz-aXo" secondAttribute="top" constant="8" id="QCB-Gw-1Ye"/>
+                                        <constraint firstAttribute="bottom" secondItem="0DP-9a-H7F" secondAttribute="bottom" constant="24" id="WnD-xk-K1z"/>
                                         <constraint firstItem="onA-gh-Gs1" firstAttribute="leading" secondItem="zyr-Iz-aXo" secondAttribute="leading" constant="12" id="ZN4-pF-kfg"/>
-                                        <constraint firstAttribute="bottom" secondItem="WQw-0E-sCS" secondAttribute="bottom" constant="24" id="i9m-Ho-nXn"/>
+                                        <constraint firstAttribute="trailing" secondItem="0DP-9a-H7F" secondAttribute="trailing" constant="12" id="bNa-bY-fTS"/>
                                         <constraint firstAttribute="trailing" secondItem="onA-gh-Gs1" secondAttribute="trailing" constant="12" id="ivO-Vw-8Wj"/>
-                                        <constraint firstAttribute="trailing" secondItem="WQw-0E-sCS" secondAttribute="trailing" constant="12" id="pmj-SV-eco"/>
                                         <constraint firstAttribute="trailing" secondItem="zzh-SO-WWw" secondAttribute="trailing" constant="20" id="r4K-Eh-jAJ"/>
+                                        <constraint firstItem="0DP-9a-H7F" firstAttribute="leading" secondItem="zyr-Iz-aXo" secondAttribute="leading" constant="12" id="tFd-h9-dxH"/>
                                         <constraint firstItem="J4X-Iy-Ufw" firstAttribute="leading" secondItem="zyr-Iz-aXo" secondAttribute="leading" constant="12" id="uNC-AC-jdj"/>
-                                        <constraint firstItem="WQw-0E-sCS" firstAttribute="leading" secondItem="zyr-Iz-aXo" secondAttribute="leading" constant="12" id="x92-hZ-Ooj"/>
                                     </constraints>
                                 </collectionViewCellContentView>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -2955,7 +2959,7 @@ Accuracy</string>
         <segue reference="cE2-nE-uHa"/>
         <segue reference="7on-uK-SsX"/>
         <segue reference="PuQ-E1-i1W"/>
-        <segue reference="zBd-cH-kPD"/>
+        <segue reference="98i-p1-Qef"/>
         <segue reference="bKH-hB-3Ha"/>
     </inferredMetricsTieBreakers>
     <resources>
@@ -3023,9 +3027,6 @@ Accuracy</string>
         </namedColor>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="linkColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="separatorColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>

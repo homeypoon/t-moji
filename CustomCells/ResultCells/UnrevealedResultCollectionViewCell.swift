@@ -28,4 +28,8 @@ class UnrevealedResultCollectionViewCell: UICollectionViewCell {
         self.applyRoundedCornerAndShadow(borderType: .othersResult)
     }
     
+    @IBAction func guessToRevealButtonPressed(_ sender: UIButton) {
+            delegate?.guessToRevealPressed(sender: self)
+        }
+    
 }

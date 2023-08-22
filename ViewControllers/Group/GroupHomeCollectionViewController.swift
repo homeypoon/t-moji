@@ -194,7 +194,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 sectionHeader.configure(title: quizTitle, colorName: "Text")
             case .tmateEmojis:
-                sectionHeader.configure(title: "Tmates Emoji Collection", colorName: "Text")
+                sectionHeader.configure(title: "Tmates Emoji Collections", colorName: "Text")
             }
             
             return sectionHeader
