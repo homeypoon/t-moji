@@ -42,6 +42,8 @@ class HomeCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -76,18 +78,27 @@ class HomeCollectionViewController: UICollectionViewController {
     }
     
     func createDataSource() -> DataSourceType {
-        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, group) -> UICollectionViewListCell? in
+        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, group) -> UICollectionViewCell? in
             
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! UICollectionViewListCell
-            
-            var content = UIListContentConfiguration.cell()
-            
-            content.text = "\(group.name)"
-            
-            cell.contentConfiguration = content
-            cell.accessories = [.disclosureIndicator()]
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! HomeGroupCollectionViewCell
+           
+            cell.configure(groupName: group.name)
             
             return cell
+        }
+        
+        dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) in
+            
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
+            
+            let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            
+            switch section {
+            case .groups:
+                sectionHeader.configure(title: "Groups", colorName: "Text")
+                return sectionHeader
+            }
         }
         
         return dataSource
@@ -96,16 +107,38 @@ class HomeCollectionViewController: UICollectionViewController {
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
+        let sectionHeaderItemSize =
+        NSCollectionLayoutSize(widthDimension:
+                .fractionalWidth(1), heightDimension: .estimated(48))
+        let sectionHeader =
+        NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+        
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
+        
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
+        var group: NSCollectionLayoutGroup!
         
+        if #available(iOS 16.0, *) {
+            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+        } else {
+            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+        }
+    
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+        
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: 8,
+            leading: 16,
+            bottom: 10,
+            trailing: 16
+        )
+        section.boundarySupplementaryItems = [sectionHeader]
+        
+        section.interGroupSpacing = 16
         
         return UICollectionViewCompositionalLayout(section: section)
     }

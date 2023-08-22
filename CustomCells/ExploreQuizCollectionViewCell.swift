@@ -16,8 +16,6 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
     
     
     func configure(quiz: Quiz, completeState: Bool, currentUserResultType: ResultType?, takenByText: String) {
-        print(completeState)
-        print(currentUserResultType)
         
         resultGroupButton.layer.cornerRadius = 8
         completeStateButton.layer.cornerRadius = 8

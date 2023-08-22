@@ -13,8 +13,14 @@ class RevealedTmateCollectionViewCell: UICollectionViewCell {
     @IBOutlet var emojiLabel: UILabel!
     @IBOutlet var timePassedLabel: UILabel!
     
-    func configure(withUsername username: String, withResultType resultType: ResultType?, withTimePassed timePassed: String) {
-        usernameLabel.text = username
+    func configure(withUsername username: String, withResultType resultType: ResultType?, withTimePassed timePassed: String, isCurrentUser: Bool) {
+        if isCurrentUser {
+            usernameLabel.applyStyle(labelType: .currentUser)
+        } else {
+            usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
+        }
+        
         timePassedLabel.text = timePassed
         emojiLabel.text = resultType?.emoji
         

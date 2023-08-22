@@ -102,17 +102,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                     self?.updateCollectionView()
                 }
             }
-            
-            //            self?.fetchUser {
-            //                if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs.filter({ $0 != self?.resultUser?.uid }), !masterGroupmatesIDs.isEmpty {
-            //                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
-            //                    self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
-            //                }
-            //            }
         }
-        
-        
-        //        updateCollectionView()
     }
     
     
@@ -194,9 +184,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
-        
-        let horzSpacing: CGFloat = 20
-        
+                
         let sectionHeaderItemSize =
         NSCollectionLayoutSize(widthDimension:
                 .fractionalWidth(1), heightDimension: .estimated(48))
@@ -216,8 +204,13 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
-                section.boundarySupplementaryItems = [sectionHeader]
-                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: 12,
+                    trailing: 0
+                )
+                                
                 return section
             case .currentUserResult:
                 // Quiz Result
@@ -232,7 +225,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: 20,
-                    bottom: 0,
+                    bottom: 20,
                     trailing: 20
                 )
                 
@@ -252,7 +245,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .groupPagingCentered
+                section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
                 
                 section.boundarySupplementaryItems = [sectionHeader]
                 
@@ -265,9 +258,7 @@ class QuizResultCollectionViewController: UICollectionViewController {
                 let itemLeadingAndTrailingInset = halfOfRemainingWidth +
                 nonCategorySectionItemInset
                 
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0,
-                                                                leading: itemLeadingAndTrailingInset, bottom: 0,
-                                                                trailing: itemLeadingAndTrailingInset)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: itemLeadingAndTrailingInset, bottom: 20, trailing: itemLeadingAndTrailingInset)
                 
                 section.interGroupSpacing = 20
                 

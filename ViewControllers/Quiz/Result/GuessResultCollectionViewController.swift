@@ -103,6 +103,8 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -112,6 +114,12 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             guard let currentUid = Auth.auth().currentUser?.uid else { return nil }
+            
+            let sectionHeaderItemSize =
+            NSCollectionLayoutSize(widthDimension:
+                    .fractionalWidth(1), heightDimension: .estimated(48))
+            let sectionHeader =
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
             
             
             switch item {
@@ -142,11 +150,40 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
             }
         }
         
+        dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) in
+            
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            
+            let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+            
+            if section == .membersResults {
+                if let group = self.group {
+                    sectionHeader.configure(title: "\(group.name) T-mates Results", colorName: "Text")
+                }
+            } else if section == .otherTmatesResults {
+                if let group = self.group {
+                    sectionHeader.configure(title: "Other T-mates Results", colorName: "Text")
+                } else {
+                    sectionHeader.configure(title: "T-mates Results", colorName: "Text")
+                }
+            } else {
+                sectionHeader.configure(title: "", colorName: "Text")
+            }
+            
+            return sectionHeader
+        }
+        
         return dataSource
     }
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
+        
+        let sectionHeaderItemSize =
+        NSCollectionLayoutSize(widthDimension:
+                .fractionalWidth(1), heightDimension: .estimated(48))
+        let sectionHeader =
+        NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
@@ -160,6 +197,13 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: 12,
+                    trailing: 0
+                )
+                
                 return section
             } else if sectionIndex == 1  {
                 // Guess Result
@@ -170,6 +214,14 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 20,
+                    bottom: 20,
+                    trailing: 20
+                )
+                
+                section.boundarySupplementaryItems = [sectionHeader]
                 
                 return section
             } else {
@@ -185,12 +237,25 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                         .fractionalWidth(0.75), heightDimension: .estimated(250))
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                
-                
-                let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .groupPagingCentered
                                 
+                let section = NSCollectionLayoutSection(group: group)
+                section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+                                
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                let availableLayoutWidth =
+                environment.container.effectiveContentSize.width
+                let groupWidth = availableLayoutWidth * 0.75
+                let remainingWidth = availableLayoutWidth - groupWidth
+                let halfOfRemainingWidth = remainingWidth / 2.0
+                let nonCategorySectionItemInset = CGFloat(4)
+                let itemLeadingAndTrailingInset = halfOfRemainingWidth +
+                nonCategorySectionItemInset
+                
+                section.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: itemLeadingAndTrailingInset, bottom: 20, trailing: itemLeadingAndTrailingInset)
+                
+                section.interGroupSpacing = 20
+                
                 return section
             }
         }

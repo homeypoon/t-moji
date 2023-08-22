@@ -14,14 +14,15 @@ private let reuseIdentifier = "Cell"
 class SectionBackgroundView: UICollectionReusableView {
     
     override func didMoveToSuperview() {
-        backgroundColor = .systemGray6
         translatesAutoresizingMaskIntoConstraints = true
+        clipsToBounds = true
+        
         backgroundColor = .white
         layer.cornerRadius = 15
-        clipsToBounds = true
-        layer.cornerRadius = 10.0
-        layer.borderWidth = 2.0
-        layer.borderColor = UIColor.black.cgColor
+    
+        layer.borderWidth = 3
+        layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+        layer.masksToBounds = true
     }
 }
 
@@ -127,13 +128,10 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
-        
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
@@ -264,8 +262,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             // Profile info
             if sectionIndex == 0  {
-                let vertSpacing: CGFloat = 20
-                let infoHorzSpacing: CGFloat = 36
+               
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
@@ -292,7 +289,6 @@ class ProfileCollectionViewController: UICollectionViewController {
                 return section
             } else if sectionIndex == 1  {
                 // emoji
-                let vertSpacing: CGFloat = 20
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -330,12 +326,11 @@ class ProfileCollectionViewController: UICollectionViewController {
                 
             } else {
                 // user history
-                let vertSpacing: CGFloat = 10
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(86))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(96))
                 
                 var group: NSCollectionLayoutGroup!
                 
@@ -348,7 +343,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: 0,
-                    bottom: vertSpacing,
+                    bottom: Padding.smallItemVertPadding,
                     trailing: 0
                 )
                 
@@ -460,6 +455,22 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        UIView.animate(withDuration: 0.2) {
+            cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            
+            cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+        }
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        UIView.animate(withDuration: 0.2) {
+            cell?.transform = .identity
+            cell?.contentView.backgroundColor = UIColor.white
+        }
+    }
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -512,7 +523,6 @@ class ProfileCollectionViewController: UICollectionViewController {
             print("i'm in")
             let guessQuizVC = segue.destination as! GuessQuizViewController
             
-            print("senderinfooo \(sender)")
             
             if let senderInfo = sender as? UserQuizHistory {
                 let userQuizHistory = senderInfo
@@ -534,8 +544,6 @@ class ProfileCollectionViewController: UICollectionViewController {
                 self.performSegue(withIdentifier: "resultFromProfile", sender: userQuizHistory)
             case .hiddenUserQuizHistory(let userQuizHistory):
                 self.performSegue(withIdentifier: "guessFromProfile", sender: userQuizHistory)
-                print("yes")
-                print("quizhhisofdodsf \(userQuizHistory)")
             default:
                 break
             }

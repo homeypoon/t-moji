@@ -163,7 +163,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         let vertSpacing: CGFloat = 10
-        let horzSpacing: CGFloat = 16
+        let horzSpacing: CGFloat = 12
         
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -412,6 +412,25 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 quizDetailVC.currentUserResultType = currentUserResultType
                 quizDetailVC.takenByText = takenByText
             }
+        }
+    }
+}
+
+extension ExploreCollectionViewController {
+    override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        UIView.animate(withDuration: 0.2) {
+            cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            
+            cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+        }
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        UIView.animate(withDuration: 0.2) {
+            cell?.transform = .identity
+            cell?.contentView.backgroundColor = UIColor.white
         }
     }
 }

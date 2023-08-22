@@ -87,12 +87,12 @@ class QuizDetailViewController: UIViewController {
         quizDetailStackView.layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
         quizDetailStackView.isLayoutMarginsRelativeArrangement = true
         
-        quizDetailStackView.applyRoundedCornerAndShadow(borderType: .big)
+        quizDetailStackView.applyRoundedCornerAndShadow(borderType: .quizDetailBanner)
     }
     
     private func updateButtonFont() {
         for button in quizButtons {
-            button.applyRoundedCornerAndShadow(borderType: .big)
+            button.applyRoundedCornerAndShadow(borderType: .quizDetailButton)
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
                 outgoing.font = UIFont.systemFont(ofSize: 22, weight: .semibold)

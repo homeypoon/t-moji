@@ -56,7 +56,6 @@ class PersonalQuizViewController: UIViewController {
         updateInitialUI()
         updateUI()
         
-        // Do any additional setup after loading the view.
     }
     
     func updateInitialUI() {
@@ -66,6 +65,7 @@ class PersonalQuizViewController: UIViewController {
                 outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
                 return outgoing
             }
+            button.applyRoundedCornerAndShadow(borderType: .quizButton)
             
             button.titleLabel?.textAlignment = .center
         }
@@ -75,6 +75,8 @@ class PersonalQuizViewController: UIViewController {
             outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
             return outgoing
         }
+        
+        submitButton.applyRoundedCornerAndShadow(borderType: .quizSubmitButton)
         
     }
     

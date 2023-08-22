@@ -15,16 +15,15 @@ class TmateEmojisCollectionViewCell: UICollectionViewCell {
     func configure(username: String?, points: Int, resultTypes: [ResultType?], isCurrentUser: Bool) {
         
         if isCurrentUser {
-            usernameLabel.text = "Me"
+            usernameLabel.applyStyle(labelType: .currentUser)
         } else {
             usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
         }
         
         pointsLabel.text = "\(points) pts"
         emojisLabel.text = getEmojiList(resultTypes: resultTypes)
-        
-        // If the result type is nil, it means it's unguessed
-        
+                
         self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
     

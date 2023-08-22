@@ -58,6 +58,8 @@ class GuessQuizViewController: UIViewController {
                 return outgoing
             }
             
+            button.applyRoundedCornerAndShadow(borderType: .quizButton)
+            
             button.titleLabel?.textAlignment = .center
         }
         
@@ -69,6 +71,8 @@ class GuessQuizViewController: UIViewController {
         
         submitButton.tintColor = UIColor(named: "primaryRed")
         submitButton.setTitleColor(UIColor(named: "white"), for: [])
+        
+        submitButton.applyRoundedCornerAndShadow(borderType: .guessSubmitButton)
 
         if let quizHistory = userQuizHistory,
            let member = guessedMember {

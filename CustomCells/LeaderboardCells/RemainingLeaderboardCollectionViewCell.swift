@@ -16,15 +16,16 @@ class RemainingLeaderboardCollectionViewCell: UICollectionViewCell {
     func configure(withOrdinal ordinal: String, withUsername username: String?, withPoints points: Int, isCurrentUser: Bool) {
         if !isCurrentUser {
             usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
             chevronImageView.isHidden = false
         } else {
-            usernameLabel.text = "Me"
+            usernameLabel.applyStyle(labelType: .currentUser)
             chevronImageView.isHidden = true
         }
         
         ordinalLabel.text = ordinal
         pointsLabel.text = "\(points) pts"
         
-        self.applyRoundedCornerAndShadow(borderType: .smallItem)
+        self.applyRoundedCornerAndShadow(borderType: .remainingLeaderboard)
     }
 }

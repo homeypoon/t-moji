@@ -24,7 +24,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         enum Item: Hashable, Comparable {
             case unrevealedMember(tmate: User, userQuizHistory: UserQuizHistory)
-            case revealedMember(tmate: User, userQuizHistory: UserQuizHistory)
+            case revealedMember(tmate: User, userQuizHistory: UserQuizHistory, isCurrentUser: Bool)
             case tmateEmoji(tmate: User, resultTypes: [ResultType?], isCurrentUser: Bool)
             
             func hash(into hasher: inout Hasher) {
@@ -32,7 +32,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 case .unrevealedMember(let tmate, let userQuizHistory):
                     hasher.combine(tmate)
                     hasher.combine(userQuizHistory)
-                case .revealedMember(let tmate, let userQuizHistory):
+                case .revealedMember(let tmate, let userQuizHistory, _):
                     hasher.combine(tmate)
                     hasher.combine(userQuizHistory)
                 case .tmateEmoji(let tmate, let resultTypes, _):
@@ -45,7 +45,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 switch (lhs, rhs) {
                 case (.unrevealedMember(let lTmate, let lUserQuizHistory), .unrevealedMember(let rTmate, let rUserQuizHistory)):
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
-                case (.revealedMember(let lTmate, let lUserQuizHistory), .revealedMember(let rTmate, let rUserQuizHistory)):
+                case (.revealedMember(let lTmate, let lUserQuizHistory, _), .revealedMember(let rTmate, let rUserQuizHistory, _)):
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
                 case (.tmateEmoji(let lTmate, let lResultTypes, _), .tmateEmoji(let rTmate, let rResultTypes, _)):
                     return lTmate == rTmate && lResultTypes == rResultTypes
@@ -58,7 +58,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 switch (lhs, rhs) {
                 case (.unrevealedMember(_, let lUserQuizHistory), .unrevealedMember(_, let rUserQuizHistory)):
                     return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
-                case (.revealedMember(_, let lUserQuizHistory), .revealedMember(_, let rUserQuizHistory)):
+                case (.revealedMember(_, let lUserQuizHistory, _), .revealedMember(_, let rUserQuizHistory, _)):
                     return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
                 case (.tmateEmoji(let lTmate, let lResultTypes, _), .tmateEmoji(let rTmate, let rResultTypes, _)):
                     if lTmate.points != rTmate.points {
@@ -165,11 +165,11 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 cell.configure(withUsername: tmate.username, withQuizTitle: quizTitle, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 return cell
-            case .revealedMember(let tmate, let userQuizHistory):
+            case .revealedMember(let tmate, let userQuizHistory, let isCurrentUser):
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RevealedTmate", for: indexPath) as! RevealedTmateCollectionViewCell
                 
-                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
+                cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime), isCurrentUser: isCurrentUser)
                 
                 return cell
             case .tmateEmoji(tmate: let tmate, resultTypes: let resultTypes, let isCurrentUser):
@@ -344,7 +344,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
             
             for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
-
                 
                 for userQuizHistory in userQuizHistories {
 
@@ -352,10 +351,20 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         if matchingQuizHistory.membersGuessed.contains(currentUid) {
                             let quizTitle = QuizData.quizzes.first(where: { $0.id == matchingQuizHistory.quizID })?.title ?? "Guessed Tmates"
                             
-                            itemsBySection[.revealedMembers(quizTitle: quizTitle), default: []].append(ViewModel.Item.revealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
+                            itemsBySection[.revealedMembers(quizTitle: quizTitle), default: []].append(ViewModel.Item.revealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory, isCurrentUser: false))
                         } else {
                             itemsBySection[.unrevealedMembers, default: []].append(ViewModel.Item.unrevealedMember(tmate: userMasterTmate, userQuizHistory: matchingQuizHistory))
                         }
+                    }
+                }
+            }
+            
+            if let currentUserQuizHistory = model.currentUser?.userQuizHistory, !currentUserQuizHistory.isEmpty, let currentUser = model.currentUser {
+                for userQuizHistory in currentUserQuizHistory {
+                    if let matchingQuizHistory = currentUserQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
+                        let quizTitle = QuizData.quizzes.first(where: { $0.id == matchingQuizHistory.quizID })?.title ?? "Guessed Tmates"
+                        
+                        itemsBySection[.revealedMembers(quizTitle: quizTitle), default: []].append(ViewModel.Item.revealedMember(tmate: currentUser, userQuizHistory: matchingQuizHistory, isCurrentUser: true))
                     }
                 }
             }
@@ -460,8 +469,13 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             switch item {
             case .unrevealedMember(let tmate, let userQuizHistory):
                 self.performSegue(withIdentifier: "showGuessQuiz", sender: (tmate, userQuizHistory))
-            case .revealedMember(let tmate, let userQuizHistory):
-                self.performSegue(withIdentifier: "showRevealedResults", sender: (tmate, userQuizHistory))
+            case .revealedMember(let tmate, let userQuizHistory, let isCurrentUser):
+                
+                if isCurrentUser {
+                    self.performSegue(withIdentifier: "showRevealedResults", sender: (tmate, userQuizHistory, isCurrentUser))
+                } else {
+                    self.performSegue(withIdentifier: "showRevealedResults", sender: (tmate, userQuizHistory, isCurrentUser))
+                }
                 print("tmatee \(tmate)")
                 
             case .tmateEmoji(tmate: let tmate, _, _):
@@ -490,9 +504,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             let navController = segue.destination as! UINavigationController
             let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
             
-            if let senderInfo = sender as? (User, UserQuizHistory) {
+            if let senderInfo = sender as? (User, UserQuizHistory, Bool) {
                 let tmate = senderInfo.0
                 let userQuizHistory = senderInfo.1
+                let isCurrentUser = senderInfo.2
                 
                 print("tmatee2 \(tmate)")
                 
@@ -500,7 +515,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 quizResultVC.resultUser = tmate
                 quizResultVC.userQuizHistory = userQuizHistory
                 quizResultVC.group = group
-                quizResultVC.quizResultType = .checkOtherResult
+                
+                quizResultVC.quizResultType = isCurrentUser ? .checkOwnResult : .checkOtherResult
             }
         } else if segue.identifier == "showGroupSettings" {
             let groupSettingsVC = segue.destination as! GroupSettingsViewController

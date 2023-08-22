@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct Padding {
+    static let smallItemVertPadding: CGFloat = 12
+    static let smallItemHorzPadding: CGFloat = 20
+}
+    
 struct Price {
     // Heart
     static let guessForTmate = 1
