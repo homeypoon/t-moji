@@ -397,6 +397,14 @@
                                     <outlet property="takenByOthersLabel" destination="qoF-6f-RoQ" id="uui-nk-x0j"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="ExploreInlineAd" id="rtZ-ls-gf6">
+                                <rect key="frame" x="26.666666666666668" y="170" width="340" height="160"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="6AM-Vg-snM">
+                                    <rect key="frame" x="0.0" y="0.0" width="340" height="160"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
                         </cells>
                         <connections>
                             <outlet property="dataSource" destination="rjy-0d-xOv" id="pQB-rq-nFB"/>
@@ -1594,7 +1602,7 @@ Accuracy</string>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="🐶" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c9y-WF-8aT">
                                             <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <color key="backgroundColor" name="white"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -1809,13 +1817,13 @@ Accuracy</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Quiz Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ud-xd-IV8">
-                                <rect key="frame" x="20" y="123" width="353" height="20"/>
+                                <rect key="frame" x="20" y="63.999999999999993" width="353" height="28.666666666666664"/>
                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="24"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="9xX-5V-XOd">
-                                <rect key="frame" x="23.666666666666657" y="270.66666666666674" width="345.66666666666674" height="278.33333333333326"/>
+                                <rect key="frame" x="23.666666666666657" y="353.66666666666674" width="345.66666666666674" height="278.33333333333326"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="6Un-FU-sCV">
                                         <rect key="frame" x="0.0" y="0.0" width="345.66666666666669" height="135"/>
@@ -1898,7 +1906,7 @@ Accuracy</string>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pfa-XH-xWb">
-                                <rect key="frame" x="23.666666666666657" y="597" width="345.66666666666674" height="52"/>
+                                <rect key="frame" x="23.666666666666657" y="680" width="345.66666666666674" height="52"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="52" id="n2r-vY-ADV"/>
                                 </constraints>
@@ -1913,7 +1921,7 @@ Accuracy</string>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="249" verticalCompressionResistancePriority="752" text="Which one do you think user got?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1he-pu-ZFQ">
-                                <rect key="frame" x="20" y="167" width="353" height="71.666666666666686"/>
+                                <rect key="frame" x="20" y="116.66666666666666" width="353" height="71.666666666666657"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="30"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -2923,7 +2931,7 @@ Accuracy</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="wRm-dV-gLD"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HO4-Cq-Wcp">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -2942,7 +2950,7 @@ Accuracy</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="2OW-6K-Aqi"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="TMM-Dt-niZ">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -2956,8 +2964,8 @@ Accuracy</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="cE2-nE-uHa"/>
-        <segue reference="7on-uK-SsX"/>
+        <segue reference="ytG-9c-ZQX"/>
+        <segue reference="07G-sr-qaN"/>
         <segue reference="PuQ-E1-i1W"/>
         <segue reference="98i-p1-Qef"/>
         <segue reference="bKH-hB-3Ha"/>

@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import GoogleMobileAds
 
 class ExploreCollectionViewController: UICollectionViewController, UISearchBarDelegate, UISearchResultsUpdating {
     
@@ -20,11 +21,14 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         enum Item: Hashable {
             case quiz(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)
+            case adInlineBanner(uuid: UUID)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
                 case .quiz(let quiz, _, _, _, _):
                     hasher.combine(quiz)
+                case .adInlineBanner(let uuid):
+                    hasher.combine(uuid)
                 }
             }
             
@@ -32,6 +36,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 switch (lhs, rhs) {
                 case (.quiz(let lQuiz, _, _, _, _), .quiz(let rQuiz, _, _, _, _)):
                     return lQuiz == rQuiz
+                case (.adInlineBanner(let lUUID), .adInlineBanner(let rUUID)):
+                    return lUUID == rUUID
                 default:
                     return false
                 }
@@ -45,10 +51,12 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         var completedTmates = [Int: [User]]()
     }
     
+    let exploreItemSize: CGFloat = 160.0
+    
     var dataSource: DataSourceType!
     var model = Model()
     var selectedSegmentIndex: Int = 0
-
+    
     
     var searchController: UISearchController!
     
@@ -102,7 +110,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -120,7 +128,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     
     @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
         selectedSegmentIndex = sender.selectedSegmentIndex
-
+        
         print("in segmented value change")
         
         updateCollectionView()
@@ -154,7 +162,34 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 cell.configure(quiz: quiz, completeState: completeState, currentUserResultType: currentUserResultType, takenByText: takenByText)
                 
                 return cell
+                
+            case .adInlineBanner(_):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier:
+                       "ExploreInlineAd", for: indexPath)
+
+                let adSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.exploreItemSize, self.exploreItemSize)
+                // Step 2: Create banner with the inline size and set ad unit ID.
+                let adBannerView = GADBannerView(adSize: adSize)
+                adBannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111"
+                adBannerView.rootViewController = self
+
+
+                // Step 3: Load an ad.
+                let request = GADRequest()
+                adBannerView.load(request)
+                // TODO: Insert banner view in table view or scroll view, etc.
+
+                cell.contentView.addSubview(adBannerView)
+                adBannerView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    adBannerView.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
+                    adBannerView.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
+                    adBannerView.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
+                    adBannerView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor)
+                ])
+                return cell
             }
+            
         }
         
         return dataSource
@@ -162,6 +197,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
+                
         let vertSpacing: CGFloat = 10
         let horzSpacing: CGFloat = 12
         
@@ -170,7 +206,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(160))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(exploreItemSize))
         
         var group: NSCollectionLayoutGroup!
         
@@ -206,6 +242,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         if let user = model.user, selectedSegmentIndex == 1 {
             quizzes = QuizData.quizzes.filter { _ in !model.quizHistories.flatMap{$0.completedUsers}.contains(user.uid) }
         }
+        
+        var itemIndex = 0
         
         for quiz in quizzes {
             //            var takenByText = TakenByText.noTmates
@@ -265,7 +303,21 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             
             itemsBySection[.quizzes, default: []].append(item)
             
+//            // Insert an AdMob banner item every 6 quiz items
+//            if itemIndex % 6 == 5 {
+//                itemsBySection[.quizzes, default: []].append(.adInlineBanner)
+//            }
+            
+            // Insert an AdMob banner item every 2 quiz items
+                    if itemIndex % 2 == 1 {
+                        itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
+                    }
+            
+            itemIndex += 1
+            
         }
+                
+        
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
@@ -388,6 +440,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             switch item {
             case .quiz(let quiz, let quizHistory, let completeState, let currentUserResultType, let takenByText):
                 self.performSegue(withIdentifier: "showQuizDetail", sender: (quiz, quizHistory, completeState, currentUserResultType, takenByText))
+            case .adInlineBanner:
+                break
             }
         }
     }
@@ -419,13 +473,14 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
 extension ExploreCollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
-        UIView.animate(withDuration: 0.2) {
-            cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            
-            cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
-        }
+        
+            UIView.animate(withDuration: 0.2) {
+                cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                
+                cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+            }
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
         UIView.animate(withDuration: 0.2) {
@@ -434,3 +489,4 @@ extension ExploreCollectionViewController {
         }
     }
 }
+

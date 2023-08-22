@@ -36,13 +36,11 @@ extension UICollectionViewCell {
             
             self.contentView.layer.cornerRadius = 24.0
             self.contentView.layer.maskedCorners = [ .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-//                        self.contentView.layer.borderWidth = 0.1
-//                        self.contentView.layer.borderColor = UIColor.gray.cgColor
             self.contentView.layer.masksToBounds = true
 
             self.layer.shadowColor = UIColor.black.cgColor
             self.layer.shadowOffset = CGSize(width: 4, height: 6)
-            self.layer.shadowRadius = 1
+            self.layer.shadowRadius = 0.5
             self.layer.shadowOpacity = 0.8
             self.layer.masksToBounds = false
 

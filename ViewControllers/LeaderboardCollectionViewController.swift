@@ -130,8 +130,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
-            
-            
             // top three
             if sectionIndex == 0  {
                 let vertSpacing: CGFloat = 10
