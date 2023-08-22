@@ -11,10 +11,46 @@ import FirebaseAuth
 
 private let reuseIdentifier = "Cell"
 
-class AddUsersCollectionViewController: UICollectionViewController, GroupNameCollectionViewCellDelegate {
+class AddUsersCollectionViewController: UICollectionViewController, GroupNameCollectionViewCellDelegate, UISearchBarDelegate, UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text?.lowercased() else {
+            // No search text, handle as needed
+            return
+        }
+        
+        if searchText.isEmpty {
+            
+            updateCollectionView()
+            
+            
+        } else {
+            
+            model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
+            
+            var filteredUsers = model.allUsers.filter { $0.username.lowercased().contains(searchText.lowercased()) } + model.selectedUsers
+            
+            filteredUsers = model.selectedUsers + filteredUsers.filter { !model.selectedUsers.contains($0) }
+
+            
+            // Update the collection view with filtered results
+            updateCollectionView(filteredUsers: filteredUsers)
+            
+//
+//            model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
+//
+//            let filteredUsers = model.allUsers.filter { $0.username.lowercased().contains(searchText.lowercased()) }
+//
+//            model.users = model.selectedUsers + filteredUsers.filter { !model.selectedUsers.contains($0) }
+//
+//            model.users = model.allUsers // Restore the original list when search text is empty
+            
+        }
+//        updateCollectionView()
+    }
+    
     var group: Group?
     var membersIDs: [String]?
-
+    
     var groupName: String = ""
     
     @IBOutlet var cancelBarButton: UIBarButtonItem!
@@ -74,6 +110,21 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     var dataSource: DataSourceType!
     var model = Model()
     
+    var searchController: UISearchController!
+    
+    func setUpSearchController() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.delegate = self
+        
+        // Customize search bar appearance
+        searchController.searchBar.placeholder = "Search Users"
+        
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
@@ -102,6 +153,8 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         collectionView.register(SearchBarReusableView.self, forSupplementaryViewOfKind: SupplementaryViewKind.searchBar,  withReuseIdentifier: SearchBarReusableView.reuseIdentifier)
+        
+        setUpSearchController()
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
@@ -140,25 +193,21 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         }
         
         dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) in
-                if kind == SupplementaryViewKind.sectionHeader {
-                    let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
-                    let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
-                    
-                    switch section {
-                    case .users:
-                        sectionHeader.configure(title: "Add Users", colorName: "Text")
-                    case .groupName:
-                        break
-                    }
-                    
-                    return sectionHeader
-                } else if kind == SupplementaryViewKind.searchBar {
-                    let searchBarView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SearchBarReusableView.reuseIdentifier, for: indexPath) as! SearchBarReusableView
-                    searchBarView.searchBar.delegate = self
-                    return searchBarView
+            if kind == SupplementaryViewKind.sectionHeader {
+                let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
+                let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
+                
+                switch section {
+                case .users:
+                    sectionHeader.configure(title: "Add Users", colorName: "Text")
+                case .groupName:
+                    break
                 }
-                return nil
+                
+                return sectionHeader
             }
+            return nil
+        }
         
         return dataSource
     }
@@ -174,12 +223,6 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         let sectionHeader =
         NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
         
-        let searchBarItemSize =
-        NSCollectionLayoutSize(widthDimension:
-                .fractionalWidth(1), heightDimension: .absolute(80))
-        let searchBar =
-        NSCollectionLayoutBoundarySupplementaryItem(layoutSize: searchBarItemSize, elementKind: SupplementaryViewKind.searchBar, alignment: .bottom)
-
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
@@ -192,8 +235,6 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
-                
-                section.boundarySupplementaryItems = [searchBar]
                                 
                 return section
             case .users:
@@ -216,23 +257,31 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 )
                 
                 section.boundarySupplementaryItems = [sectionHeader]
-                                
+                
                 return section
-            
+                
             }
         }
     }
     
-    func updateCollectionView() {
+    func updateCollectionView(filteredUsers: [User]? = nil) {
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
-
+        
         sectionIDs.append(.groupName)
         itemsBySection[.groupName, default: []].append(ViewModel.Item.groupName)
         
         sectionIDs.append(.users)
-
-        for user in model.users {
+        
+        let users: [User]!
+        
+        if let filteredUsers {
+            users = filteredUsers
+        } else {
+            users = model.allUsers
+        }
+        
+        for user in users {
             if model.userSelectedState[user.uid] == true {
                 itemsBySection[.users, default: []].append(ViewModel.Item.selectedUser(user: user))
             } else {
@@ -240,10 +289,10 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             }
         }
         
-        print("itemsssss \(itemsBySection)")
-
-
-        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        print("model users update \(model.users)")
+        
+        self.dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+        
         
         DispatchQueue.main.async {
             self.collectionView.reloadData()
@@ -269,7 +318,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                             
                             
                             self.model.userSelectedState[user.uid] = false
-                        
+                            
                             self.model.users.append(user)
                             self.model.allUsers.append(user)
                             
@@ -317,32 +366,32 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         guard let userId = Auth.auth().currentUser?.uid, (updateGroupName || !addMemberIDs.isEmpty) else {return}
         let collectionRef = FirestoreService.shared.db.collection("groups")
         
-            collectionRef.whereField(FieldPath.documentID(), isEqualTo: groupID).getDocuments() { (querySnapshot, error) in
-                if let error = error {
-                    self.dismiss(animated: false, completion: nil)
-                    self.presentErrorAlert(with: error.localizedDescription)
-                } else {
-                    let document = querySnapshot!.documents.first
-                    print("doc \(document)")
-                    print("groupIDddd \(groupID)")
-                    
-                    if updateGroupName && !addMemberIDs.isEmpty {
-                        document?.reference.updateData([
-                            "name": self.groupName,
-                            "membersIDs": FieldValue.arrayUnion(addMemberIDs)
-                        ])
-                    } else if updateGroupName {
-                        document?.reference.updateData([
-                            "name": self.groupName
-                        ])
-                    } else if !addMemberIDs.isEmpty {
-                        document?.reference.updateData([
-                            "membersIDs": FieldValue.arrayUnion(addMemberIDs)
-                        ])
-                    }
-                    
+        collectionRef.whereField(FieldPath.documentID(), isEqualTo: groupID).getDocuments() { (querySnapshot, error) in
+            if let error = error {
+                self.dismiss(animated: false, completion: nil)
+                self.presentErrorAlert(with: error.localizedDescription)
+            } else {
+                let document = querySnapshot!.documents.first
+                print("doc \(document)")
+                print("groupIDddd \(groupID)")
+                
+                if updateGroupName && !addMemberIDs.isEmpty {
+                    document?.reference.updateData([
+                        "name": self.groupName,
+                        "membersIDs": FieldValue.arrayUnion(addMemberIDs)
+                    ])
+                } else if updateGroupName {
+                    document?.reference.updateData([
+                        "name": self.groupName
+                    ])
+                } else if !addMemberIDs.isEmpty {
+                    document?.reference.updateData([
+                        "membersIDs": FieldValue.arrayUnion(addMemberIDs)
+                    ])
                 }
+                
             }
+        }
         
         if !addMemberIDs.isEmpty {
             
@@ -508,43 +557,14 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
 extension AddUsersCollectionViewController: AddUsersCollectionViewCellDelegate {
     func addToGroupButtonTapped(for cell: AddUsersCollectionViewCell) {
         print("preeeessed")
-            if let indexPath = collectionView.indexPath(for: cell) {
-                let user = model.users[indexPath.item]
-                model.userSelectedState[user.uid] = !(model.userSelectedState[user.uid] ?? false) // Toggle selected state
-                
-                print("state \(!(model.userSelectedState[user.uid] ?? false))")
-                updateSaveButtonState()
-                updateCollectionView()
-                
-            }
-
-    }
-}
-
-
-extension AddUsersCollectionViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            model.users = model.allUsers // Restore the original list when search text is empty
+        if let indexPath = collectionView.indexPath(for: cell) {
+            let user = model.users[indexPath.item]
+            model.userSelectedState[user.uid] = !(model.userSelectedState[user.uid] ?? false) // Toggle selected state
             
-        } else {
-            model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
-            
-            let filteredUsers = model.allUsers.filter { $0.username.lowercased().contains(searchText.lowercased()) }
-            
-            model.users = model.selectedUsers + filteredUsers.filter { !model.selectedUsers.contains($0) }
-            
+            print("state \(!(model.userSelectedState[user.uid] ?? false))")
+            updateSaveButtonState()
+            collectionView.reloadData()
+            //                updateCollectionView()
         }
-        updateCollectionView()
     }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = nil
-        searchBar.resignFirstResponder()
-        model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
-        
-        model.users = model.allUsers // Restore the original list when search is canceled
-        updateCollectionView()
-    }
-    
 }

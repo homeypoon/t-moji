@@ -27,7 +27,9 @@ class AddUsersCollectionViewCell: UICollectionViewCell {
     
     @IBAction func addToGroupButtonPressed(_ sender: UIButton) {
         print("tapped")
-        delegate?.addToGroupButtonTapped(for: self)
+        DispatchQueue.main.async {
+            self.delegate?.addToGroupButtonTapped(for: self)
+        }
     }
     
 }
