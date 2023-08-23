@@ -15,6 +15,11 @@ extension UICollectionViewCell {
         case topThreeLeaderboard, remainingLeaderboard
         case homeGroup, tmatesEmojiCollection
     }
+    
+    enum BackgroundType {
+        case currentUser, othersUser
+    }
+    
     func applyRoundedCornerAndShadow(borderType: BorderType) {
         switch borderType {
         case .exploreItem:
@@ -85,6 +90,16 @@ extension UICollectionViewCell {
             self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
         }
+    }
+    
+    func applyBackground(backgroundType: BackgroundType) {
+        
+        switch backgroundType {
+        case .currentUser:
+            self.contentView.backgroundColor = UIColor(named: "primaryPurple")?.withAlphaComponent(0.05)
+        case .othersUser:
+            self.contentView.backgroundColor = UIColor.white
+        }
         
     }
 }
@@ -101,7 +116,7 @@ extension UIStackView {
     
             self.layer.masksToBounds = true
             
-            self.layer.borderWidth = 3.5
+            self.layer.borderWidth = 2.5
             self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             
         }
@@ -122,10 +137,10 @@ extension UIButton {
             self.layer.shadowColor = UIColor(named: "primaryPurple")?.cgColor
             self.layer.shadowOffset = CGSize(width: 9, height: 6)
             self.layer.shadowOpacity = 0.3
-            self.layer.shadowRadius = 3
+            self.layer.shadowRadius = 2.5
             self.layer.masksToBounds = false
             
-            self.layer.borderWidth = 3
+            self.layer.borderWidth = 2.5
             self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath

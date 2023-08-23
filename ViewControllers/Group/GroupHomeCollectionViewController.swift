@@ -604,6 +604,4 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
     }
-    
-    
 }

@@ -514,7 +514,7 @@
                                         </constraints>
                                         <color key="tintColor" name="white"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" title="Redo Quiz">
+                                        <buttonConfiguration key="configuration" style="filled" image="play.square.fill" catalog="system" title="  Redo Quiz">
                                             <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
                                             <color key="baseForegroundColor" name="primaryPurple"/>
                                         </buttonConfiguration>
@@ -755,7 +755,7 @@
                                                     <color key="textColor" name="Text"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN">
                                                     <rect key="frame" x="20" y="64" width="353" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="RZO-lV-Ocb"/>
@@ -1926,18 +1926,85 @@ Accuracy</string>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W40-bK-j45" customClass="ExtraGuessPopupView" customModule="T_moji" customModuleProvider="target">
+                                <rect key="frame" x="29.333333333333343" y="281" width="334.33333333333326" height="290"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R5r-Br-OIB">
+                                        <rect key="frame" x="0.0" y="0.0" width="334.33333333333331" height="43.666666666666664"/>
+                                        <color key="backgroundColor" name="primaryDarkOrange"/>
+                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="y76-Ko-WX0">
+                                        <rect key="frame" x="20.666666666666657" y="99.666666666666686" width="293" height="70.666666666666686"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wrong Guess!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n77-QA-zma">
+                                                <rect key="frame" x="0.0" y="0.0" width="293" height="26.333333333333332"/>
+                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Watch this video to get another guess!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kni-my-QGz">
+                                                <rect key="frame" x="0.0" y="50.333333333333314" width="293" height="20.333333333333329"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="MoH-I7-wAs">
+                                        <rect key="frame" x="8" y="235.66666666666663" width="318.33333333333331" height="34.333333333333314"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="txI-dU-BCX">
+                                                <rect key="frame" x="0.0" y="0.0" width="125.33333333333333" height="34.333333333333336"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="No Thanks">
+                                                    <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="17"/>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="noThanksButtonClicked:" destination="W40-bK-j45" eventType="touchUpInside" id="Bh9-sY-tLS"/>
+                                                </connections>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Starting in 5..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="utI-nJ-iTP">
+                                                <rect key="frame" x="137.33333333333331" y="0.0" width="181" height="34.333333333333336"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="R5r-Br-OIB" firstAttribute="top" secondItem="W40-bK-j45" secondAttribute="top" id="3Ia-2h-bvz"/>
+                                    <constraint firstItem="MoH-I7-wAs" firstAttribute="leading" secondItem="W40-bK-j45" secondAttribute="leading" constant="8" id="7c1-gi-mKO"/>
+                                    <constraint firstAttribute="trailing" secondItem="MoH-I7-wAs" secondAttribute="trailing" constant="8" id="AuH-Q0-sCq"/>
+                                    <constraint firstItem="y76-Ko-WX0" firstAttribute="centerX" secondItem="W40-bK-j45" secondAttribute="centerX" id="F0E-XA-rkK"/>
+                                    <constraint firstItem="MoH-I7-wAs" firstAttribute="centerX" secondItem="W40-bK-j45" secondAttribute="centerX" id="I0z-GV-KYl"/>
+                                    <constraint firstItem="R5r-Br-OIB" firstAttribute="leading" secondItem="W40-bK-j45" secondAttribute="leading" id="LS3-jr-mYN"/>
+                                    <constraint firstItem="y76-Ko-WX0" firstAttribute="centerY" secondItem="W40-bK-j45" secondAttribute="centerY" constant="-10" id="cEh-Lf-IJ3"/>
+                                    <constraint firstAttribute="bottom" secondItem="MoH-I7-wAs" secondAttribute="bottom" constant="20" id="rGh-z1-TMk"/>
+                                    <constraint firstItem="R5r-Br-OIB" firstAttribute="height" secondItem="W40-bK-j45" secondAttribute="height" multiplier="0.15" id="sff-Hf-3hb"/>
+                                    <constraint firstAttribute="trailing" secondItem="R5r-Br-OIB" secondAttribute="trailing" id="ty3-1E-UO5"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="countdownLabel" destination="utI-nJ-iTP" id="zl0-ih-Q3r"/>
+                                </connections>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="5g2-Qf-r3k"/>
                         <color key="backgroundColor" name="lightGreyBackground"/>
                         <constraints>
+                            <constraint firstItem="W40-bK-j45" firstAttribute="width" secondItem="ByX-s2-eTU" secondAttribute="width" multiplier="0.85" id="0hh-cd-JZ3"/>
                             <constraint firstItem="32V-c2-Csb" firstAttribute="width" secondItem="ByX-s2-eTU" secondAttribute="width" multiplier="0.43" id="7O8-TI-I9S"/>
                             <constraint firstItem="1he-pu-ZFQ" firstAttribute="top" secondItem="0Ud-xd-IV8" secondAttribute="bottom" constant="24" id="7W9-iX-OZi"/>
                             <constraint firstAttribute="trailing" secondItem="1he-pu-ZFQ" secondAttribute="trailing" constant="20" id="8LP-TG-QEj"/>
                             <constraint firstItem="0Ud-xd-IV8" firstAttribute="top" secondItem="5g2-Qf-r3k" secondAttribute="top" constant="20" id="Bev-To-shs"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="centerX" secondItem="ByX-s2-eTU" secondAttribute="centerX" id="D9L-QK-bAI"/>
                             <constraint firstItem="1he-pu-ZFQ" firstAttribute="leading" secondItem="5g2-Qf-r3k" secondAttribute="leading" constant="20" id="DjD-dH-Gry"/>
+                            <constraint firstAttribute="bottom" secondItem="W40-bK-j45" secondAttribute="bottom" constant="281" id="FEJ-F1-PzN"/>
+                            <constraint firstItem="W40-bK-j45" firstAttribute="centerY" secondItem="ByX-s2-eTU" secondAttribute="centerY" id="I9q-Y7-CWA"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="width" secondItem="9xX-5V-XOd" secondAttribute="width" multiplier="1:1" id="KaM-Jh-lWr"/>
                             <constraint firstItem="5g2-Qf-r3k" firstAttribute="bottom" secondItem="Pfa-XH-xWb" secondAttribute="bottom" constant="120" id="LaO-jr-OcT"/>
+                            <constraint firstItem="W40-bK-j45" firstAttribute="centerX" secondItem="5g2-Qf-r3k" secondAttribute="centerX" id="ePd-wr-TFh"/>
                             <constraint firstItem="0Ud-xd-IV8" firstAttribute="leading" secondItem="5g2-Qf-r3k" secondAttribute="leading" constant="20" id="gFU-k9-42u"/>
                             <constraint firstItem="9xX-5V-XOd" firstAttribute="top" relation="greaterThanOrEqual" secondItem="1he-pu-ZFQ" secondAttribute="bottom" constant="32" id="hnz-qu-Obt"/>
                             <constraint firstItem="9xX-5V-XOd" firstAttribute="centerX" secondItem="ByX-s2-eTU" secondAttribute="centerX" id="kLQ-QS-0d3"/>
@@ -1947,6 +2014,7 @@ Accuracy</string>
                     </view>
                     <navigationItem key="navigationItem" id="kPy-ZZ-d6a"/>
                     <connections>
+                        <outlet property="extraGuessPopupView" destination="W40-bK-j45" id="gFH-aN-FO2"/>
                         <outlet property="multiChoiceButton1" destination="32V-c2-Csb" id="nMm-h9-LBj"/>
                         <outlet property="multiChoiceButton2" destination="3rh-RR-7V6" id="zJB-Da-AfP"/>
                         <outlet property="multiChoiceButton3" destination="NhB-6a-KDj" id="XmR-a7-CHj"/>
@@ -1963,7 +2031,7 @@ Accuracy</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gw9-xT-Uv1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1192" y="2488"/>
+            <point key="canvasLocation" x="-1193.1297709923663" y="2487.323943661972"/>
         </scene>
         <!--Quiz Result-->
         <scene sceneID="uDz-Vd-d6G">
@@ -2931,7 +2999,7 @@ Accuracy</string>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="wRm-dV-gLD"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HO4-Cq-Wcp">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -2964,8 +3032,8 @@ Accuracy</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ytG-9c-ZQX"/>
-        <segue reference="07G-sr-qaN"/>
+        <segue reference="Bwj-UY-ATU"/>
+        <segue reference="0Pe-Oy-V1F"/>
         <segue reference="PuQ-E1-i1W"/>
         <segue reference="98i-p1-Qef"/>
         <segue reference="bKH-hB-3Ha"/>
@@ -2981,6 +3049,7 @@ Accuracy</string>
         <image name="house.fill" catalog="system" width="128" height="104"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
+        <image name="play.square.fill" catalog="system" width="128" height="114"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
         <image name="target" catalog="system" width="128" height="123"/>
         <image name="trophy.fill" catalog="system" width="128" height="128"/>
@@ -3001,7 +3070,7 @@ Accuracy</string>
             <color red="0.92941176470588238" green="0.95294117647058818" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="darkBlueText">
-            <color red="0.0" green="0.12941176470588237" blue="0.45882352941176469" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.0" blue="0.097000002861022949" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="darkRedText">
             <color red="0.12909920513629913" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3011,6 +3080,9 @@ Accuracy</string>
         </namedColor>
         <namedColor name="primaryDarkBlue">
             <color red="0.0" green="0.25882352941176473" blue="0.70980392156862748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="primaryDarkOrange">
+            <color red="0.91764705882352937" green="0.33725490196078434" blue="0.30588235294117649" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="primaryDarkRed">
             <color red="1" green="0.50196078431372548" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3025,7 +3097,7 @@ Accuracy</string>
             <color red="0.44705882352941179" green="0.29803921568627451" blue="0.8784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="primaryRed">
-            <color red="0.7686274509803922" green="0.16862745098039217" blue="0.38039215686274508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.29803921568627451" blue="0.40784313725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="progressViewTint">
             <color red="1" green="0.96470588235294119" blue="0.11372549019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

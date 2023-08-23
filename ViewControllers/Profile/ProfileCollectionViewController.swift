@@ -124,6 +124,8 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
                 fetchQuizHistory(completedQuizIDs: completedQuizIDs)
+            } else {
+                self.updateCollectionView()
             }
         }
     }
@@ -462,10 +464,10 @@ class ProfileCollectionViewController: UICollectionViewController {
         let sectionIndex = indexPath.section
                 
         if self.dataSource.snapshot().sectionIdentifiers[sectionIndex]  == .userQuizHistory {
-                UIView.animate(withDuration: 0.2) {
-                    cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            UIView.animate(withDuration: 0.1) {
+                cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     
-                    cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+                cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
                 
             }
         }
@@ -477,7 +479,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         let sectionIndex = indexPath.section
         
         if self.dataSource.snapshot().sectionIdentifiers[sectionIndex]  == .userQuizHistory {
-            UIView.animate(withDuration: 0.2) {
+            UIView.animate(withDuration: 0.1) {
                 cell?.transform = .identity
                 cell?.contentView.backgroundColor = UIColor.white
             }

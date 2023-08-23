@@ -16,13 +16,16 @@ class TopThreeLeaderboardCollectionViewCell: UICollectionViewCell {
     
     func configure(withOrdinal ordinal: String, withUsername username: String?, withPoints points: Int, isCurrentUser: Bool) {
         
-        if !isCurrentUser {
+        if isCurrentUser {
+            usernameLabel.applyStyle(labelType: .currentUser)
+            self.applyBackground(backgroundType: .currentUser)
+            chevronImageView.isHidden = true
+            
+        } else {
             usernameLabel.text = username
             usernameLabel.applyStyle(labelType: .otherUser)
             chevronImageView.isHidden = false
-        } else {
-            usernameLabel.applyStyle(labelType: .currentUser)
-            chevronImageView.isHidden = true
+            self.applyBackground(backgroundType: .othersUser)
         }
         
         ordinalLabel.text = ordinal

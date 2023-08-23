@@ -8,8 +8,11 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleMobileAds
+
 
 class QuizDetailViewController: UIViewController {
+    
     var quiz: Quiz?
     var currentUser: User!
     var quizHistory: QuizHistory!
@@ -17,6 +20,8 @@ class QuizDetailViewController: UIViewController {
     var currentUserResultType: ResultType?
     var takenByText: String!
     
+    private var rewardedInterstitialAd: GADRewardedInterstitialAd?
+
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var resultGroupButton: UIButton!
     @IBOutlet var myResultLabel: UILabel!
@@ -45,6 +50,20 @@ class QuizDetailViewController: UIViewController {
         super.viewDidLoad()
         updateButtonFont()
         updateUIText()
+        loadRewardedAd()
+    }
+    
+    private func loadRewardedAd() {
+        
+        GADRewardedInterstitialAd.load(withAdUnitID:"ca-app-pub-3940256099942544/6978759866",
+            request: GADRequest()) { ad, error in
+              if let error = error {
+                return print("Failed to load rewarded interstitial ad with error: \(error.localizedDescription)")
+              }
+
+              self.rewardedInterstitialAd = ad
+              self.rewardedInterstitialAd?.fullScreenContentDelegate = self
+            }
     }
     
     private func updateUIText() {
@@ -112,6 +131,7 @@ class QuizDetailViewController: UIViewController {
 
         isRetakeQuiz = takeQuizState == ButtonState.retakeQuiz
         if isRetakeQuiz! {
+//            show()
             self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
         } else {
             performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
@@ -215,4 +235,33 @@ class QuizDetailViewController: UIViewController {
         }
     }
     
+    func show() {
+      guard let rewardedInterstitialAd = rewardedInterstitialAd else {
+        return print("Ad wasn't ready.")
+      }
+
+      rewardedInterstitialAd.present(fromRootViewController: self) {
+        let reward = rewardedInterstitialAd.adReward
+        // TODO: Reward the user!
+      }
+    }
+    
+}
+
+extension QuizDetailViewController: GADFullScreenContentDelegate {
+
+  /// Tells the delegate that the ad failed to present full screen content.
+  func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    print("Ad did fail to present full screen content.")
+  }
+
+  /// Tells the delegate that the ad will present full screen content.
+  func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    print("Ad will present full screen content.")
+  }
+
+  /// Tells the delegate that the ad dismissed full screen content.
+  func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    print("Ad did dismiss full screen content.")
+  }
 }

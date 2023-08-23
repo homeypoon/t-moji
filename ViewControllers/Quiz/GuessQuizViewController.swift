@@ -32,11 +32,13 @@ class GuessQuizViewController: UIViewController {
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
+    @IBOutlet var extraGuessPopupView: ExtraGuessPopupView!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.tabBarController?.tabBar.isHidden = true
+        extraGuessPopupView.isHidden = true
     }
     
     override func viewDidLoad() {
@@ -135,11 +137,22 @@ class GuessQuizViewController: UIViewController {
         default:
             break
         }
-        fetchUser {
-            self.updateUser {
-                self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
-            }
-        }
+        
+        extraGuessPopupView.isHidden = false
+        extraGuessPopupView.restartCountdown()
+        
+//        // If user is correct, perform segue
+//        if guessedResultType == userQuizHistory?.finalResult {
+//            fetchUser {
+//                self.updateUser {
+//                    self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+//                }
+//            }
+//        } else {
+//            // Present extra guess popup
+//
+//        }
+        
     }
     
     func updateUser(completion: @escaping () -> Void) {
@@ -234,3 +247,7 @@ class GuessQuizViewController: UIViewController {
         
     }
 }
+
+
+
+

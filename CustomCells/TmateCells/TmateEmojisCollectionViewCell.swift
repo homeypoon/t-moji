@@ -16,9 +16,13 @@ class TmateEmojisCollectionViewCell: UICollectionViewCell {
         
         if isCurrentUser {
             usernameLabel.applyStyle(labelType: .currentUser)
+            
+            self.applyBackground(backgroundType: .currentUser)
+            
         } else {
             usernameLabel.text = username
             usernameLabel.applyStyle(labelType: .otherUser)
+            self.applyBackground(backgroundType: .othersUser)
         }
         
         pointsLabel.text = "\(points) pts"

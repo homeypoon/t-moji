@@ -16,9 +16,12 @@ class RevealedTmateCollectionViewCell: UICollectionViewCell {
     func configure(withUsername username: String, withResultType resultType: ResultType?, withTimePassed timePassed: String, isCurrentUser: Bool) {
         if isCurrentUser {
             usernameLabel.applyStyle(labelType: .currentUser)
+            
+            self.applyBackground(backgroundType: .currentUser)
         } else {
             usernameLabel.text = username
             usernameLabel.applyStyle(labelType: .otherUser)
+            self.applyBackground(backgroundType: .othersUser)
         }
         
         timePassedLabel.text = timePassed
