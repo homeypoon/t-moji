@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol ExtraGuessPopupViewDelegate: AnyObject {
+    func extraGuessCountDownFinished()
+}
+
 class ExtraGuessPopupView: UIView {
+    
+    weak var delegate: ExtraGuessPopupViewDelegate?
+    
 
     @IBOutlet weak var countdownLabel: UILabel!
     
@@ -39,6 +46,7 @@ class ExtraGuessPopupView: UIView {
         if countdownValue == 0 {
             countdownTimer?.invalidate()
             hidePopup()
+            delegate?.extraGuessCountDownFinished()
         }
     }
     

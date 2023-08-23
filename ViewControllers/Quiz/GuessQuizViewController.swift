@@ -8,8 +8,13 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleMobileAds
 
-class GuessQuizViewController: UIViewController {
+class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
+    func extraGuessCountDownFinished() {
+        showExtraGuessRewardAd()
+    }
+    
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var quizQuestionLabel: UILabel!
     @IBOutlet var multiChoiceButton1: UIButton!
@@ -20,6 +25,8 @@ class GuessQuizViewController: UIViewController {
     
     @IBOutlet var multiChoiceButtons: [UIButton]!
     
+    private var rewardedInterstitialAd: GADRewardedInterstitialAd?
+    
     var fromResultVC: Bool?
     
     var quiz: Quiz?
@@ -29,6 +36,8 @@ class GuessQuizViewController: UIViewController {
     var guessedMember: User?
     
     var guessedResultType: ResultType! // selected by user
+    
+    var previousWrongSelectedButton: UIButton?
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
@@ -43,14 +52,47 @@ class GuessQuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        extraGuessPopupView.delegate = self
         
         updateUI()
+        loadGuessRewardedAd()
+    }
+    
+    private func loadGuessRewardedAd() {
         
+        GADRewardedInterstitialAd.load(withAdUnitID:"ca-app-pub-3940256099942544/6978759866",
+            request: GADRequest()) { ad, error in
+              if let error = error {
+                  return
+              }
+
+              self.rewardedInterstitialAd = ad
+              self.rewardedInterstitialAd?.fullScreenContentDelegate = self
+            }
+    }
+    
+    func showExtraGuessRewardAd() {
+      guard let rewardedInterstitialAd = rewardedInterstitialAd else {
+        presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
+          loadGuessRewardedAd()
+          return
+      }
+
+      rewardedInterstitialAd.present(fromRootViewController: self) {
+        let reward = rewardedInterstitialAd.adReward
+        // TODO: Reward the user!
+          self.updateUI()
+          self.loadGuessRewardedAd()
+      }
     }
     
 
     func updateUI() {
         for button in multiChoiceButtons {
+            if button == previousWrongSelectedButton {
+                button.isEnabled = false
+            }
+            
             button.tintColor = UIColor(named: "primaryLightOrange")
             button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
             
@@ -138,21 +180,30 @@ class GuessQuizViewController: UIViewController {
             break
         }
         
-        extraGuessPopupView.isHidden = false
-        extraGuessPopupView.restartCountdown()
-        
-//        // If user is correct, perform segue
-//        if guessedResultType == userQuizHistory?.finalResult {
-//            fetchUser {
-//                self.updateUser {
-//                    self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
-//                }
-//            }
-//        } else {
-//            // Present extra guess popup
-//
-//        }
-        
+        // If user retried guess already, show guess results
+        if previousWrongSelectedButton != nil {
+            self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+            
+        } else {
+            // If user is correct, perform segue
+            if guessedResultType == userQuizHistory?.finalResult {
+                fetchUser {
+                    self.updateUser {
+                        self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+                    }
+                }
+            } else {
+                // Show extra guess pop up
+                self.navigationItem.hidesBackButton = true
+                
+                previousWrongSelectedButton = selectedButton
+                
+                extraGuessPopupView.isHidden = false
+                extraGuessPopupView.restartCountdown()
+                
+                fetchUser { self.updateUser { } }
+            }
+        }
     }
     
     func updateUser(completion: @escaping () -> Void) {
@@ -248,6 +299,24 @@ class GuessQuizViewController: UIViewController {
     }
 }
 
+extension GuessQuizViewController: GADFullScreenContentDelegate {
 
+  /// Tells the delegate that the ad failed to present full screen content.
+  func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    print("Ad did fail to present full screen content.")
+      presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
+      updateUI()
+  }
+
+  /// Tells the delegate that the ad will present full screen content.
+  func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    print("Ad will present full screen content.")
+  }
+
+  /// Tells the delegate that the ad dismissed full screen content.
+  func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    print("Ad did dismiss full screen content.")
+  }
+}
 
 
