@@ -11,6 +11,10 @@ import FirebaseFirestore
 import GoogleMobileAds
 
 class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
+    func noThanksButtonClicked() {
+        self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+    }
+    
     func extraGuessCountDownFinished() {
         showExtraGuessRewardAd()
     }
@@ -313,9 +317,9 @@ extension GuessQuizViewController: GADFullScreenContentDelegate {
     print("Ad will present full screen content.")
   }
 
-  /// Tells the delegate that the ad dismissed full screen content.
+  /// ad dismissed
   func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-    print("Ad did dismiss full screen content.")
+      self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
   }
 }
 

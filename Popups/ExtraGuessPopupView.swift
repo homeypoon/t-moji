@@ -9,6 +9,8 @@ import UIKit
 
 protocol ExtraGuessPopupViewDelegate: AnyObject {
     func extraGuessCountDownFinished()
+    
+    func noThanksButtonClicked()
 }
 
 class ExtraGuessPopupView: UIView {
@@ -59,6 +61,7 @@ class ExtraGuessPopupView: UIView {
     
     @IBAction func noThanksButtonClicked(_ sender: UIButton) {
         hidePopup()
+        delegate?.noThanksButtonClicked()
     }
 
 }

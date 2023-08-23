@@ -1927,34 +1927,35 @@ Accuracy</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W40-bK-j45" customClass="ExtraGuessPopupView" customModule="T_moji" customModuleProvider="target">
-                                <rect key="frame" x="29.333333333333343" y="281" width="334.33333333333326" height="290"/>
+                                <rect key="frame" x="29.333333333333343" y="261" width="334.33333333333326" height="330"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R5r-Br-OIB">
-                                        <rect key="frame" x="0.0" y="0.0" width="334.33333333333331" height="43.666666666666664"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="334.33333333333331" height="49.666666666666664"/>
                                         <color key="backgroundColor" name="primaryDarkOrange"/>
                                     </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="y76-Ko-WX0">
-                                        <rect key="frame" x="20.666666666666657" y="99.666666666666686" width="293" height="70.666666666666686"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="MoH-I7-wAs">
+                                        <rect key="frame" x="32" y="226" width="270.33333333333331" height="96"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wrong Guess!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n77-QA-zma">
-                                                <rect key="frame" x="0.0" y="0.0" width="293" height="26.333333333333332"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="22"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Watch this video to get another guess!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kni-my-QGz">
-                                                <rect key="frame" x="0.0" y="50.333333333333314" width="293" height="20.333333333333329"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="MoH-I7-wAs">
-                                        <rect key="frame" x="8" y="235.66666666666663" width="318.33333333333331" height="34.333333333333314"/>
-                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c5P-Bs-Nu5">
+                                                <rect key="frame" x="0.0" y="0.0" width="270.33333333333331" height="44"/>
+                                                <color key="backgroundColor" name="primaryRed"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="44" id="Jbz-yf-m2u"/>
+                                                </constraints>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="Get Extra Guess">
+                                                    <fontDescription key="titleFontDescription" type="boldSystem" pointSize="17"/>
+                                                    <color key="baseForegroundColor" name="white"/>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="noThanksButtonClicked:" destination="W40-bK-j45" eventType="touchUpInside" id="ZTY-bT-dFY"/>
+                                                </connections>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="txI-dU-BCX">
-                                                <rect key="frame" x="0.0" y="0.0" width="125.33333333333333" height="34.333333333333336"/>
+                                                <rect key="frame" x="0.0" y="52" width="270.33333333333331" height="44"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="44" id="1nO-Xl-US2"/>
+                                                </constraints>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="No Thanks">
                                                     <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="17"/>
@@ -1963,10 +1964,32 @@ Accuracy</string>
                                                     <action selector="noThanksButtonClicked:" destination="W40-bK-j45" eventType="touchUpInside" id="Bh9-sY-tLS"/>
                                                 </connections>
                                             </button>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Starting in 5..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="utI-nJ-iTP">
-                                                <rect key="frame" x="137.33333333333331" y="0.0" width="181" height="34.333333333333336"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="28" translatesAutoresizingMaskIntoConstraints="NO" id="JeB-wi-S5U">
+                                        <rect key="frame" x="20.666666666666657" y="77.666666666666686" width="293" height="114.33333333333331"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="y76-Ko-WX0">
+                                                <rect key="frame" x="0.0" y="0.0" width="293" height="64.666666666666671"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wrong Guess!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n77-QA-zma">
+                                                        <rect key="frame" x="0.0" y="0.0" width="293" height="26.333333333333332"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="black" pointSize="22"/>
+                                                        <color key="textColor" name="primaryDarkOrange"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Watch this video to get another guess!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kni-my-QGz">
+                                                        <rect key="frame" x="0.0" y="44.333333333333314" width="293" height="20.333333333333329"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Starting in 5..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="utI-nJ-iTP">
+                                                <rect key="frame" x="0.0" y="92.666666666666629" width="293" height="21.666666666666671"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                                <color key="textColor" name="primaryRed"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
@@ -1975,15 +1998,17 @@ Accuracy</string>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="R5r-Br-OIB" firstAttribute="top" secondItem="W40-bK-j45" secondAttribute="top" id="3Ia-2h-bvz"/>
-                                    <constraint firstItem="MoH-I7-wAs" firstAttribute="leading" secondItem="W40-bK-j45" secondAttribute="leading" constant="8" id="7c1-gi-mKO"/>
-                                    <constraint firstAttribute="trailing" secondItem="MoH-I7-wAs" secondAttribute="trailing" constant="8" id="AuH-Q0-sCq"/>
-                                    <constraint firstItem="y76-Ko-WX0" firstAttribute="centerX" secondItem="W40-bK-j45" secondAttribute="centerX" id="F0E-XA-rkK"/>
+                                    <constraint firstItem="MoH-I7-wAs" firstAttribute="leading" secondItem="W40-bK-j45" secondAttribute="leading" constant="32" id="7c1-gi-mKO"/>
+                                    <constraint firstAttribute="trailing" secondItem="MoH-I7-wAs" secondAttribute="trailing" constant="32" id="AuH-Q0-sCq"/>
                                     <constraint firstItem="MoH-I7-wAs" firstAttribute="centerX" secondItem="W40-bK-j45" secondAttribute="centerX" id="I0z-GV-KYl"/>
                                     <constraint firstItem="R5r-Br-OIB" firstAttribute="leading" secondItem="W40-bK-j45" secondAttribute="leading" id="LS3-jr-mYN"/>
-                                    <constraint firstItem="y76-Ko-WX0" firstAttribute="centerY" secondItem="W40-bK-j45" secondAttribute="centerY" constant="-10" id="cEh-Lf-IJ3"/>
-                                    <constraint firstAttribute="bottom" secondItem="MoH-I7-wAs" secondAttribute="bottom" constant="20" id="rGh-z1-TMk"/>
+                                    <constraint firstItem="JeB-wi-S5U" firstAttribute="top" secondItem="R5r-Br-OIB" secondAttribute="bottom" priority="999" constant="28" id="NmI-4N-pRX"/>
+                                    <constraint firstItem="JeB-wi-S5U" firstAttribute="centerX" secondItem="W40-bK-j45" secondAttribute="centerX" id="YGb-1J-KdI"/>
+                                    <constraint firstAttribute="height" constant="330" id="bwB-OK-tlh"/>
+                                    <constraint firstAttribute="bottom" secondItem="MoH-I7-wAs" secondAttribute="bottom" constant="8" id="rGh-z1-TMk"/>
                                     <constraint firstItem="R5r-Br-OIB" firstAttribute="height" secondItem="W40-bK-j45" secondAttribute="height" multiplier="0.15" id="sff-Hf-3hb"/>
                                     <constraint firstAttribute="trailing" secondItem="R5r-Br-OIB" secondAttribute="trailing" id="ty3-1E-UO5"/>
+                                    <constraint firstItem="JeB-wi-S5U" firstAttribute="top" relation="greaterThanOrEqual" secondItem="R5r-Br-OIB" secondAttribute="bottom" constant="8" id="zr2-b4-dRb"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="countdownLabel" destination="utI-nJ-iTP" id="zl0-ih-Q3r"/>
@@ -2000,7 +2025,6 @@ Accuracy</string>
                             <constraint firstItem="0Ud-xd-IV8" firstAttribute="top" secondItem="5g2-Qf-r3k" secondAttribute="top" constant="20" id="Bev-To-shs"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="centerX" secondItem="ByX-s2-eTU" secondAttribute="centerX" id="D9L-QK-bAI"/>
                             <constraint firstItem="1he-pu-ZFQ" firstAttribute="leading" secondItem="5g2-Qf-r3k" secondAttribute="leading" constant="20" id="DjD-dH-Gry"/>
-                            <constraint firstAttribute="bottom" secondItem="W40-bK-j45" secondAttribute="bottom" constant="281" id="FEJ-F1-PzN"/>
                             <constraint firstItem="W40-bK-j45" firstAttribute="centerY" secondItem="ByX-s2-eTU" secondAttribute="centerY" id="I9q-Y7-CWA"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="width" secondItem="9xX-5V-XOd" secondAttribute="width" multiplier="1:1" id="KaM-Jh-lWr"/>
                             <constraint firstItem="5g2-Qf-r3k" firstAttribute="bottom" secondItem="Pfa-XH-xWb" secondAttribute="bottom" constant="120" id="LaO-jr-OcT"/>
