@@ -584,6 +584,25 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         }
     }
     
+    @IBAction func leaveGroupBarButtonClicked(_ sender: UIBarButtonItem) {
+        
+        presentLeaveGroupAlert()
+    }
+    
+    func presentLeaveGroupAlert() {
+        let alert = UIAlertController(title: "Leave T--m Confirmation", message: "Are you sure you want to leave \(group.name)?", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        alert.addAction(cancelAction)
+        
+        let leaveGroupAction = UIAlertAction(title: "Leave T--m", style: .destructive, handler: {_ in
+            self.performSegue(withIdentifier: "unwindToHomeAndLeaveGroup", sender: nil)
+        })
+        alert.addAction(leaveGroupAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
     @IBAction func unwindToGroupHome(segue: UIStoryboardSegue) {
     }
 }

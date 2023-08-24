@@ -238,16 +238,20 @@ class HomeCollectionViewController: UICollectionViewController {
     }
     
     // User exits group
-    @IBAction func unwindToHome(segue: UIStoryboardSegue) {
+    @IBAction func unwindToHomeAndLeave(segue: UIStoryboardSegue) {
         
         // If unwinding from group settings, need to delete group from user
-        if let groupSettingsVC = segue.source as? GroupSettingsViewController {
-            guard let group = groupSettingsVC.group else { return }
+        if let groupHomeVC = segue.source as? GroupHomeCollectionViewController {
+            guard let group = groupHomeVC.group else { return }
+            print("unwinded to home, group: \(groupHomeVC)")
             
             removeUserFromGroup(group: group)
             
         }
         fetchGroups()
+    }
+    
+    @IBAction func unwindToHome(segue: UIStoryboardSegue) {
     }
     
 }

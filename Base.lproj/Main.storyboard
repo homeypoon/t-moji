@@ -1201,7 +1201,7 @@
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="eJn-QQ-Amg">
                         <barButtonItem key="leftBarButtonItem" title="&lt; Home" id="pNI-Bo-0UI">
                             <connections>
-                                <segue destination="un2-BK-0az" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="md3-Ht-g9H"/>
+                                <segue destination="un2-BK-0az" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="nHu-GM-zoS"/>
                             </connections>
                         </barButtonItem>
                         <centerItemGroups>
@@ -1212,7 +1212,11 @@
                                             <segue destination="3so-wp-4WR" kind="show" identifier="showAddTmates" id="ifL-FV-9VQ"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Leave Group" image="rectangle.portrait.and.arrow.forward" catalog="system" id="PxP-6Z-P3b"/>
+                                    <barButtonItem title="Leave Group" image="rectangle.portrait.and.arrow.forward" catalog="system" id="PxP-6Z-P3b">
+                                        <connections>
+                                            <action selector="leaveGroupBarButtonClicked:" destination="ey2-CB-G97" id="Ltq-7F-SzQ"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </barButtonItems>
                             </barButtonItemGroup>
                         </centerItemGroups>
@@ -1228,6 +1232,7 @@
                         <segue destination="eZe-Do-Vmq" kind="show" identifier="showGuessQuiz" id="0Pe-Oy-V1F"/>
                         <segue destination="tI7-pJ-KT3" kind="show" identifier="showRevealedResults" id="ZLO-ql-kZX"/>
                         <segue destination="CUi-1Q-bk3" kind="show" identifier="showTmateProfile" id="PuQ-E1-i1W"/>
+                        <segue destination="un2-BK-0az" kind="unwind" identifier="unwindToHomeAndLeaveGroup" unwindAction="unwindToHomeAndLeaveWithSegue:" id="gjQ-Qx-vlm"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuF-VP-MsG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
