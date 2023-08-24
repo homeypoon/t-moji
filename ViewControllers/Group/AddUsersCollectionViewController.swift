@@ -129,10 +129,12 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
         
-        // Add More Tmates from Group Settings
+        // Add More Tmates To Edit
         if let group = group {
             self.navigationItem.leftBarButtonItem = nil
             self.navigationItem.rightBarButtonItem = self.createBarButton
+            
+            self.createBarButton.title = "Save"
             self.tabBarController?.navigationItem.hidesBackButton = false
             
             groupName = group.name
@@ -140,6 +142,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             // Add User
             self.navigationItem.leftBarButtonItem = self.cancelBarButton
             self.navigationItem.rightBarButtonItem = self.createBarButton
+            self.createBarButton.title = "Create"
             self.tabBarController?.navigationItem.hidesBackButton = true
             
         }
@@ -489,7 +492,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     func updateSaveButtonState() {
         
         if let group = group {
-            let shouldEnableSaveButton = (!groupName.isEmpty && groupName != group.name) || (model.users.contains { user in
+            let shouldEnableSaveButton = !groupName.isEmpty && (groupName != group.name || model.users.contains { user in
                 return model.userSelectedState[user.uid] == true
             })
             createBarButton.isEnabled = shouldEnableSaveButton
@@ -503,7 +506,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     
     @IBAction func createBarButtonClicked(_ sender: UIBarButtonItem) {
         if group != nil {
-            performSegue(withIdentifier: "unwindToGroupSettings", sender: nil)
+            performSegue(withIdentifier: "unwindToGroupHome", sender: nil)
         } else {
             performSegue(withIdentifier: "showGroupHome", sender: nil)
         }
@@ -528,9 +531,9 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             
             let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
             groupHomeVC.group = self.group
-        } else if segue.identifier == "unwindToGroupSettings" {
-            let groupSettingsVC = segue.destination as! GroupSettingsViewController
-            groupSettingsVC.group = group
+        } else if segue.identifier == "unwindToGroupHome" {
+//            let groupSettingsVC = segue.destination as! GroupHomeCollectionViewController
+//            groupSettingsVC.group = group
             
             var addMemberIDs = model.userSelectedState
                 .filter { $0.value }

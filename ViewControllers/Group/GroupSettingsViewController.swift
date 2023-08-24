@@ -164,8 +164,6 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
         super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "showAddTmates" {
-//            let navController = segue.destination as! UINavigationController
-//            let addUsersVC = navController.topViewController as! AddUsersCollectionViewController
             
             let addUsersVC = segue.destination as! AddUsersCollectionViewController
             
@@ -173,13 +171,6 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
             
             guard let currentUid = Auth.auth().currentUser?.uid else { return }
             addUsersVC.membersIDs = members.map { $0.uid }
-            
-//            addUsersVC
-                
-//                guessQuizVC.guessedMember = tmate
-//                guessQuizVC.userQuizHistory = userQuizHistory
-//                guessQuizVC.group = group
-            
         }
     }
     
