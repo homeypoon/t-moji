@@ -26,23 +26,29 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
         
         self.applyRoundedCornerAndShadow(borderType: .topBigBanner)
         
-        let (correspondingLevel, minPointsForCurrentLevel, maxPointsForCurrentLevel) = Levels.getCorrespondingLevelAndMaxPoints(for: currentPoints)
+        
+        
         print("currentPoints \(currentPoints)")
-        
-        levelLabel.text = "\(correspondingLevel)"
 
-        updateProgress(for: currentPoints, minPoints: minPointsForCurrentLevel, maxPoints: maxPointsForCurrentLevel, animated: false)
-        
+        updateProgress(for: currentPoints)
         updateGuessStats(correctGuesses: correctGuesses, wrongGuesses: wrongGuesses)
     }
     
-    func updateProgress(for currentPoints: Int, minPoints: Float, maxPoints: Float, animated: Bool) {
-        let progressValue = (Float(currentPoints) - minPoints) / (maxPoints - minPoints)
+    func updateProgress(for currentPoints: Int) {
+        let levelTracker = LevelTracker(userPoints: currentPoints)
         
-        print("min \(minPoints)")
-        print("max \(maxPoints)")
-        levelProgressView.setProgress(progressValue, animated: animated)
-        pointsProgressLabel.text = "\(currentPoints) / \(Int(maxPoints))"
+        levelLabel.text = "\(levelTracker.currentLevel)"
+        
+        if levelTracker.isMaxLevel {
+            pointsProgressLabel.text = "\(levelTracker.userPoints) (MAX LEVEL)"
+            
+            levelProgressView.setProgress(1.0, animated: true)
+        } else {
+            pointsProgressLabel.text = "\(levelTracker.userPoints) / \(levelTracker.nextLevelPointsThreshold)"
+            let progressValue = Float(levelTracker.pointsInLevel) / Float(levelTracker.requiredPointsToNextLevel)
+            
+            levelProgressView.setProgress(progressValue, animated: true)
+        }
     }
     
     func updateGuessStats(correctGuesses: Int, wrongGuesses: Int) {
@@ -50,8 +56,6 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
         wrongGuessCountLabel.text = "\(wrongGuesses)"
         
         let guessAccuracy = Double(correctGuesses) / Double(correctGuesses + wrongGuesses) * 100
-        
-        
 
         guessAccuracyCountLabel.text = !guessAccuracy.isNaN ? String(format: "%.0f%%", guessAccuracy) : "N / A"
     }

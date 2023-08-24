@@ -192,6 +192,7 @@ extension UIButton {
 extension UILabel {
     enum LabelType {
         case level, currentUser, otherUser
+        case leaderboardTopUser, leaderboardRemainingUser
     }
     func applyStyle(labelType: LabelType) {
         
@@ -208,7 +209,14 @@ extension UILabel {
             self.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         case .otherUser:
             self.textColor = UIColor(named: "Text")
-            self.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+            self.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            
+        case .leaderboardTopUser:
+            self.textColor = UIColor(named: "Text")
+            self.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        case .leaderboardRemainingUser:
+            self.textColor = UIColor(named: "Text")
+            self.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
 
         }
         print("applying label point")
@@ -235,5 +243,24 @@ extension UIProgressView {
     
 }
 
+extension UIView {
+    enum ViewType {
+        case extraGuessPopup
+    }
+    
+    func applyRoundedCornerAndShadow(viewType: ViewType) {
+        switch viewType {
+        case .extraGuessPopup:
+            // explore
+            self.layer.cornerRadius = 18.0
+    
+            self.layer.masksToBounds = true
+            
+            self.layer.borderWidth = 2.5
+            self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+        }
+        
+    }
+}
 
 

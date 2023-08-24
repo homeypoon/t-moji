@@ -16,6 +16,8 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
     @IBOutlet var levelProgressView: UIProgressView!
     @IBOutlet var pointsProgressLabel: UILabel!
     
+    private var progressUpdated = false
+    
     func configure(quizTitle: String?, isRetake: Bool, withPoints currentPoints: Int) {
         
         quizTitleLabel.text = quizTitle
@@ -33,25 +35,125 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
         
         self.applyRoundedCornerAndShadow(borderType: .topBigBanner)
         
-        let (correspondingLevel, minPointsForCurrentLevel, maxPointsForCurrentLevel) = Levels.getCorrespondingLevelAndMaxPoints(for: currentPoints)
         print("currentPoints \(currentPoints)")
         
-        levelLabel.text = "\(correspondingLevel)"
+        //        levelLabel.text = "\(correspondingLevel)"
         
         levelLabel.applyStyle(labelType: .level)
         
         levelProgressView.applyStyle(progressType: .levelProgress)
-
-        updateProgress(for: currentPoints, minPoints: minPointsForCurrentLevel, maxPoints: maxPointsForCurrentLevel, animated: false)
+        
+        if !progressUpdated {
+            let initialPoints = isRetake ? currentPoints - Points.retakeQuiz : currentPoints - Points.takeQuiz
+            updateProgress(initialPoints: initialPoints, currentPoints: currentPoints)
+            progressUpdated = true
+        }
     }
     
-    func updateProgress(for currentPoints: Int, minPoints: Float, maxPoints: Float, animated: Bool) {
-        let progressValue = (Float(currentPoints) - minPoints) / (maxPoints - minPoints)
+    func updateProgress(initialPoints: Int, currentPoints: Int) {
+        let initialLevelTracker = LevelTracker(userPoints: initialPoints)
+        let currentLevelTracker = LevelTracker(userPoints: currentPoints)
         
-        print("min \(minPoints)")
-        print("max \(maxPoints)")
-        levelProgressView.setProgress(progressValue, animated: animated)
-        pointsProgressLabel.text = "\(currentPoints) / \(Int(maxPoints))"
+        print("updating progress")
         
+        if initialLevelTracker.currentLevel == currentLevelTracker.currentLevel {
+            updateProgressWhenNoLevelChange(initialLevelTracker: initialLevelTracker, currentLevelTracker: currentLevelTracker, noPointsChange: initialLevelTracker.userPoints == currentLevelTracker.userPoints)
+            print("no level change")
+        } else {
+            print("level change")
+            updateProgressWithLevelChange(initialLevelTracker: initialLevelTracker, currentLevelTracker: currentLevelTracker)
+        }
+    }
+    
+    func updateProgressWhenNoLevelChange(initialLevelTracker: LevelTracker, currentLevelTracker: LevelTracker, noPointsChange: Bool) {
+        levelLabel.text = "\(currentLevelTracker.currentLevel)"
+        
+        // Max Level
+        if currentLevelTracker.isMaxLevel {
+            pointsProgressLabel.text = "\(currentLevelTracker.userPoints) (MAX LEVEL)"
+            
+            levelProgressView.setProgress(1.0, animated: true)
+        } else if noPointsChange {
+            // No Points Change
+            pointsProgressLabel.text = "\(currentLevelTracker.userPoints) / \(currentLevelTracker.nextLevelPointsThreshold)"
+            let progressValue = Float(currentLevelTracker.pointsInLevel) / Float(currentLevelTracker.requiredPointsToNextLevel)
+            
+            levelProgressView.setProgress(progressValue, animated: false)
+            print("no points changed")
+        } else {
+            // Points Changed
+            pointsProgressLabel.text = "\(initialLevelTracker.userPoints) / \(initialLevelTracker.nextLevelPointsThreshold)"
+            var progressValue = Float(initialLevelTracker.pointsInLevel) / Float(initialLevelTracker.requiredPointsToNextLevel)
+            
+            levelProgressView.setProgress(progressValue, animated: false)
+            
+            // Update to current points
+            progressValue = Float(currentLevelTracker.pointsInLevel) / Float(currentLevelTracker.requiredPointsToNextLevel)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.levelProgressView.setProgress(progressValue, animated: true)
+                
+                self.pointsProgressLabel.text = "\(currentLevelTracker.userPoints) / \(currentLevelTracker.nextLevelPointsThreshold)"
+            }
+            
+            print("points changed")
+        }
+    }
+    
+    func updateProgressWithLevelChange(initialLevelTracker: LevelTracker, currentLevelTracker: LevelTracker) {
+        levelLabel.text = "\(initialLevelTracker.currentLevel)"
+        
+        if currentLevelTracker.isMaxLevel {
+            pointsProgressLabel.text = "\(currentLevelTracker.userPoints) (MAX LEVEL)"
+            
+            levelProgressView.setProgress(1.0, animated: true)
+        } else {
+            // Set inital points to next threshold
+            print("initialLevelTracker.userpoints \(initialLevelTracker.userPoints)")
+            print("initialLevelTracker.nextLevelPointsThreshold \(initialLevelTracker.nextLevelPointsThreshold)")
+            
+            pointsProgressLabel.text = "\(initialLevelTracker.userPoints) / \(initialLevelTracker.nextLevelPointsThreshold)"
+            var progressValue = Float(initialLevelTracker.pointsInLevel) / Float(initialLevelTracker.requiredPointsToNextLevel)
+            
+            levelProgressView.setProgress(progressValue, animated: false)
+            
+            // Delay the initial animation
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                self.levelProgressView.setProgress(Float(initialLevelTracker.requiredPointsToNextLevel) / Float(initialLevelTracker.requiredPointsToNextLevel), animated: true)
+            }
+            
+            // Delay the resetting of the progress view
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                self.levelProgressView.setProgress(Float(0) / Float(currentLevelTracker.requiredPointsToNextLevel), animated: true)
+            }
+            
+            // Set threshold to current points
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+                progressValue = Float(currentLevelTracker.pointsInLevel) / Float(currentLevelTracker.requiredPointsToNextLevel)
+                
+                self.levelProgressView.setProgress(progressValue, animated: true)
+                
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) {
+
+                // Animate levelLabel to become bigger and bounce
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.levelLabel.transform = CGAffineTransform(scaleX: 1.3, y: 1.3) // Scale up
+                }, completion: { _ in
+                    UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 7, options: [], animations: {
+                        self.levelLabel.transform = .identity // Bounce back
+                    }, completion: nil)
+
+                    // Update label text
+                    UIView.transition(with: self.levelLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                        self.levelLabel.text = "\(currentLevelTracker.currentLevel)"
+                        self.levelProgressView.setProgress(progressValue, animated: true)
+                        self.pointsProgressLabel.text = "\(currentLevelTracker.userPoints) / \(currentLevelTracker.nextLevelPointsThreshold)"
+                    }, completion: nil)
+                })
+
+            }
+            print("level changed, points changed")
+        }
     }
 }

@@ -7,31 +7,46 @@
 
 import Foundation
 
-struct Levels {
-    static let maxPointsPerLevel: [Int: Int] = [
-        1: 5, 2: 15, 3: 25, 4: 50, 5: 100, 6: 150, 7: 250,
-        8: 500, 9: 750, 10: 850, 11: 1000, 12: 1200, 13: 1400, 14: 1600, 15: 1800, 16: 2000, 17: 2300, 18: 2600, 19: 2900, 20: 3200, 21: 3500, 22: 3800, 23: 4100, 24: 4400, 25: 4700, 26: 5000, 27: 5400, 28: 5800, 29: 6200, 30: 6600, 31: 7000, 32: 7400, 33: 7800, 34: 8200, 35: 8600, 36: 9000, 37: 9400, 38: 9800, 39: 10200, 40: 10600, 41: 11000, 42: 11400, 43: 11800, 44: 12200, 45: 12600, 46: 13000, 47: 13500, 48: 14000, 49: 14500, 50: 15000, 51: 15500, 52: 16000, 53: 16500, 54: 17000, 55: 17500, 56: 18000, 57: 18500, 58: 19000, 59: 19500, 60: 20000
-    ]
-    
-    static func getCorrespondingLevelAndMaxPoints(for currentPoints: Int) -> (level: Int, minPoints: Float, maxPoints: Float) {
-        var correspondingLevel = 1
+struct LevelTracker {
+    var userPoints = 0
+
+    var currentLevel: Int  {
         
-        while correspondingLevel < maxPointsPerLevel.count - 1 && currentPoints >= maxPointsPerLevel[correspondingLevel]! {
-            
-            if currentPoints == maxPointsPerLevel[correspondingLevel]! {
-                let minPointsForCorrespondingLevel: Int = correspondingLevel >= 2 ? maxPointsPerLevel[correspondingLevel - 1]! : 0
-                let maxPointsForCorrespondingLevel = maxPointsPerLevel[correspondingLevel]!
-                return (level: correspondingLevel, minPoints: Float(minPointsForCorrespondingLevel), maxPoints: Float(maxPointsForCorrespondingLevel))
-            } else if currentPoints > maxPointsPerLevel[correspondingLevel]! {
-                correspondingLevel += 1
+        guard userPoints >= 0 else { return 0 }
+                
+        for (index, pointsThreshold) in LevelTracker.pointsThresholdPerLevel.enumerated() {
+            if userPoints < pointsThreshold {
+                return index
             }
         }
-        
-        let minPointsForCorrespondingLevel: Int = correspondingLevel >= 2 ? maxPointsPerLevel[correspondingLevel - 1]! : 0
-        
-        let maxPointsForCorrespondingLevel = maxPointsPerLevel[correspondingLevel]!
-        return (level: correspondingLevel, minPoints: Float(minPointsForCorrespondingLevel), maxPoints: Float(maxPointsForCorrespondingLevel))
+        return LevelTracker.pointsThresholdPerLevel.count
     }
     
+     var currentLevelPointsThreshold: Int {
+         guard currentLevel - 1 >= 0 else { return 0 }
+         
+        return LevelTracker.pointsThresholdPerLevel[currentLevel - 1]
+    }
+    
+     var nextLevelPointsThreshold: Int {
+         guard currentLevel >= 0 else { return 0 }
+         
+         return !isMaxLevel ? LevelTracker.pointsThresholdPerLevel[currentLevel] : 0
+    }
+    
+     var pointsInLevel: Int {
+         print("current thres \(currentLevelPointsThreshold)")
+        return userPoints - currentLevelPointsThreshold
+    }
+    
+     var requiredPointsToNextLevel: Int {
+        return nextLevelPointsThreshold - currentLevelPointsThreshold
+    }
+    
+    var isMaxLevel: Bool {
+        return currentLevel >= LevelTracker.pointsThresholdPerLevel.count
+    }
+    
+    static let pointsThresholdPerLevel = [0, 5, 10, 15, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 650, 700, 750, 800, 850, 900, 950, 1000, 1100, 1200, 1300, 1400, 1500, 1750, 2000, 2500, 3000, 3500, 4500, 5000, 6000, 7500, 10000, 12500, 15000, 20000, 30000, 50000, 75000, 100000]
 }
 

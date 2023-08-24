@@ -20,8 +20,8 @@ class QuizDetailViewController: UIViewController {
     var currentUserResultType: ResultType?
     var takenByText: String!
     
-    private var rewardedInterstitialAd: GADRewardedInterstitialAd?
-
+    private var rewardedAd: GADRewardedAd?
+    
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var resultGroupButton: UIButton!
     @IBOutlet var myResultLabel: UILabel!
@@ -35,13 +35,16 @@ class QuizDetailViewController: UIViewController {
     
     var isRetakeQuiz: Bool?
     
+    
+    
     @IBOutlet var resultStackView: UIStackView!
     var takeQuizState: Int!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         self.tabBarController?.tabBar.isHidden = false
+        
         fetchQuizHistory()
         fetchUser()
     }
@@ -49,21 +52,34 @@ class QuizDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateButtonFont()
-        updateUIText()
-        loadRewardedAd()
     }
     
-    private func loadRewardedAd() {
-        
-        GADRewardedInterstitialAd.load(withAdUnitID:"ca-app-pub-3940256099942544/6978759866",
-            request: GADRequest()) { ad, error in
-              if let error = error {
-                return print("Failed to load rewarded interstitial ad with error: \(error.localizedDescription)")
-              }
-
-              self.rewardedInterstitialAd = ad
-              self.rewardedInterstitialAd?.fullScreenContentDelegate = self
+    func loadRetakeQuizRewardedAd() {
+        let request = GADRequest()
+        GADRewardedAd.load(withAdUnitID:"ca-app-pub-3940256099942544/1712485313",
+                           request: request,
+                           completionHandler: { [self] ad, error in
+          if let error = error {
+            print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+            return
+          }
+          rewardedAd = ad
+            showRetakeQuizRewardedAd()
+          print("Rewarded ad loaded.")
+        }
+        )
+      }
+    
+    func showRetakeQuizRewardedAd() {
+        if let ad = rewardedAd {
+            ad.present(fromRootViewController: self) {
+                // Reward the user by letting them redo quiz
+                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
             }
+        } else {
+            // Ad wasn't ready
+            self.presentErrorAlert(withTitle: "No videos available 😔", withMessage: "Try again soon!")
+        }
     }
     
     private func updateUIText() {
@@ -78,29 +94,32 @@ class QuizDetailViewController: UIViewController {
             resultDetailButton.isHidden = true
             resultStackView.isHidden = true
             
+            takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
+            
         } else if takeQuizState == ButtonState.retakeQuiz {
             myResultLabel.isHidden = false
             resultDetailButton.isHidden = false
             resultStackView.isHidden = false
             
             myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
-            takeQuizButton.setTitle("Retake Quiz", for: [])
+            takeQuizButton.setTitle("  Retake Quiz", for: [])
+            takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
         }
         
         quizTitleLabel.text = quiz?.title
         
-        // If no t-mates have taken quiz
-        if takenByText == TakenByText.noTmates {
-            guessForTmatesButton.isUserInteractionEnabled = false
-            
-            guessForTmatesButton.tintColor = .systemGray2
-            print("truee")
-        } else {
-            guessForTmatesButton.isEnabled = true
-            guessForTmatesButton.tintColor = UIColor.systemCyan
-            print("false")
-        }
+//        // If no t-mates have taken quiz
+//        if takenByText == TakenByText.noTmates {
+//            guessForTmatesButton.isUserInteractionEnabled = false
+//
+//            guessForTmatesButton.tintColor = .systemGray2
+//            print("truee")
+//        } else {
+//            guessForTmatesButton.isEnabled = true
+//            guessForTmatesButton.tintColor = UIColor.systemCyan
+//            print("false")
+//        }
         guessForTmatesButton.configuration?.subtitle = takenByText
         
         quizDetailStackView.layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
@@ -128,13 +147,21 @@ class QuizDetailViewController: UIViewController {
     }
     
     @IBAction func showQuiz(_ sender: UIButton) {
-
+        
         isRetakeQuiz = takeQuizState == ButtonState.retakeQuiz
-        if isRetakeQuiz! {
-//            show()
-            self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
-        } else {
-            performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
+        
+        if let isRetakeQuiz = isRetakeQuiz {
+            if isRetakeQuiz {
+                // UNCOMMENT
+//                loadRetakeQuizRewardedAd()
+
+                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil) // delete
+                
+                
+//                showRetakeQuizRewardedAd()
+            } else {
+                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
+            }
         }
     }
     
@@ -158,7 +185,7 @@ class QuizDetailViewController: UIViewController {
         
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.presentErrorAlert(withMessage: error.localizedDescription)
             } else {
                 for document in querySnapshot!.documents {
                     do {
@@ -170,7 +197,7 @@ class QuizDetailViewController: UIViewController {
                             print("updating")
                         }
                     } catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.presentErrorAlert(withMessage: error.localizedDescription)
                     }
                 }
             }
@@ -192,13 +219,13 @@ class QuizDetailViewController: UIViewController {
                 self.updateUIText()
             case .failure(let error):
                 // Handle the error appropriately
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.presentErrorAlert(withMessage: error.localizedDescription)
             }
         }
     }
     
-    func presentErrorAlert(with message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+    func presentErrorAlert(withTitle title: String? = "Error", withMessage message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
@@ -235,33 +262,22 @@ class QuizDetailViewController: UIViewController {
         }
     }
     
-    func show() {
-      guard let rewardedInterstitialAd = rewardedInterstitialAd else {
-        return print("Ad wasn't ready.")
-      }
-
-      rewardedInterstitialAd.present(fromRootViewController: self) {
-        let reward = rewardedInterstitialAd.adReward
-        // TODO: Reward the user!
-      }
-    }
-    
 }
 
 extension QuizDetailViewController: GADFullScreenContentDelegate {
-
-  /// Tells the delegate that the ad failed to present full screen content.
-  func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-    print("Ad did fail to present full screen content.")
-  }
-
-  /// Tells the delegate that the ad will present full screen content.
-  func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-    print("Ad will present full screen content.")
-  }
-
-  /// Tells the delegate that the ad dismissed full screen content.
-  func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-    print("Ad did dismiss full screen content.")
-  }
+    
+    /// Tells the delegate that the ad failed to present full screen content.
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        print("Ad did fail to present full screen content.")
+    }
+    
+    /// Tells the delegate that the ad will present full screen content.
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        print("Ad will present full screen content.")
+    }
+    
+    /// Tells the delegate that the ad dismissed full screen content.
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        print("Ad did dismiss full screen content.")
+    }
 }

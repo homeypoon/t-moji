@@ -11,23 +11,25 @@ class RemainingLeaderboardCollectionViewCell: UICollectionViewCell {
     @IBOutlet var ordinalLabel: UILabel!
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var pointsLabel: UILabel!
-    @IBOutlet var chevronImageView: UIImageView!
+    @IBOutlet var levelLabel: UILabel!
     
     func configure(withOrdinal ordinal: String, withUsername username: String?, withPoints points: Int, isCurrentUser: Bool) {
         if isCurrentUser {
             usernameLabel.applyStyle(labelType: .currentUser)
-            chevronImageView.isHidden = true
             
             self.applyBackground(backgroundType: .currentUser)
         } else {
             usernameLabel.text = username
-            usernameLabel.applyStyle(labelType: .otherUser)
-            chevronImageView.isHidden = false
+            usernameLabel.applyStyle(labelType: .leaderboardRemainingUser)
             self.applyBackground(backgroundType: .othersUser)
         }
         
         ordinalLabel.text = ordinal
         pointsLabel.text = "\(points) pts"
+
+        let levelTracker = LevelTracker(userPoints: points)
+        
+        levelLabel.text = !levelTracker.isMaxLevel ? "lvl \(levelTracker.currentLevel)" : "(MAX LEVEL)"
         
         self.applyRoundedCornerAndShadow(borderType: .remainingLeaderboard)
     }

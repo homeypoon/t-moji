@@ -12,11 +12,13 @@ import GoogleMobileAds
 
 class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func noThanksButtonClicked() {
+        removeBlurEffect()
         self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
     }
     
-    func extraGuessCountDownFinished() {
+    func extraGuessGranted() {
         showExtraGuessRewardAd()
+        removeBlurEffect()
     }
     
     @IBOutlet var quizTitleLabel: UILabel!
@@ -45,13 +47,17 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     
     var resultChoices: [ResultType] = []
     var selectedButton: UIButton?
+    
+    var blurEffectView: UIVisualEffectView?
+
     @IBOutlet var extraGuessPopupView: ExtraGuessPopupView!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.tabBarController?.tabBar.isHidden = true
-        extraGuessPopupView.isHidden = true
+//        extraGuessPopupView.isHidden = true
+        extraGuessPopupView.removeFromSuperview()
     }
     
     override func viewDidLoad() {
@@ -83,7 +89,6 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
       }
 
       rewardedInterstitialAd.present(fromRootViewController: self) {
-        let reward = rewardedInterstitialAd.adReward
         // TODO: Reward the user!
           self.updateUI()
           self.loadGuessRewardedAd()
@@ -102,7 +107,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
             
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .medium)
                 return outgoing
             }
             
@@ -171,6 +176,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
 
     @IBAction func submitButtonPressed(_ sender: UIButton) {
         
+        guard selectedButton != nil else { return }
+        
         switch selectedButton {
         case multiChoiceButton1:
             guessedResultType = resultChoices[0]
@@ -186,13 +193,16 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         
         // If user retried guess already, show guess results
         if previousWrongSelectedButton != nil {
+            
+            updateUserWithPointsAndGuessCount {}
+            
             self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
             
         } else {
             // If user is correct, perform segue
             if guessedResultType == userQuizHistory?.finalResult {
-                fetchUser {
-                    self.updateUser {
+                updateUserWithPointsAndGuessCount {
+                    self.updateGuessedMembers {
                         self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
                     }
                 }
@@ -202,15 +212,18 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 
                 previousWrongSelectedButton = selectedButton
                 
-                extraGuessPopupView.isHidden = false
+                showExtraGuessPopup()
+                
                 extraGuessPopupView.restartCountdown()
                 
-                fetchUser { self.updateUser { } }
+                self.updateGuessedMembers { }
+                
+                selectedButton = nil
             }
         }
     }
     
-    func updateUser(completion: @escaping () -> Void) {
+    func updateGuessedMembers(completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else {
             completion()
             return }
@@ -239,7 +252,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         }
     }
     
-    private func fetchUser(completion: @escaping () -> Void) {
+    private func updateUserWithPointsAndGuessCount(completion: @escaping () -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
@@ -300,6 +313,28 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         
         self.navigationController?.popViewController(animated: true)
         
+    }
+    
+    func showExtraGuessPopup() {
+        addBlurEffect()
+        view.addSubview(extraGuessPopupView)
+
+        extraGuessPopupView.translatesAutoresizingMaskIntoConstraints = true
+    }
+    
+    func addBlurEffect() {
+        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.dark)
+        blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView?.frame = view.bounds
+        blurEffectView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        if let blurEffectView = blurEffectView {
+            self.view.addSubview(blurEffectView)
+        }
+    }
+    
+    func removeBlurEffect() {
+        blurEffectView?.removeFromSuperview()
+        blurEffectView = nil
     }
 }
 

@@ -93,11 +93,10 @@ struct QuizData {
 //                Answer(text: "Snowy and cold", correspondingResult: ResultType.ship),
 //                Answer(text: "Breezy and mild", correspondingResult: ResultType.helicopter)
 //            ])
-            
+
         ]),
         
         // Fruit Quiz
-        // CHANGE NEEDED
         Quiz(id: 2, resultGroup: .fruit, title: "What Fruit Are You?", quizType: .character, questions: [
             Question(text: "Tea or Coffee?", type: .ranged, possibleAnswers: [
                 Answer(text: "Tea", correspondingResult: ResultType.pineapple),
@@ -149,7 +148,7 @@ struct QuizData {
 //                Answer(text: "Losing family", correspondingResult: ResultType.moana),
 //                Answer(text: "Isolation", correspondingResult: ResultType.ariel),
 //                Answer(text: "Being judged", correspondingResult: ResultType.belle),
-//                Answer(text: "Losing control", correspondingResult: ResultType.elsa),
+//                Answer(text: "Failure", correspondingResult: ResultType.elsa),
 //            ]),
 //            Question(text: "City or Countryside?", type: .ranged, possibleAnswers: [
 //                Answer(text: "City", correspondingResult: ResultType.ariel),
@@ -181,10 +180,94 @@ struct QuizData {
 //                Answer(text: "Falcon", correspondingResult: ResultType.mulan),
 //                Answer(text: "Wolf", correspondingResult: ResultType.elsa)
 //            ])
-        ])
+        ]),
         
+        // Mental Age
+        Quiz(id: 4, resultGroup: .mentalAge, title: "What’s Your Mental Age?", quizType: .character, questions: [
+            Question(text: "What is your favorite food?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Burger", correspondingResult: ResultType.child),
+                Answer(text: "Steak", correspondingResult: ResultType.senior),
+                Answer(text: "Chicken Nuggets", correspondingResult: ResultType.baby),
+                Answer(text: "Salad", correspondingResult: ResultType.adult)
+            ]),
+//            Question(text: "Early Bird or Night Owl?", type: .ranged, possibleAnswers: [
+//                Answer(text: "Early Bird", correspondingResult: ResultType.child),
+//                Answer(text: "", correspondingResult: ResultType.baby),
+//                Answer(text: "", correspondingResult: ResultType.senior),
+//                Answer(text: "Night Owl", correspondingResult: ResultType.adult)
+//            ]),
+//            Question(text: "What is your favorite pattern?", type: .multipleChoice, possibleAnswers: [
+//                Answer(text: "Stripes", correspondingResult: ResultType.child),
+//                Answer(text: "Solid Color", correspondingResult: ResultType.adult),
+//                Answer(text: "Polka Dots", correspondingResult: ResultType.baby),
+//                Answer(text: "Plaid", correspondingResult: ResultType.senior)
+//            ]),
+//            Question(text: "What would you do with a million dollars?", type: .multipleChoice, possibleAnswers: [
+//                Answer(text: "Invest", correspondingResult: ResultType.adult),
+//                Answer(text: "Buy a house", correspondingResult: ResultType.child),
+//                Answer(text: "Buy lottery tickets", correspondingResult: ResultType.senior),
+//                Answer(text: "Donate", correspondingResult: ResultType.baby)
+//            ]),
+//            Question(text: "What is your favorite subject?", type: .multipleChoice, possibleAnswers: [
+//                Answer(text: "Math", correspondingResult: ResultType.baby),
+//                Answer(text: "Art", correspondingResult: ResultType.child),
+//                Answer(text: "History", correspondingResult: ResultType.senior),
+//                Answer(text: "Technology", correspondingResult: ResultType.adult)
+//            ]),
+//            Question(text: "What's your favorite ice cream flavor?", type: .multipleChoice, possibleAnswers: [
+//                Answer(text: "Strawberry", correspondingResult: ResultType.baby),
+//                Answer(text: "Vanilla", correspondingResult: ResultType.senior),
+//                Answer(text: "Chocolate", correspondingResult: ResultType.adult),
+//                Answer(text: "Cookies & Cream", correspondingResult: ResultType.child)
+//            ])
+        ]),
+        
+        // Bear Quiz
+        Quiz(id: 5, resultGroup: .bear, title: "What Type of Bear Are You?", quizType: .character, questions: [
+            Question(text: "What's your favorite type of pizza topping?", type: .multipleChoice, possibleAnswers: [
+                
+                Answer(text: "Pepperoni", correspondingResult: ResultType.brownBear),
+                Answer(text: "Extra Cheese", correspondingResult: ResultType.koala),
+                Answer(text: "Pineapple", correspondingResult: ResultType.panda),
+                Answer(text: "Mushroom", correspondingResult: ResultType.polarBear)
+            ]),
+            Question(text: "Which celebrity would you like to meet the most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Adele", correspondingResult: ResultType.polarBear),
+                Answer(text: "Taylor Swift", correspondingResult: ResultType.panda),
+                Answer(text: "Ed Sheeran", correspondingResult: ResultType.koala),
+                Answer(text: "Shawn Mendes", correspondingResult: ResultType.brownBear)
+            ]),
+            Question(text: "How lazy are you?", type: .ranged, possibleAnswers: [
+                Answer(text: "Not Lazy", correspondingResult: ResultType.brownBear),
+                Answer(text: "", correspondingResult: ResultType.polarBear),
+                Answer(text: "", correspondingResult: ResultType.koala),
+                Answer(text: "Very Lazy", correspondingResult: ResultType.panda)
+            ]),
+            Question(text: "What is your favorite sense?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Taste", correspondingResult: ResultType.brownBear),
+                Answer(text: "Smell", correspondingResult: ResultType.polarBear),
+                Answer(text: "Sight", correspondingResult: ResultType.panda),
+                Answer(text: "Hearing", correspondingResult: ResultType.koala)
+            ]),
+            Question(text: "When do you like to go grocery shopping?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "First thing in the morning", correspondingResult: ResultType.brownBear),
+                Answer(text: "Lunch hour", correspondingResult: ResultType.polarBear),
+                Answer(text: "Right before closing", correspondingResult: ResultType.koala),
+                Answer(text: "Never", correspondingResult: ResultType.panda)
+            ]),
+            Question(text: "Which planet would you visit?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Mars", correspondingResult: ResultType.brownBear),
+                Answer(text: "Saturn", correspondingResult: ResultType.koala),
+                Answer(text: "Jupiter", correspondingResult: ResultType.polarBear),
+                Answer(text: "Venus", correspondingResult: ResultType.panda)
+            ]),
+            Question(text: "Which board game do you want to play?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Monopoly", correspondingResult: ResultType.brownBear),
+                Answer(text: "Scrabble", correspondingResult: ResultType.koala),
+                Answer(text: "Chess", correspondingResult: ResultType.polarBear),
+                Answer(text: "Game of Life", correspondingResult: ResultType.panda)
+            ])
+        ]),
     ]
-    
-    
 }
 

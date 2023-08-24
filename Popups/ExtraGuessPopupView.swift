@@ -8,7 +8,7 @@
 import UIKit
 
 protocol ExtraGuessPopupViewDelegate: AnyObject {
-    func extraGuessCountDownFinished()
+    func extraGuessGranted()
     
     func noThanksButtonClicked()
 }
@@ -26,11 +26,10 @@ class ExtraGuessPopupView: UIView {
     override func awakeFromNib() {
         super.awakeFromNib()
         setupUI()
-        restartCountdown()
     }
     
     func setupUI() {
-        // Configure the appearance of the popup view and countdownLabel
+        self.applyRoundedCornerAndShadow(viewType: .extraGuessPopup)
     }
     
     func restartCountdown() {
@@ -48,7 +47,7 @@ class ExtraGuessPopupView: UIView {
         if countdownValue == 0 {
             countdownTimer?.invalidate()
             hidePopup()
-            delegate?.extraGuessCountDownFinished()
+            delegate?.extraGuessGranted()
         }
     }
     
@@ -64,4 +63,8 @@ class ExtraGuessPopupView: UIView {
         delegate?.noThanksButtonClicked()
     }
 
+    @IBAction func getExtraGuessButtonClicked(_ sender: UIButton) {
+        hidePopup()
+        delegate?.extraGuessGranted()
+    }
 }

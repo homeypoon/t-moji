@@ -62,7 +62,7 @@ class PersonalQuizViewController: UIViewController {
         for button in multiChoiceButtons {
             button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
+                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .medium)
                 return outgoing
             }
             button.applyRoundedCornerAndShadow(borderType: .quizButton)

@@ -157,6 +157,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
                 }
 
+
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 

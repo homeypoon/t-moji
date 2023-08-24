@@ -247,7 +247,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 section.contentInsets = sectionEdgeInsets
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
+                    top: 8,
                     leading: horzSpacing,
                     bottom: vertSpacing,
                     trailing: horzSpacing
@@ -256,7 +256,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 return section
             case .revealedMembers:
                 // Revealed Select Member
-                let vertSpacing: CGFloat = 10
+                let vertSpacing: CGFloat = 12
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -275,7 +275,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
+                    top: 8,
                     leading: horzSpacing,
                     bottom: vertSpacing,
                     trailing: horzSpacing

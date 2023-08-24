@@ -22,8 +22,10 @@ class CurrentUserResultCollectionViewCell: UICollectionViewCell {
         
         if let username = memberUsername {
             resultIsLabel.text = "\(username) got..."
+            self.applyBackground(backgroundType: .othersUser)
         } else {
             resultIsLabel.text = "Your Result is..."
+            self.applyBackground(backgroundType: .currentUser)
         }
         
         self.applyRoundedCornerAndShadow(borderType: .currentResult)

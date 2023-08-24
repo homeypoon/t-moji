@@ -14,6 +14,8 @@ enum ResultType: String {
     case apple = "apple", banana = "banana", orange = "orange", strawberry = "strawberry", mango = "mango", pineapple = "pineapple"
     case belle = "belle", mulan = "mulan", moana = "moana", ariel = "ariel", rapunzel = "rapunzel", elsa = "elsa"
     
+    case baby = "baby", child = "child", adult = "adult", senior = "senior"
+    case brownBear = "brown bear", polarBear = "polar bear", panda = "panda", koala = "koala"
     
     // ALERT: Watch how long each result message is + word length
     var message: String {
@@ -56,7 +58,7 @@ enum ResultType: String {
             return "You have a warm and welcoming personality that makes everyone feel at ease. Your hospitality and generosity are your strengths, and you have a way of turning ordinary moments into special memories."
             
             // disney princess
-    
+            
         case .belle:
             return "You are intelligent, curious, and possess a love for books and learning. Your independent and adventurous spirit sets you apart. You value inner beauty and possess a caring and empathetic nature."
         case .mulan:
@@ -70,6 +72,25 @@ enum ResultType: String {
         case .elsa:
             return "You have a powerful and resilient spirit. Your journey of self-acceptance and your ability to embrace your uniqueness is a source of inspiration. Your strength lies in your authenticity and inner power."
             
+            // mental age
+        case .baby:
+            return "You are a reminder of the beauty in simplicity, a testament to the awe-inspiring process of creation and growth. As you journey through life, you leave a trail of wonder and adoration in your wake."
+        case .child:
+            return "Inquisitive and full of wonder, you embody the essence of childhood curiosity. Your eyes eagerly take in the world around you as you explore every nook and cranny with a boundless sense of adventure."
+        case .adult:
+            return "Your demeanor exudes a sense of purpose and self-assuredness that comes from navigating life's twists and turns. Each step you take is deliberate, a reflection of the wisdom you've gained over the years."
+        case .senior:
+            return "Your presence is a source of comfort, offering reassurance to others as they navigate their own journeys. Your ability to listen without judgment and offer guidance is a beacon of light in the world."
+            // Bear
+        case .brownBear:
+            return "Your interactions are marked by a balanced blend of assertiveness and empathy. You have a natural gift for leadership, and you’re great at guiding others with a calm and authoritative presence."
+        case .panda:
+            return "Your ability to exude calm amidst chaos and nurture connections makes you a cherished presence in the lives of those you touch. Your presence enriches the lives of those fortunate enough to know you."
+            
+        case .koala:
+            return "Your interactions are marked by a gentle and approachable nature. Your ability to listen without judgment is a gift that fosters trust and encourages open communication."
+        case .polarBear:
+            return "You understand the value of self-reliance and introspection. Your ability to find strength in introspection and channel it into growth is an inspiration to those around you."
         }
     }
     
@@ -119,6 +140,26 @@ enum ResultType: String {
             return "💇‍♀️"
         case .elsa:
             return "❄️"
+            
+            // Ages
+        case .baby:
+            return "👶"
+        case .child:
+            return "🧒"
+        case .adult:
+            return "🧑"
+        case .senior:
+            return "🧓"
+            
+            // Bears
+        case .brownBear:
+            return "🐻"
+        case .polarBear:
+            return "🐻‍❄️"
+        case .panda:
+            return "🐼"
+        case .koala:
+            return "🐨"
         }
     }
 }
@@ -130,7 +171,8 @@ extension ResultType {
             .vehicle: [.car, .bike, .motorcycle, .bus, .ship, .helicopter],
             .fruit: [.apple, .banana, .orange, .strawberry, .mango, .pineapple],
             .disneyPrincess: [.belle, .mulan, .moana, .ariel, .rapunzel, .elsa],
-
+            .mentalAge: [.baby, .child, .adult, .senior],
+            .bear: [.polarBear, .koala, .panda, .brownBear],
             // Add more groups as needed
         ]
     }()
@@ -169,4 +211,6 @@ enum ResultGroup: String {
     case vehicle = "Vehicle"
     case animal = "Animal"
     case disneyPrincess = "Disney Princess"
+    case mentalAge = "Mental Age"
+    case bear = "Bear"
 }
