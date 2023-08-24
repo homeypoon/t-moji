@@ -54,13 +54,9 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
         let initialLevelTracker = LevelTracker(userPoints: initialPoints)
         let currentLevelTracker = LevelTracker(userPoints: currentPoints)
         
-        print("updating progress")
-        
         if initialLevelTracker.currentLevel == currentLevelTracker.currentLevel {
             updateProgressWhenNoLevelChange(initialLevelTracker: initialLevelTracker, currentLevelTracker: currentLevelTracker, noPointsChange: initialLevelTracker.userPoints == currentLevelTracker.userPoints)
-            print("no level change")
         } else {
-            print("level change")
             updateProgressWithLevelChange(initialLevelTracker: initialLevelTracker, currentLevelTracker: currentLevelTracker)
         }
     }
@@ -116,25 +112,32 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
             
             levelProgressView.setProgress(progressValue, animated: false)
             
+            var delayBaseTime = 1.3
+            
+            if (Float(initialLevelTracker.pointsInLevel) / Float(initialLevelTracker.requiredPointsToNextLevel) <= 0.3) {
+                delayBaseTime += 0.6
+            }
+            
             // Delay the initial animation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 self.levelProgressView.setProgress(Float(initialLevelTracker.requiredPointsToNextLevel) / Float(initialLevelTracker.requiredPointsToNextLevel), animated: true)
             }
             
             // Delay the resetting of the progress view
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delayBaseTime) {
                 self.levelProgressView.setProgress(Float(0) / Float(currentLevelTracker.requiredPointsToNextLevel), animated: true)
             }
             
             // Set threshold to current points
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delayBaseTime + 1) {
                 progressValue = Float(currentLevelTracker.pointsInLevel) / Float(currentLevelTracker.requiredPointsToNextLevel)
                 
                 self.levelProgressView.setProgress(progressValue, animated: true)
                 
+                self.pointsProgressLabel.text = "\(currentLevelTracker.userPoints) / \(currentLevelTracker.nextLevelPointsThreshold)"
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delayBaseTime + 1.5) {
 
                 // Animate levelLabel to become bigger and bounce
                 UIView.animate(withDuration: 0.5, animations: {
@@ -147,13 +150,10 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
                     // Update label text
                     UIView.transition(with: self.levelLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
                         self.levelLabel.text = "\(currentLevelTracker.currentLevel)"
-                        self.levelProgressView.setProgress(progressValue, animated: true)
-                        self.pointsProgressLabel.text = "\(currentLevelTracker.userPoints) / \(currentLevelTracker.nextLevelPointsThreshold)"
                     }, completion: nil)
                 })
 
             }
-            print("level changed, points changed")
         }
     }
 }

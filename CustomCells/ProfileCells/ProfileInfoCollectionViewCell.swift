@@ -48,6 +48,9 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
             let progressValue = Float(levelTracker.pointsInLevel) / Float(levelTracker.requiredPointsToNextLevel)
             
             levelProgressView.setProgress(progressValue, animated: true)
+            print("progressValue \(progressValue)")
+            print("points in level \(levelTracker.pointsInLevel)")
+            print("requiredPointsToNextLevel \(levelTracker.requiredPointsToNextLevel)")
         }
     }
     
