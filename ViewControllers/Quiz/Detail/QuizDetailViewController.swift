@@ -137,13 +137,18 @@ class QuizDetailViewController: UIViewController {
                 return outgoing
             }
         }
+        
         resultGroupButton.setTitle(quiz?.resultGroup.rawValue.capitalized, for: [])
+        
+        resultGroupButton.tintColor = UIColor(named: "primaryLightRed")
+        resultGroupButton.layer.borderColor = UIColor(named: "primaryRed")?.cgColor
+        
         resultGroupButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            outgoing.foregroundColor = UIColor(named: "primaryRed")
             return outgoing
         }
-        
     }
     
     @IBAction func showQuiz(_ sender: UIButton) {

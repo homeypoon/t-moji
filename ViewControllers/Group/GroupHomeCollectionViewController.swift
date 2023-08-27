@@ -14,17 +14,18 @@ private let reuseIdentifier = "Cell"
 class GroupHomeCollectionViewController: UICollectionViewController {
     
     var group: Group!
+    @IBOutlet var leaveTeamBarButton: UIBarButtonItem!
     
     enum ViewModel {
         enum Section: Hashable {
             case tmateResults(quizTitle: String)
-            case tmateEmojis
+            case tmateEmojis(tmate: User)
         }
         
         enum Item: Hashable, Comparable {
             case unrevealedMember(tmate: User, userQuizHistory: UserQuizHistory)
             case revealedMember(tmate: User, userQuizHistory: UserQuizHistory, isCurrentUser: Bool)
-            case tmateEmoji(tmate: User, resultTypes: [ResultType?], isCurrentUser: Bool)
+            case tmateEmoji(tmate: User, resultType: ResultType, isHidden: Bool)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -34,9 +35,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 case .revealedMember(let tmate, let userQuizHistory, _):
                     hasher.combine(tmate)
                     hasher.combine(userQuizHistory)
-                case .tmateEmoji(let tmate, let resultTypes, _):
+                case .tmateEmoji(let tmate, let resultType, _):
                     hasher.combine(tmate)
-                    hasher.combine(resultTypes)
+                    hasher.combine(resultType)
                 }
             }
             
@@ -46,8 +47,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
                 case (.revealedMember(let lTmate, let lUserQuizHistory, _), .revealedMember(let rTmate, let rUserQuizHistory, _)):
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
-                case (.tmateEmoji(let lTmate, let lResultTypes, _), .tmateEmoji(let rTmate, let rResultTypes, _)):
-                    return lTmate == rTmate && lResultTypes == rResultTypes
+                case (.tmateEmoji(let lTmate, let lResultType, _), .tmateEmoji(let rTmate, let rResultType, _)):
+                    return lResultType == rResultType && lTmate == rTmate
                 default:
                     return false
                 }
@@ -56,21 +57,15 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             static func < (lhs: Item, rhs: Item) -> Bool {
                 switch (lhs, rhs) {
                 case (.revealedMember(_, _, _), .unrevealedMember(_, _)):
-                       return true // Revealed comes before unrevealed
+                    return true // Revealed comes before unrevealed
                 case (.unrevealedMember(_, _), .revealedMember(_, _, _)):
-                       return false // Unrevealed comes after revealed
+                    return false // Unrevealed comes after revealed
                 case (.unrevealedMember(_, let lUserQuizHistory), .unrevealedMember(_, let rUserQuizHistory)):
                     return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
                 case (.revealedMember(_, let lUserQuizHistory, _), .revealedMember(_, let rUserQuizHistory, _)):
                     return lUserQuizHistory.userCompleteTime < rUserQuizHistory.userCompleteTime
-                case (.tmateEmoji(let lTmate, let lResultTypes, _), .tmateEmoji(let rTmate, let rResultTypes, _)):
-                    if lTmate.points != rTmate.points {
-                        return lTmate.points < rTmate.points
-                    } else if lResultTypes.count < rResultTypes.count {
-                        return lResultTypes.count < rResultTypes.count
-                    } else {
-                        return lTmate < rTmate
-                    }
+                case (.tmateEmoji(_, let lResultType, _), .tmateEmoji(_, let rResultType, _)):
+                    return lResultType < rResultType
                 default:
                     return false
                 }
@@ -125,7 +120,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-            
+        
         navigationItem.hidesBackButton = false
         
         navigationItem.title = group.name
@@ -148,14 +143,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
         selectedSegmentIndex = sender.selectedSegmentIndex
-
+        
         updateCollectionView()
     }
     
-    
-    @IBAction func onGroupSettingsClick(_ sender: Any) {
-        performSegue(withIdentifier: "showGroupSettings", sender: nil)
-    }
     
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
@@ -175,11 +166,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime), isCurrentUser: isCurrentUser)
                 
                 return cell
-            case .tmateEmoji(tmate: let tmate, resultTypes: let resultTypes, let isCurrentUser):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TmateEmojis", for: indexPath) as! TmateEmojisCollectionViewCell
+            case .tmateEmoji(_, let resultType, let isHidden):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TmateEmoji", for: indexPath) as! ProfileEmojiCollectionViewCell
                 
-                
-                cell.configure(username: tmate.username, points: tmate.points, resultTypes: resultTypes, isCurrentUser: isCurrentUser)
+                cell.configure(withResultType: resultType, isHidden: isHidden)
                 
                 return cell
             }
@@ -191,11 +181,11 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
             
             switch section {
-            
+                
             case .tmateResults(let quizTitle):
                 sectionHeader.configure(title: quizTitle, colorName: "Text")
-            case .tmateEmojis:
-                sectionHeader.configure(title: "Tmates Emoji Collections", colorName: "Text")
+            case .tmateEmojis(let tmate):
+                sectionHeader.configure(title: "\(tmate.username) \(tmate.points)", colorName: "Text")
             }
             
             return sectionHeader
@@ -207,7 +197,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
-        return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+        let layout =  UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
             let horzSpacing: CGFloat = 20
             
@@ -258,43 +248,41 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             case .tmateEmojis:
                 let vertSpacing: CGFloat = 10
                 
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(200))
-                
-                var group: NSCollectionLayoutGroup!
-                
-                if #available(iOS 16.0, *) {
-                    group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-                } else {
-                    group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 2)
-                }
-                
-                group.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
-                    leading: 0,
-                    bottom: vertSpacing,
-                    trailing: 0
-                )
-                
-                group.interItemSpacing = .fixed(16)
-                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                group.interItemSpacing = .fixed(12)
+                                
                 let section = NSCollectionLayoutSection(group: group)
                 section.boundarySupplementaryItems = [sectionHeader]
                 
-                section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 20,
-                    leading: horzSpacing,
-                    bottom: vertSpacing,
-                    trailing: horzSpacing
-                )
+                let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
                 
-                section.interGroupSpacing = 16
+                backgroundItem.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 20,
+                    bottom: 16,
+                    trailing: 20
+                    )
+
+                section.decorationItems = [backgroundItem]
+                
+                section.interGroupSpacing = 12
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 12,
+                    leading: 40,
+                    bottom: 40,
+                    trailing: 40
+                )
                 
                 return section
             }
         }
+        layout.register(SectionBackgroundView.self, forDecorationViewOfKind: SupplementaryViewKind.sectionBackgroundView)
+        return layout
     }
     
     func updateCollectionView() {
@@ -307,16 +295,16 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         case 0:
             
             let uniqueQuizIDs = fetchUniqueQuizIDs()
-                                
-                for quizID in uniqueQuizIDs {
-                    let quizTitle = QuizData.quizzes.first(where: { $0.id == quizID })?.title ?? "Guessed Tmates"
-                    sectionIDs.append(.tmateResults(quizTitle: quizTitle))
-                }
-                
+            
+            for quizID in uniqueQuizIDs {
+                let quizTitle = QuizData.quizzes.first(where: { $0.id == quizID })?.title ?? "Guessed Tmates"
+                sectionIDs.append(.tmateResults(quizTitle: quizTitle))
+            }
+            
             for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
                 
                 for userQuizHistory in userQuizHistories {
-
+                    
                     if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
                         let quizTitle = QuizData.quizzes.first(where: { $0.id == matchingQuizHistory.quizID })?.title ?? "Tmate Quiz"
                         
@@ -352,30 +340,59 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
             
             for section in sectionIDs.filter({ if case .tmateResults = $0 { return true } else { return false }}) {
-                    itemsBySection[section]?.sort()
-                }
+                itemsBySection[section]?.sort()
+            }
             
         case 1:
-            sectionIDs.append(.tmateEmojis)
+            let uniqueQuizIDs = fetchUniqueQuizIDs()
             
             if let currentUser = model.currentUser {
-                itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: currentUser, resultTypes: currentUser.userQuizHistory.map { $0.finalResult }, isCurrentUser: true))
-            }
-            
-            for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
-                var userMasterTmateResultTypes = [ResultType?]()
+                let currentUserResultTypes = currentUser.userQuizHistory.map { $0.finalResult }
+                sectionIDs.append(.tmateEmojis(tmate: currentUser))
                 
+                print("currentUserResultTypes \(currentUserResultTypes)")
+                for resultType in currentUserResultTypes {
+                    itemsBySection[.tmateEmojis(tmate: currentUser), default: []].append(ViewModel.Item.tmateEmoji(tmate: currentUser, resultType: resultType, isHidden: false))
+                    print("emoji")
+                }
+            }
+            for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
+                sectionIDs.append(.tmateEmojis(tmate: userMasterTmate))
+                                
                 for userQuizHistory in userQuizHistories {
-                    if let quizHistory = model.quizHistories.first(where: { $0.quizID == userQuizHistory.quizID }),
-                       quizHistory.completedUsers.contains(userMasterTmate.uid) {
+                    if let matchingQuizHistory = userMasterTmate.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID }) {
                         
-                        userMasterTmateResultTypes.append(userQuizHistory.finalResult)
+                        if matchingQuizHistory.membersGuessed.contains(currentUid) {
+                            
+                            itemsBySection[.tmateEmojis(tmate: userMasterTmate), default: []].append(ViewModel.Item.tmateEmoji(tmate: userMasterTmate, resultType: userQuizHistory.finalResult, isHidden: false))
+                            print("not guessed")
+                        } else {
+                            itemsBySection[.tmateEmojis(tmate: userMasterTmate), default: []].append(ViewModel.Item.tmateEmoji(tmate: userMasterTmate, resultType: userQuizHistory.finalResult, isHidden: true))
+                            print("guessed")
+                        }
                     }
                 }
-                itemsBySection[.tmateEmojis, default: []].append(ViewModel.Item.tmateEmoji(tmate: userMasterTmate, resultTypes: userMasterTmateResultTypes, isCurrentUser: false))
             }
             
-            itemsBySection[.tmateEmojis] = itemsBySection[.tmateEmojis]?.sorted(by: >)
+            // Sort the section IDs based on quiz titles
+            sectionIDs.sort { (section1, section2) -> Bool in
+                switch (section1, section2) {
+                case let (.tmateEmojis(lTmate), .tmateEmojis(rTmate)):
+                    if lTmate.points != rTmate.points {
+                        return lTmate.points > rTmate.points
+                    } else {
+                        return lTmate < rTmate
+                    }
+                default:
+                    return false
+                }
+            }
+            
+            for section in sectionIDs.filter({ if case .tmateResults = $0 { return true } else { return false }}) {
+                itemsBySection[section]?.sort()
+            }
+            
+            //            itemsBySection[.tmateEmojis] = itemsBySection[.tmateEmojis]?.sorted(by: >)
         default:
             break
         }
@@ -388,7 +405,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     }
     
     
-
+    
     func fetchQuizHistory(completion: @escaping () -> Void) {
         self.model.quizHistories.removeAll()
         
@@ -425,7 +442,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         return Array(uniqueQuizIDs)
     }
-
+    
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
@@ -488,9 +505,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 quizResultVC.quizResultType = isCurrentUser ? .checkOwnResult : .checkOtherResult
             }
-        } else if segue.identifier == "showGroupSettings" {
-            let groupSettingsVC = segue.destination as! GroupSettingsViewController
-            groupSettingsVC.group = self.group
         } else if segue.identifier == "showTmateProfile" {
             let profileVC = segue.destination as! ProfileCollectionViewController
             

@@ -30,11 +30,18 @@ extension UICollectionViewCell {
             self.contentView.layer.masksToBounds = true
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
+            
+        case .homeGroup:
+            self.contentView.layer.cornerRadius = 8.0
+            self.contentView.layer.borderWidth = 1.5
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+            self.contentView.layer.masksToBounds = true
+            
         case .smallItem:
             // guess, leaderboard
-            self.contentView.layer.cornerRadius = 4.0
+            self.contentView.layer.cornerRadius = 8.0
             self.contentView.layer.borderWidth = 1.5
-            self.contentView.layer.borderColor = UIColor.black.cgColor
+            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
             
         case .topBigBanner:
@@ -75,11 +82,6 @@ extension UICollectionViewCell {
             self.contentView.layer.masksToBounds = true
         case .remainingLeaderboard:
             self.contentView.layer.cornerRadius = 4.0
-            self.contentView.layer.borderWidth = 1.5
-            self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
-            self.contentView.layer.masksToBounds = true
-        case .homeGroup:
-            self.contentView.layer.cornerRadius = 8.0
             self.contentView.layer.borderWidth = 1.5
             self.contentView.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             self.contentView.layer.masksToBounds = true
@@ -128,6 +130,7 @@ extension UIButton {
     enum BorderType {
         case quizDetailButton, quizButton
         case quizSubmitButton, guessSubmitButton
+        case exploreTag
     }
     func applyRoundedCornerAndShadow(borderType: BorderType) {
         switch borderType {
@@ -184,6 +187,10 @@ extension UIButton {
             self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+        case .exploreTag:
+            self.layer.cornerRadius = 10.0
+            self.layer.borderWidth = 1.0
+            self.isUserInteractionEnabled = false
         }
     }
     
@@ -200,8 +207,9 @@ extension UILabel {
         case .level:
             self.layer.cornerRadius = 13.0
             self.layer.borderWidth = 0.5
-            self.layer.backgroundColor = UIColor.white.cgColor
-            //        self.layer.borderColor = UIColor.green.cgColor
+            self.layer.backgroundColor = UIColor(named: "progressViewTint")?.cgColor
+            self.textColor = UIColor(named: "primaryDarkBlue")
+//            self.layer.borderColor = UIColor(named: "primaryDarkBlue")?.cgColor
 
         case .currentUser:
             self.text = "Me"
@@ -217,9 +225,8 @@ extension UILabel {
         case .leaderboardRemainingUser:
             self.textColor = UIColor(named: "Text")
             self.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-
+            
         }
-        print("applying label point")
         
     }
     

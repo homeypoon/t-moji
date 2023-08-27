@@ -96,7 +96,7 @@ class HomeCollectionViewController: UICollectionViewController {
             
             switch section {
             case .groups:
-                sectionHeader.configure(title: "Groups", colorName: "Text")
+                sectionHeader.configure(title: "T--ms", colorName: "Text")
                 return sectionHeader
             }
         }
