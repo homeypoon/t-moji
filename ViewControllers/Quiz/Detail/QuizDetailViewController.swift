@@ -140,6 +140,8 @@ class QuizDetailViewController: UIViewController {
         
         resultGroupButton.setTitle(quiz?.resultGroup.rawValue.capitalized, for: [])
         
+        resultGroupButton.applyRoundedCornerAndShadow(borderType: .exploreTag)
+        
         resultGroupButton.tintColor = UIColor(named: "primaryLightRed")
         resultGroupButton.layer.borderColor = UIColor(named: "primaryRed")?.cgColor
         

@@ -232,7 +232,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(380))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(415))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -367,7 +367,6 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
             self.collectionView.reloadData()
         }        
     }
-    
     
     
     func fetchQuizHistory(completion: @escaping () -> Void) {

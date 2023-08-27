@@ -67,19 +67,6 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                     hasher.combine(member)
                 }
             }
-            
-            //            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
-            //                switch (lhs, rhs) {
-            //                case (.currentUserResult(let lMember, let lQuizHistory), .currentUserResult(let rMember, let rQuizHistory)):
-            //                    return lMember == rMember && lQuizHistory == rQuizHistory
-            //                case (.revealedResult(member: let lMember, quizHistory: let lQuizHistory), .revealedResult(member: let rMember, quizHistory: let rQuizHistory)):
-            //                    return lMember == rMember && lQuizHistory == rQuizHistory
-            //                case (.unrevealedResult(let lMember), .unrevealedResult(let rMember)):
-            //                    return lMember == rMember
-            //                default:
-            //                    return false
-            //                }
-            //            }
         }
     }
     
@@ -220,7 +207,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(400))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(425))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)

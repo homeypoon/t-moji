@@ -10,7 +10,7 @@ import UIKit
 class CurrentUserResultCollectionViewCell: UICollectionViewCell {
     @IBOutlet var emojiLabel: UILabel!
     @IBOutlet var resultNameLabel: UILabel!
-    @IBOutlet var resultDescriptionLabel: UILabel!
+    @IBOutlet var resultDescriptionTextView: UITextView!
     @IBOutlet var resultIsLabel: UILabel!
     
     
@@ -18,7 +18,7 @@ class CurrentUserResultCollectionViewCell: UICollectionViewCell {
         
         emojiLabel.text = "\(resultType.emoji)"
         resultNameLabel.text = "\(resultType.rawValue.capitalized)"
-        resultDescriptionLabel.text = resultType.message
+        resultDescriptionTextView.text = resultType.message
         
         if let username = memberUsername {
             resultIsLabel.text = "\(username) got..."

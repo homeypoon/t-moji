@@ -77,7 +77,6 @@ class PersonalQuizViewController: UIViewController {
         }
         
         submitButton.applyRoundedCornerAndShadow(borderType: .quizSubmitButton)
-        
     }
     
     func updateUI() {
@@ -117,8 +116,8 @@ class PersonalQuizViewController: UIViewController {
         
         
         for button in multiChoiceButtons {
-            button.tintColor = UIColor(named: "primaryLightBlue")
-            button.setTitleColor(UIColor(named: "darkBlueText"), for: [])
+            button.tintColor = UIColor(named: "primaryLightRed")
+            button.setTitleColor(UIColor(named: "darkRedText"), for: [])
         }
         selectedButton = nil
         
@@ -138,12 +137,12 @@ class PersonalQuizViewController: UIViewController {
     @IBAction func multiChoiceButtonTapped(_ sender: UIButton) {
         // Reset the color of all buttons
         for button in multiChoiceButtons {
-            button.tintColor = UIColor(named: "primaryLightBlue")
-            button.setTitleColor(UIColor(named: "darkBlueText"), for: [])
+            button.tintColor = UIColor(named: "primaryLightRed")
+            button.setTitleColor(UIColor(named: "darkRedText"), for: [])
         }
         
         // Set the selected button's color
-        sender.tintColor = UIColor(named: "primaryDarkBlue")
+        sender.tintColor = UIColor(named: "primaryRed")
         
         sender.setTitleColor(UIColor(named: "white"), for: [])
         

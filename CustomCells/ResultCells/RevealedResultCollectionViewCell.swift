@@ -10,7 +10,7 @@ import UIKit
 class RevealedResultCollectionViewCell: UICollectionViewCell {
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var resultTitleLabel: UILabel!
-    @IBOutlet var resultDescriptionLabel: UILabel!
+    @IBOutlet var resultDescriptionTextView: UITextView!
     
     
     func configure(withUsername username: String, withResultType resultType: ResultType, isCurrentUser: Bool) {
@@ -24,7 +24,7 @@ class RevealedResultCollectionViewCell: UICollectionViewCell {
 
         usernameLabel.text = modifiedUsername
         resultTitleLabel.text = "\(resultType.emoji) \(resultType.rawValue.capitalized)"
-        resultDescriptionLabel.text = resultType.message
+        resultDescriptionTextView.text = resultType.message
         
         self.applyRoundedCornerAndShadow(borderType: .othersResult)
     }
