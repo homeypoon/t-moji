@@ -10,7 +10,7 @@ import UIKit
 class GuessResultCollectionViewCell: UICollectionViewCell {
     @IBOutlet var emojiLabel: UILabel!
     @IBOutlet var resultNameLabel: UILabel!
-    @IBOutlet var resultDescriptionLabel: UILabel!
+    @IBOutlet var resultDescriptionTextView: UITextView!
     @IBOutlet var youGuessedLabel: UILabel!
     @IBOutlet var userGotLabel: UILabel!
     
@@ -21,7 +21,7 @@ class GuessResultCollectionViewCell: UICollectionViewCell {
         
         emojiLabel.text = "\(resultType.emoji)"
         resultNameLabel.text = "\(resultType.rawValue.capitalized)"
-        resultDescriptionLabel.text = resultType.message
+        resultDescriptionTextView.text = resultType.message
         
         self.applyRoundedCornerAndShadow(borderType: .currentResult)
     }

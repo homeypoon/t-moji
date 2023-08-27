@@ -44,6 +44,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
         enum Item: Hashable {
             case profile(user: User)
+            case noEmojis
             case emoji(resultType: ResultType, isHidden: Bool)
             case userQuizHistory(userQuizHistory: UserQuizHistory)
             case hiddenUserQuizHistory(userQuizHistory: UserQuizHistory)
@@ -58,6 +59,8 @@ class ProfileCollectionViewController: UICollectionViewController {
                     hasher.combine(quizHistory)
                 case .hiddenUserQuizHistory(let quizHistory):
                     hasher.combine(quizHistory)
+                case .noEmojis:
+                    hasher.combine("No Emojis Yet")
                 }
             }
             
@@ -71,6 +74,8 @@ class ProfileCollectionViewController: UICollectionViewController {
                     return lQuizHistory == rQuizHistory
                 case (.hiddenUserQuizHistory(let lQuizHistory), .hiddenUserQuizHistory(let rQuizHistory)):
                     return lQuizHistory == rQuizHistory
+                case (.noEmojis, .noEmojis):
+                    return true
                 default:
                     return false
                 }
@@ -223,6 +228,10 @@ class ProfileCollectionViewController: UICollectionViewController {
                 cell.configure(withQuizTitle: quizTitle, withTimePassed:  Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
+            case .noEmojis:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NoEmojis", for: indexPath) as! NoEmojisCollectionViewCell
+                
+                return cell
             }
         }
         
@@ -292,39 +301,89 @@ class ProfileCollectionViewController: UICollectionViewController {
             } else if sectionIndex == 1  {
                 // emoji
                 
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
-                let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                
-                
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                group.interItemSpacing = .fixed(12)
-                                
-                let section = NSCollectionLayoutSection(group: group)
-                
-                section.boundarySupplementaryItems = [sectionHeader]
-                
-                let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
-                
-                backgroundItem.contentInsets = NSDirectionalEdgeInsets(
-                    top: 8,
-                    leading: 20,
-                    bottom: 16,
-                    trailing: 20
+                // No Emojis
+                if sectionIndex == self.dataSource.snapshot().sectionIdentifiers.firstIndex(of: .userEmojis) && self.dataSource.itemIdentifier(for: IndexPath(item: 0, section: sectionIndex)) == .noEmojis {
+                    
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                    
+                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(48))
+                    
+                    var group: NSCollectionLayoutGroup!
+                    
+                    if #available(iOS 16.0, *) {
+                        group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                    } else {
+                        group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                    }
+                    
+                    group.contentInsets = NSDirectionalEdgeInsets(
+                        top: 0,
+                        leading: 0,
+                        bottom: Padding.smallItemVertPadding,
+                        trailing: 0
                     )
-
-                section.decorationItems = [backgroundItem]
-                
-                section.interGroupSpacing = 12
-                
-                section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 12,
-                    leading: 40,
-                    bottom: 40,
-                    trailing: 40
-                )
-
-                return section
+                    
+                    let section = NSCollectionLayoutSection(group: group)
+                    
+                    section.boundarySupplementaryItems = [sectionHeader]
+                    
+                    let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
+                    
+                    backgroundItem.contentInsets = NSDirectionalEdgeInsets(
+                        top: 8,
+                        leading: 20,
+                        bottom: 16,
+                        trailing: 20
+                    )
+                    
+                    section.decorationItems = [backgroundItem]
+                                        
+                    section.contentInsets = NSDirectionalEdgeInsets(
+                        top: 12,
+                        leading: 40,
+                        bottom: 40,
+                        trailing: 40
+                    )
+                    
+                    return section
+                           
+                } else {
+                    
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
+                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                    
+                    
+                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
+                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                    group.interItemSpacing = .fixed(12)
+                    
+                    let section = NSCollectionLayoutSection(group: group)
+                    
+                    section.boundarySupplementaryItems = [sectionHeader]
+                    
+                    let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
+                    
+                    backgroundItem.contentInsets = NSDirectionalEdgeInsets(
+                        top: 8,
+                        leading: 20,
+                        bottom: 16,
+                        trailing: 20
+                    )
+                    
+                    section.decorationItems = [backgroundItem]
+                    
+                    section.interGroupSpacing = 12
+                    
+                    section.contentInsets = NSDirectionalEdgeInsets(
+                        top: 12,
+                        leading: 40,
+                        bottom: 40,
+                        trailing: 40
+                    )
+                    
+                    return section
+                }
                 
             } else {
                 // user history
@@ -417,7 +476,6 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             itemsBySection[.userEmojis] = resultTypeItems
             
-            
             let quizHistoryItems = profileUser.userQuizHistory.reduce(into: [ViewModel.Item]()) { partial, userQuizHistory in
                 
                 let item = ViewModel.Item.userQuizHistory( userQuizHistory: userQuizHistory)
@@ -426,6 +484,12 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             itemsBySection[.userQuizHistory] = quizHistoryItems
             
+        }
+        
+        print("items emojis \(itemsBySection[.userEmojis])")
+        
+        if let emojiSection = itemsBySection[.userEmojis], emojiSection.isEmpty {
+            itemsBySection[.userEmojis] = [ViewModel.Item.noEmojis]
         }
         
         

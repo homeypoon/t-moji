@@ -37,7 +37,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         if completeState == true {
             completeStateButton.setTitle("Result: \(currentUserResultType?.emoji ?? " ")", for: .normal)
             
-            completeStateButton.tintColor = UIColor(named: "primaryLightOrange")
+            completeStateButton.configuration?.baseBackgroundColor = UIColor(named: "primaryLightOrange")
             completeStateButton.layer.borderColor = UIColor(named: "primaryDarkOrange")?.cgColor
             
             completeStateButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -49,15 +49,17 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         } else {
             completeStateButton.setTitle("Not Taken", for: .normal)
             
-            completeStateButton.tintColor = UIColor(named: "primaryDarkOrange")
+            completeStateButton.configuration?.baseBackgroundColor = UIColor(named: "primaryDarkOrange")
             completeStateButton.layer.borderColor = UIColor(named: "primaryDarkOrange")?.cgColor
             
             completeStateButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
                 outgoing.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+                outgoing.backgroundColor = UIColor(named: "primaryDarkOrange")
                 outgoing.foregroundColor = UIColor(named: "white")
                 return outgoing
             }
+            
         }
         takenByOthersLabel.text = takenByText
         

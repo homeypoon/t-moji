@@ -11,7 +11,11 @@ import FirebaseAuth
 
 private let reuseIdentifier = "Cell"
 
-class HomeCollectionViewController: UICollectionViewController {
+class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDelegate {
+    func createGroupButtonPressed() {
+        performSegue(withIdentifier: "showAddUsersToGroup", sender: nil)
+    }
+    
     
     var unwindCreatedGroup: Group?
     
@@ -19,11 +23,34 @@ class HomeCollectionViewController: UICollectionViewController {
     
     enum ViewModel {
         enum Section: Hashable, Comparable {
+            case homeTopBanner
             case groups
             //            case activityFeed
         }
         
-        typealias Item = Group
+        enum Item: Hashable, Comparable {
+            case homeTopBanner
+            case group(group: Group)
+            
+            func hash(into hasher: inout Hasher) {
+                switch self {
+                case .homeTopBanner:
+                    hasher.combine("homeTopBanner")
+                case .group(let group):
+                    hasher.combine(group)
+                }
+            }
+            static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
+                switch (lhs, rhs) {
+                case (.homeTopBanner, .homeTopBanner):
+                    return true
+                case (.group(let lGroup), .group(let rGroup)):
+                    return lGroup == rGroup
+                default:
+                    return false
+                }
+            }
+        }
     }
     
     struct Model {
@@ -35,6 +62,8 @@ class HomeCollectionViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+
         
         fetchGroups()
     }
@@ -78,13 +107,22 @@ class HomeCollectionViewController: UICollectionViewController {
     }
     
     func createDataSource() -> DataSourceType {
-        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, group) -> UICollectionViewCell? in
-            
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! HomeGroupCollectionViewCell
-           
-            cell.configure(groupName: group.name)
-            
-            return cell
+        let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
+            switch item {
+            case .homeTopBanner:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeTopBanner", for: indexPath) as! HomeTopBannerCollectionViewCell
+                
+                cell.configure()
+                cell.delegate = self
+                
+                return cell
+            case .group(let group):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! HomeGroupCollectionViewCell
+                
+                cell.configure(groupName: group.name)
+                
+                return cell
+            }
         }
         
         dataSource.supplementaryViewProvider = { (collectionView, kind, indexPath) in
@@ -98,6 +136,9 @@ class HomeCollectionViewController: UICollectionViewController {
             case .groups:
                 sectionHeader.configure(title: "T--ms", colorName: "Text")
                 return sectionHeader
+            case .homeTopBanner:
+                sectionHeader.configure(title: "", colorName: "Text")
+                return sectionHeader
             }
         }
         
@@ -106,53 +147,113 @@ class HomeCollectionViewController: UICollectionViewController {
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
-        
-        let sectionHeaderItemSize =
-        NSCollectionLayoutSize(widthDimension:
-                .fractionalWidth(1), heightDimension: .estimated(48))
-        let sectionHeader =
-        NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
-        
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
-        
-        var group: NSCollectionLayoutGroup!
-        
-        if #available(iOS 16.0, *) {
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
-        } else {
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+        let layout =  UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            
+            switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
+            case .homeTopBanner:
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(220))
+                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                
+                
+//                group.contentInsets = NSDirectionalEdgeInsets(
+//                    top: 0,
+//                    leading: infoHorzSpacing,
+//                    bottom: vertSpacing,
+//                    trailing: infoHorzSpacing
+//                )
+                
+                let section = NSCollectionLayoutSection(group: group)
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: 40,
+                    trailing: 0
+                )
+                    
+                return section
+            case .groups:
+                
+                let sectionHeaderItemSize =
+                NSCollectionLayoutSize(widthDimension:
+                        .fractionalWidth(1), heightDimension: .estimated(48))
+                let sectionHeader =
+                NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(70))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 16,
+                    bottom: 10,
+                    trailing: 16
+                )
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.interGroupSpacing = 16
+                
+                return section
+            }
         }
     
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
-        
-        section.contentInsets = NSDirectionalEdgeInsets(
-            top: 8,
-            leading: 16,
-            bottom: 10,
-            trailing: 16
-        )
-        section.boundarySupplementaryItems = [sectionHeader]
-        
-        section.interGroupSpacing = 16
-        
-        return UICollectionViewCompositionalLayout(section: section)
+        return layout
     }
     
+//    func updateCollectionView() {
+//
+//        var sectionIDs = [ViewModel.Section]()
+//
+//        sectionIDs.append(.homeTopBanner)
+//        var itemsBySection = [ViewModel.Section.homeTopBanner: [ViewModel.Item.homeTopBanner]]
+//
+//
+//        var itemsBySection = model.groups.reduce(into: [ViewModel.Section: [ViewModel.Item]]()) { partial, group in
+//
+//            partial[.groups, default: []].append(ViewModel.Item.group(group: group))
+//        }
+//
+//        itemsBySection = itemsBySection.mapValues { $0.sorted() }
+//
+//        let sectionIDs = itemsBySection.keys.sorted()
+//
+//        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
+//
+//        DispatchQueue.main.async {
+//            self.collectionView.reloadData()
+//        }
+//    }
+    
     func updateCollectionView() {
+        var sectionIDs = [ViewModel.Section]()
+        var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
-        var itemsBySection = model.groups.reduce(into: [ViewModel.Section: [ViewModel.Item]]()) { partial, habitCount in
-            
-            partial[.groups, default: []].append(habitCount)
+        // Add homeTopBanner section
+        sectionIDs.append(.homeTopBanner)
+        itemsBySection[.homeTopBanner] = [.homeTopBanner]
+        
+        sectionIDs.append(.groups)
+        
+        for group in model.groups {
+            itemsBySection[.groups, default: []].append(ViewModel.Item.group(group: group))
         }
-        
-        itemsBySection = itemsBySection.mapValues { $0.sorted() }
-        
-        let sectionIDs = itemsBySection.keys.sorted()
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
@@ -194,10 +295,10 @@ class HomeCollectionViewController: UICollectionViewController {
                             currentMember.groupsIDs = currentMember.groupsIDs.filter({$0 != groupId })
                             
                             try document.reference.setData(from: currentMember)
-                                                        
-//                            document.reference.updateData([
-//                                "groupsIDs": FieldValue.arrayRemove([groupId])
-//                            ])
+                            
+                            //                            document.reference.updateData([
+                            //                                "groupsIDs": FieldValue.arrayRemove([groupId])
+                            //                            ])
                         } else {
                             if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == currentUid }) {
                                 currentMember.masterGroupmatesIDs.remove(at: index)
@@ -229,13 +330,29 @@ class HomeCollectionViewController: UICollectionViewController {
         }
     }
     
-    @IBSegueAction func showGroupHome(_ coder: NSCoder, sender: UICollectionViewCell?) -> GroupHomeCollectionViewController? {
-        guard let cell = sender,
-              let indexPath = collectionView.indexPath(for: cell),
-              let group = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        
-        return GroupHomeCollectionViewController(coder: coder, group: group)
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let item = dataSource.itemIdentifier(for: indexPath) {
+            switch item {
+            case .group(let group):
+                performSegue(withIdentifier: "showGroupHome", sender: group)
+            case .homeTopBanner:
+                break
+            }
+        }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if segue.identifier == "showGroupHome" {
+            let groupHomeVC = segue.destination as! GroupHomeCollectionViewController
+            
+            if let group = sender as? Group {
+                groupHomeVC.group = group
+            }
+        }
+    }
+    
     
     // User exits group
     @IBAction func unwindToHomeAndLeave(segue: UIStoryboardSegue) {

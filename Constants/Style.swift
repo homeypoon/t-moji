@@ -136,7 +136,7 @@ extension UIButton {
         case .quizDetailButton:
             // explore
             self.layer.cornerRadius = 8.0
-            self.layer.shadowColor = UIColor(named: "primaryPurple")?.cgColor
+            self.layer.shadowColor = UIColor(named: "primaryDarkOrange")?.cgColor
             self.layer.shadowOffset = CGSize(width: 9, height: 6)
             self.layer.shadowOpacity = 0.3
             self.layer.shadowRadius = 2.5
@@ -260,8 +260,16 @@ extension UIProgressView {
         self.progressTintColor = UIColor(named: "progressViewTint")
         self.trackTintColor = UIColor.white
         
-        self.layer.cornerRadius = 12.0
         self.layer.masksToBounds = true
+        self.progressViewStyle = .default
+        
+        // Set the rounded edge for the outer bar
+        self.layer.cornerRadius = 12
+        self.clipsToBounds = true
+
+        // Set the rounded edge for the inner bar
+        self.layer.sublayers![1].cornerRadius = 12
+        self.subviews[1].clipsToBounds = true
     }
     
 }
