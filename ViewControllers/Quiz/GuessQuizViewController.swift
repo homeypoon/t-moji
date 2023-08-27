@@ -25,8 +25,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         removeBlurEffect()
     }
     
-    @IBOutlet var quizTitleLabel: UILabel!
-    @IBOutlet var quizQuestionLabel: UILabel!
+    @IBOutlet var quizQuestionTextView: UITextView!
     @IBOutlet var multiChoiceButton1: UIButton!
     @IBOutlet var multiChoiceButton2: UIButton!
     @IBOutlet var multiChoiceButton3: UIButton!
@@ -69,6 +68,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         extraGuessPopupView.delegate = self
         
         updateUI()
+        quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
+        
         loadGuessRewardedAd()
     }
     
@@ -136,8 +137,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
             
             if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
                 self.quiz = quiz
-                quizTitleLabel.text = "\(quiz.title)"
-                quizQuestionLabel.text = "Which \(quiz.resultGroup.rawValue) do you think \(member.username) got?"
+                quizQuestionTextView.text = "Which \(quiz.resultGroup.rawValue) do you think \(member.username) got?"
             }
             
             let finalResult = quizHistory.finalResult

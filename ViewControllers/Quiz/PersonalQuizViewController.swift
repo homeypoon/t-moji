@@ -21,8 +21,8 @@ class PersonalQuizViewController: UIViewController {
     var chosenAnswers: [QuestionIndex: [Answer]] = [:]
     
     var selectedButton: UIButton?
-    
-    @IBOutlet var quizQuestionLabel: UILabel!
+        
+    @IBOutlet var quizQuestionTextView: UITextView!
     
     @IBOutlet var multiChoiceStackView: UIStackView!
     @IBOutlet var multiChoiceButton1: UIButton!
@@ -55,7 +55,7 @@ class PersonalQuizViewController: UIViewController {
         super.viewDidLoad()
         updateInitialUI()
         updateUI()
-        
+
     }
     
     func updateInitialUI() {
@@ -68,6 +68,8 @@ class PersonalQuizViewController: UIViewController {
             button.applyRoundedCornerAndShadow(borderType: .quizButton)
             
             button.titleLabel?.textAlignment = .center
+            
+            quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
         }
         
         submitButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -84,7 +86,7 @@ class PersonalQuizViewController: UIViewController {
         currentQuestion = quiz.questions[questionIndex]
         possibleAnswers = currentQuestion.possibleAnswers
         
-        quizQuestionLabel.text = currentQuestion.text
+        quizQuestionTextView.text = currentQuestion.text
         
         let totalProgress = Float(questionIndex) / Float(quiz.questions.count)
         

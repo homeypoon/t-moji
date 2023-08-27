@@ -106,20 +106,6 @@ class QuizDetailViewController: UIViewController {
             takeQuizButton.setTitle("  Retake Quiz", for: [])
             takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
         }
-        
-        quizTitleLabel.text = quiz?.title
-        
-//        // If no t-mates have taken quiz
-//        if takenByText == TakenByText.noTmates {
-//            guessForTmatesButton.isUserInteractionEnabled = false
-//
-//            guessForTmatesButton.tintColor = .systemGray2
-//            print("truee")
-//        } else {
-//            guessForTmatesButton.isEnabled = true
-//            guessForTmatesButton.tintColor = UIColor.systemCyan
-//            print("false")
-//        }
         guessForTmatesButton.configuration?.subtitle = takenByText
         
         quizDetailStackView.layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
@@ -136,6 +122,7 @@ class QuizDetailViewController: UIViewController {
                 outgoing.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
                 return outgoing
             }
+
         }
         
         resultGroupButton.setTitle(quiz?.resultGroup.rawValue.capitalized, for: [])

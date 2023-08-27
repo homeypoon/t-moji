@@ -49,13 +49,13 @@ extension UICollectionViewCell {
             self.contentView.layer.cornerRadius = 24.0
             self.contentView.layer.maskedCorners = [ .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             self.contentView.layer.masksToBounds = true
-
+            
             self.layer.shadowColor = UIColor.black.cgColor
             self.layer.shadowOffset = CGSize(width: 4, height: 6)
             self.layer.shadowRadius = 0.5
             self.layer.shadowOpacity = 0.8
             self.layer.masksToBounds = false
-
+            
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.contentView.layer.cornerRadius).cgPath
             
         case .currentResult:
@@ -98,7 +98,7 @@ extension UICollectionViewCell {
         
         switch backgroundType {
         case .currentUser:
-            self.contentView.backgroundColor = UIColor(named: "primaryPurple")?.withAlphaComponent(0.05)
+            self.contentView.backgroundColor = UIColor(named: "progressViewTint")?.withAlphaComponent(0.05)
         case .othersUser:
             self.contentView.backgroundColor = UIColor.white
         }
@@ -115,7 +115,6 @@ extension UIStackView {
         case .quizDetailBanner:
             // explore
             self.layer.cornerRadius = 18.0
-    
             self.layer.masksToBounds = true
             
             self.layer.borderWidth = 2.5
@@ -176,7 +175,7 @@ extension UIButton {
             self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
             
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
-        
+            
         case .quizButton:
             // quiz & guess button
             
@@ -209,8 +208,8 @@ extension UILabel {
             self.layer.borderWidth = 0.5
             self.layer.backgroundColor = UIColor(named: "progressViewTint")?.cgColor
             self.textColor = UIColor(named: "primaryDarkBlue")
-//            self.layer.borderColor = UIColor(named: "primaryDarkBlue")?.cgColor
-
+            //            self.layer.borderColor = UIColor(named: "primaryDarkBlue")?.cgColor
+            
         case .currentUser:
             self.text = "Me"
             self.textColor = UIColor(named: "primaryDarkBlue")
@@ -225,9 +224,26 @@ extension UILabel {
         case .leaderboardRemainingUser:
             self.textColor = UIColor(named: "Text")
             self.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-            
         }
+    }
+}
+
+extension UITextView {
+    enum TextViewType {
+        case quizQuestion
+    }
+    func applyStyle(textViewType: TextViewType) {
         
+        switch textViewType {
+        case .quizQuestion:
+            // explore
+            self.layer.cornerRadius = 12.0
+            self.layer.masksToBounds = true
+            self.layer.borderWidth = 2.5
+            self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+            self.backgroundColor = UIColor.white
+            self.textContainerInset = UIEdgeInsets(top: 16, left: 8, bottom: 16, right: 8)
+        }
     }
     
 }
@@ -243,7 +259,7 @@ extension UIProgressView {
         
         self.progressTintColor = UIColor(named: "progressViewTint")
         self.trackTintColor = UIColor.white
-                
+        
         self.layer.cornerRadius = 12.0
         self.layer.masksToBounds = true
     }
@@ -260,7 +276,7 @@ extension UIView {
         case .extraGuessPopup:
             // explore
             self.layer.cornerRadius = 18.0
-    
+            
             self.layer.masksToBounds = true
             
             self.layer.borderWidth = 2.5
