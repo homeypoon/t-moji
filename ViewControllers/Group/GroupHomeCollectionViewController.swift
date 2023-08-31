@@ -110,19 +110,33 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        updateGroupNavigationTitle()
         
         fetchQuizHistory {
             // Fetch the group first, and then fetch the users once the group data is available
             self.fetchGroup { [weak self] group in
                 // Update the group variable with the fetched group data
                 self?.group = group
-                self?.navigationItem.title = self?.group.name
+                
+                self?.updateGroupNavigationTitle()
                 
                 // Fetch users after getting the group data
                 self?.fetchUsers()
             }
         }
         
+    }
+    
+    func updateGroupNavigationTitle() {
+        if let emoji = group?.emoji, let name = group?.name {
+            navigationItem.title = "\(emoji)  \(name)"
+        } else if let name = group?.name {
+            navigationItem.title = name
+        } else if let emoji = group?.emoji {
+            navigationItem.title = emoji
+        } else {
+            navigationItem.title = ""
+        }
     }
     
     override func viewDidLoad() {
@@ -478,7 +492,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 itemsBySection[section]?.sort()
             }
             
-            //            itemsBySection[.tmateEmojis] = itemsBySection[.tmateEmojis]?.sorted(by: >)
+            for section in sectionIDs.filter({ if case .tmateResults = $0 { return true } else { return false }}) {
+                itemsBySection[section] = itemsBySection[section]?.sorted(by: >)
+            }
+            
         default:
             break
         }

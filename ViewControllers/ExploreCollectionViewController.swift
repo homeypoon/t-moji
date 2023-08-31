@@ -121,7 +121,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         let segmentedControl = UISegmentedControl(items: ["All", "Not Taken"])
         
-        //        addQuizHistories()
+//        addQuizHistories()
         segmentedControl.selectedSegmentIndex = 0
         
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)

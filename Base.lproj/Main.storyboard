@@ -247,7 +247,7 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="m4T-iL-q4O">
                                             <rect key="frame" x="22" y="16" width="349" height="43"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="☹️" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kge-kK-cBM">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="😊" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kge-kK-cBM">
                                                     <rect key="frame" x="0.0" y="0.0" width="32" height="43"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="28"/>
                                                     <color key="textColor" name="primaryDarkOrange"/>
@@ -277,6 +277,7 @@
                                 </collectionViewCellContentView>
                                 <size key="customSize" width="393" height="75"/>
                                 <connections>
+                                    <outlet property="groupEmojiLabel" destination="kge-kK-cBM" id="4lW-T7-IEJ"/>
                                     <outlet property="groupNameLabel" destination="YYm-s1-knN" id="7LM-KU-ahE"/>
                                 </connections>
                             </collectionViewCell>
@@ -472,23 +473,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tAI-rv-irV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2800.7633587786258" y="2171.1267605633802"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="L0C-T2-rhQ">
-            <objects>
-                <navigationController id="GRQ-vI-9MP" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="Ea8-qt-kSe"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HHX-tF-Nk9">
-                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="ivr-uE-NLl" kind="relationship" relationship="rootViewController" id="XuY-fL-FgT"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ETf-Yo-nks" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4433" y="4679"/>
         </scene>
         <!--Quiz Detail View Controller-->
         <scene sceneID="q7D-GJ-8Yq">
@@ -849,7 +833,7 @@
                                                     <color key="textColor" name="Text"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Group Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN">
                                                     <rect key="frame" x="19.666666666666657" y="44.333333333333343" width="353.66666666666674" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="RZO-lV-Ocb"/>
@@ -857,12 +841,10 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                                     <connections>
-                                                        <action selector="groupNameTextFieldDidChange:" destination="qUC-9F-qM2" eventType="editingChanged" id="11W-aG-K4G"/>
-                                                        <action selector="returnPressed:" destination="ivr-uE-NLl" eventType="primaryActionTriggered" id="mua-Y9-sID"/>
-                                                        <action selector="textEditingChanged:" destination="ivr-uE-NLl" eventType="editingChanged" id="z8J-bh-lzQ"/>
+                                                        <action selector="groupNameTextFieldDidChange:" destination="qUC-9F-qM2" eventType="editingChanged" id="xPB-6V-q0p"/>
                                                     </connections>
                                                 </textField>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Group Emoji (1 character)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tCt-ZH-B4Z">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Group Emoji (1 character)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tCt-ZH-B4Z" customClass="EmojiTextField" customModule="T_moji" customModuleProvider="target">
                                                     <rect key="frame" x="19.666666666666657" y="108.33333333333331" width="353.66666666666674" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="C40-l6-E8i"/>
@@ -870,9 +852,7 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                                     <connections>
-                                                        <action selector="groupNameTextFieldDidChange:" destination="qUC-9F-qM2" eventType="editingChanged" id="AOV-3G-FD5"/>
-                                                        <action selector="returnPressed:" destination="ivr-uE-NLl" eventType="primaryActionTriggered" id="1uU-MC-rK0"/>
-                                                        <action selector="textEditingChanged:" destination="ivr-uE-NLl" eventType="editingChanged" id="zNV-VM-EOI"/>
+                                                        <action selector="groupEmojiTextFieldDidChange:" destination="qUC-9F-qM2" eventType="editingChanged" id="ycF-Lf-i4w"/>
                                                     </connections>
                                                 </textField>
                                             </subviews>
@@ -899,6 +879,7 @@
                                 </collectionViewCellContentView>
                                 <size key="customSize" width="393" height="185"/>
                                 <connections>
+                                    <outlet property="groupEmojiTextField" destination="tCt-ZH-B4Z" id="xGN-ma-aeD"/>
                                     <outlet property="groupNameTextField" destination="8vn-cf-vBN" id="0Ek-14-dde"/>
                                 </connections>
                             </collectionViewCell>
@@ -978,131 +959,6 @@
                 <exit id="8DU-fh-q7M" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="951.90839694656484" y="2435.9154929577467"/>
-        </scene>
-        <!--Add Group Members View Controller-->
-        <scene sceneID="og1-8e-u7f">
-            <objects>
-                <viewController id="ivr-uE-NLl" customClass="AddGroupMembersViewController" customModule="T_moji" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="25n-vv-Oho">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fSk-vB-fEu">
-                                <rect key="frame" x="0.0" y="44" width="393" height="808"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ojb-eX-a9M">
-                                        <rect key="frame" x="0.0" y="235" width="393" height="336.66666666666697"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Group Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="14y-1O-bQM">
-                                                <rect key="frame" x="16" y="40.333333333333343" width="361" height="276.33333333333326"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
-                                                <connections>
-                                                    <action selector="returnPressed:" destination="ivr-uE-NLl" eventType="primaryActionTriggered" id="Zzz-QG-aca"/>
-                                                    <action selector="textEditingChanged:" destination="ivr-uE-NLl" eventType="editingChanged" id="vZq-eb-HSS"/>
-                                                </connections>
-                                            </textField>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Group Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="keD-LP-EhM">
-                                                <rect key="frame" x="16" y="11.999999999999998" width="365" height="20.333333333333329"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <searchBar contentMode="redraw" id="06i-9r-r0l">
-                                                <rect key="frame" x="0.0" y="-384" width="393" height="768"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                                <connections>
-                                                    <outlet property="delegate" destination="ivr-uE-NLl" id="7FU-1X-YvV"/>
-                                                </connections>
-                                            </searchBar>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" distribution="fillProportionally" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="zY0-rQ-xBv">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="451.33333333333331"/>
-                                        <subviews>
-                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="nnV-Ys-0cl">
-                                                <rect key="frame" x="0.0" y="0.0" width="393" height="451.33333333333331"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                <prototypes>
-                                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PotentialGroupMember" id="ZbJ-yE-Dph" customClass="PotentialGroupMemberTableViewCell" customModule="T_moji" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="50" width="393" height="43.666667938232422"/>
-                                                        <autoresizingMask key="autoresizingMask"/>
-                                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZbJ-yE-Dph" id="kJF-ba-dQx">
-                                                            <rect key="frame" x="0.0" y="0.0" width="393" height="43.666667938232422"/>
-                                                            <autoresizingMask key="autoresizingMask"/>
-                                                            <subviews>
-                                                                <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" fixedFrame="YES" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="1cv-yY-Up3">
-                                                                    <rect key="frame" x="20" y="8" width="122.33333333333331" height="36"/>
-                                                                    <subviews>
-                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Username" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wgQ-VS-cdC">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="78.333333333333329" height="36"/>
-                                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                                            <nil key="textColor"/>
-                                                                            <nil key="highlightedColor"/>
-                                                                        </label>
-                                                                        <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" hasAttributedTitle="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kSx-tN-ZXS">
-                                                                            <rect key="frame" x="86.333333333333329" y="0.0" width="36" height="36"/>
-                                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                                            <state key="normal" image="circle" catalog="system">
-                                                                                <attributedString key="attributedTitle"/>
-                                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="24" scale="large"/>
-                                                                            </state>
-                                                                            <state key="selected">
-                                                                                <imageReference key="image" image="checkmark.circle.fill" catalog="system" symbolScale="large"/>
-                                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="24" scale="large"/>
-                                                                            </state>
-                                                                        </button>
-                                                                    </subviews>
-                                                                </stackView>
-                                                            </subviews>
-                                                        </tableViewCellContentView>
-                                                        <connections>
-                                                            <outlet property="usernameLabel" destination="wgQ-VS-cdC" id="y29-7U-qrT"/>
-                                                        </connections>
-                                                    </tableViewCell>
-                                                </prototypes>
-                                                <sections/>
-                                            </tableView>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                                <viewLayoutGuide key="contentLayoutGuide" id="VQd-Gi-Du4"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="9Il-LY-bHK"/>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="ZXz-FD-1X0"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="fSk-vB-fEu" firstAttribute="bottom" secondItem="ZXz-FD-1X0" secondAttribute="bottom" id="7kC-kK-7sf"/>
-                            <constraint firstItem="fSk-vB-fEu" firstAttribute="trailing" secondItem="ZXz-FD-1X0" secondAttribute="trailing" id="8Kl-k2-s8v"/>
-                            <constraint firstItem="fSk-vB-fEu" firstAttribute="top" secondItem="ZXz-FD-1X0" secondAttribute="top" id="R7j-aE-KEv"/>
-                            <constraint firstItem="fSk-vB-fEu" firstAttribute="leading" secondItem="ZXz-FD-1X0" secondAttribute="leading" id="ZW7-ig-Oah"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="NZE-V1-ze8">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="gNw-rO-fV2">
-                            <connections>
-                                <segue destination="Idp-tg-7MF" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="cHi-ST-ob9"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Create" id="93r-ji-ENE" customClass="showGroupHome"/>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="createGroupButton" destination="93r-ji-ENE" id="oH6-xe-0Ki"/>
-                        <outlet property="groupNameTextField" destination="14y-1O-bQM" id="zHx-wf-2L3"/>
-                        <outlet property="tableView" destination="nnV-Ys-0cl" id="XCR-Oy-f9I"/>
-                        <outlet property="usersSearchBar" destination="06i-9r-r0l" id="DDI-1D-DAa"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6Ll-sZ-QVL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <exit id="Idp-tg-7MF" userLabel="Exit" sceneMemberID="exit"/>
-            </objects>
-            <point key="canvasLocation" x="5915" y="4492"/>
         </scene>
         <!--Group Home Collection View Controller-->
         <scene sceneID="KP1-F2-Bde">
@@ -3176,7 +3032,7 @@ Accuracy</string>
         <segue reference="ytG-9c-ZQX"/>
         <segue reference="07G-sr-qaN"/>
         <segue reference="PuQ-E1-i1W"/>
-        <segue reference="98i-p1-Qef"/>
+        <segue reference="uKU-6H-I3X"/>
         <segue reference="ezA-0P-XDu"/>
     </inferredMetricsTieBreakers>
     <resources>

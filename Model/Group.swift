@@ -14,8 +14,8 @@ struct Group: Codable {
     @DocumentID var id: String?
     
     var name: String
+    var emoji: String
     
-    var leader: MemberUserID // leader can remove ppl, also shows on profile (has star) - "\(leader.name) *"
     var membersIDs: [MemberUserID]
 }
 

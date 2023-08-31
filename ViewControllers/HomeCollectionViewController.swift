@@ -119,7 +119,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             case .group(let group):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Group", for: indexPath) as! HomeGroupCollectionViewCell
                 
-                cell.configure(groupName: group.name)
+                cell.configure(groupName: group.name, groupEmoji: group.emoji)
                 
                 return cell
             }

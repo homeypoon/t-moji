@@ -160,7 +160,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     self.fetchUser()
                     return
                 } else {
-                    self.performSegue(withIdentifier: "editProfile", sender: nil)
+                    self.performSegue(withIdentifier: "editProfile", sender: true) // Mandatory
                 }
             }
         }
@@ -569,14 +569,17 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "createProfile" {
+        if segue.identifier == "editProfile" {
             let navController = segue.destination as! UINavigationController
-            let detailController = navController.topViewController as! EditProfileTableViewController
-            detailController.user = nil
-        } else if segue.identifier == "editProfile" {
-            let navController = segue.destination as! UINavigationController
-            let detailController = navController.topViewController as! EditProfileTableViewController
-            detailController.user = user
+            let editProfileVC = navController.topViewController as! EditProfileTableViewController
+            editProfileVC.user = user
+            
+            if let isMandatorySignUp = sender as? Bool {
+                editProfileVC.isMandatorySignUp = isMandatorySignUp
+            } else {
+                editProfileVC.isMandatorySignUp = false
+            }
+            
         } else if segue.identifier == "resultFromProfile" {
             let navController = segue.destination as! UINavigationController
             let quizResultVC = navController.topViewController as! QuizResultCollectionViewController

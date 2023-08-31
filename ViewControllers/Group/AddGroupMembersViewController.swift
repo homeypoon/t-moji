@@ -24,6 +24,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet var createGroupButton: UIBarButtonItem!
     @IBOutlet var groupNameTextField: UITextField!
+    @IBOutlet var groupEmojiTextField: UITextField!
     
     var users = [User]()
     private var allUsers = [User]()
@@ -48,8 +49,21 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
     
     // Enable save button when group name is not empty and at least one member is selected
     func updateSaveButtonState() {
-        let shouldEnableSaveButton = groupNameTextField.text?.isEmpty == false && users.contains { userSelectedState[$0.uid] ?? false }
+        let shouldEnableSaveButton = groupNameTextField.text?.isEmpty == false && isEmojiTextValid() && users.contains { userSelectedState[$0.uid] ?? false }
         createGroupButton.isEnabled = shouldEnableSaveButton
+    }
+    
+    func isEmojiTextValid() -> Bool {
+        //
+        guard let groupEmojiText = groupEmojiTextField.text, groupEmojiText.count == 1 else { return false }
+        for char in groupEmojiText {
+            for scalar in char.unicodeScalars {
+                guard scalar == "\u{FE0F}" else { return false }
+                //                guard let groupEmojiTextField.text = scalar.properties.isEmoji
+                
+            }
+        }
+        return true
     }
     
     @IBAction func textEditingChanged(_ sender: Any) {
@@ -184,7 +198,7 @@ class AddGroupMembersViewController: UIViewController, UITableViewDelegate, UITa
         
         membersIDs.append(userID)
         
-        self.group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
+//        self.group = Group(name: groupName, emoji: groupemoji, membersIDs: membersIDs)
         let groupId = self.addGroup(group: self.group!)
         self.group?.id = groupId
         

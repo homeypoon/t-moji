@@ -10,6 +10,7 @@ import FirebaseAuth
 
 class EditProfileTableViewController: UITableViewController {
     var user: User?
+    var isMandatorySignUp: Bool = false
 
     @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var saveButton: UIBarButtonItem!
@@ -19,6 +20,13 @@ class EditProfileTableViewController: UITableViewController {
         
         if let user = user {
             usernameTextField.text = user.username
+        }
+        
+        if isMandatorySignUp {
+            navigationItem.leftBarButtonItem?.isEnabled = false
+            navigationItem.leftBarButtonItem?.tintColor = UIColor.clear
+        } else {
+            navigationItem.leftBarButtonItem?.isEnabled = true
         }
         
         updateSaveButtonState()

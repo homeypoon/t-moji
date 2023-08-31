@@ -61,7 +61,7 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GroupSettingsCell", for: indexPath) as! GroupSettingsTableViewCell
                 cell.delegate = self
                 let member = members[adjustedIndexPath.row]
-                cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
+//                cell.configure(withMember: member, withGroupLeader: group?.leader, withEmojis: member.userQuizHistory.compactMap { String($0.finalResult.emoji) }.joined(separator: " "))
                 return cell
             }
     }
@@ -222,7 +222,7 @@ class GroupSettingsViewController: UIViewController, UITableViewDelegate, UITabl
                     }
                 }
                 
-                self.members.sort(by: { $0.uid == self.group?.leader ? true : $1.uid == self.group?.leader ? false : $0.username < $1.username })
+//                self.members.sort(by: { $0.uid == self.group?.leader ? true : $1.uid == self.group?.leader ? false : $0.username < $1.username })
                 self.tableView.reloadData()
                 print("reload")
             }

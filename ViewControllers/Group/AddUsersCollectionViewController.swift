@@ -12,6 +12,8 @@ import FirebaseAuth
 private let reuseIdentifier = "Cell"
 
 class AddUsersCollectionViewController: UICollectionViewController, GroupNameCollectionViewCellDelegate, UISearchBarDelegate, UISearchResultsUpdating {
+    
+    
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text?.lowercased() else {
             // No search text, handle as needed
@@ -19,10 +21,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         }
         
         if searchText.isEmpty {
-            
             updateCollectionView()
-            
-            
         } else {
             
             model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
@@ -35,23 +34,14 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             // Update the collection view with filtered results
             updateCollectionView(filteredUsers: filteredUsers)
             
-//
-//            model.selectedUsers = model.users.filter { model.userSelectedState[$0.uid] ?? false }
-//
-//            let filteredUsers = model.allUsers.filter { $0.username.lowercased().contains(searchText.lowercased()) }
-//
-//            model.users = model.selectedUsers + filteredUsers.filter { !model.selectedUsers.contains($0) }
-//
-//            model.users = model.allUsers // Restore the original list when search text is empty
-            
         }
-//        updateCollectionView()
     }
     
     var group: Group?
     var membersIDs: [String]?
     
     var groupName: String = ""
+    var groupEmoji: String?
     
     @IBOutlet var cancelBarButton: UIBarButtonItem!
     @IBOutlet var createBarButton: UIBarButtonItem!
@@ -366,7 +356,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         
     }
     
-    func updateData(groupID: String, updateGroupName: Bool, addMemberIDs: [String]) {
+    func updateData(groupID: String, updateGroupName: Bool, updateGroupEmoji: Bool, addMemberIDs: [String]) {
         guard let userId = Auth.auth().currentUser?.uid, (updateGroupName || !addMemberIDs.isEmpty) else {return}
         let collectionRef = FirestoreService.shared.db.collection("groups")
         
@@ -375,25 +365,25 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 self.dismiss(animated: false, completion: nil)
                 self.presentErrorAlert(with: error.localizedDescription)
             } else {
+                var updateDataDict: [AnyHashable: Any] = [:]
                 let document = querySnapshot!.documents.first
-                print("doc \(document)")
                 print("groupIDddd \(groupID)")
                 
-                if updateGroupName && !addMemberIDs.isEmpty {
-                    document?.reference.updateData([
-                        "name": self.groupName,
-                        "membersIDs": FieldValue.arrayUnion(addMemberIDs)
-                    ])
-                } else if updateGroupName {
-                    document?.reference.updateData([
-                        "name": self.groupName
-                    ])
-                } else if !addMemberIDs.isEmpty {
-                    document?.reference.updateData([
-                        "membersIDs": FieldValue.arrayUnion(addMemberIDs)
-                    ])
+                if updateGroupName {
+                    updateDataDict["name"] = self.groupName
+                }
+
+                if updateGroupEmoji {
+                    updateDataDict["emoji"] = self.groupEmoji
+                }
+
+                if !addMemberIDs.isEmpty {
+                    updateDataDict["membersIDs"] = FieldValue.arrayUnion(addMemberIDs)
                 }
                 
+                document?.reference.updateData([
+                    "membersIDs": FieldValue.arrayUnion(addMemberIDs)
+                ])
             }
         }
         
@@ -491,18 +481,32 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     }
     
     func updateSaveButtonState() {
+        print("emoji text() \(groupEmoji)")
+        print("isEmojiTextValid() \(isEmojiTextValid())")
         
         if let group = group {
-            let shouldEnableSaveButton = !groupName.isEmpty && (groupName != group.name || model.users.contains { user in
+            let shouldEnableSaveButton = !groupName.isEmpty && isEmojiTextValid() && (groupName != group.name || groupEmoji != group.emoji || model.users.contains { user in
                 return model.userSelectedState[user.uid] == true
             })
             createBarButton.isEnabled = shouldEnableSaveButton
         } else {
-            let shouldEnableSaveButton = !groupName.isEmpty && model.users.contains { user in
+            let shouldEnableSaveButton = !groupName.isEmpty && isEmojiTextValid() && model.users.contains { user in
                 return model.userSelectedState[user.uid] == true
             }
             createBarButton.isEnabled = shouldEnableSaveButton
         }
+    }
+    
+    func isEmojiTextValid() -> Bool {
+        //
+        guard let groupEmojiText = groupEmoji, groupEmojiText.count == 1 else { return false }
+        for char in groupEmojiText {
+            for scalar in char.unicodeScalars {
+                print("scalar \(scalar)")
+                guard scalar.properties.isEmojiPresentation else { return false }
+            }
+        }
+        return true
     }
     
     @IBAction func createBarButtonClicked(_ sender: UIBarButtonItem) {
@@ -518,7 +522,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         super.prepare(for: segue, sender: sender)
         
         if segue.identifier == "showGroupHome" {
-            guard let userID = Auth.auth().currentUser?.uid else { return }
+            guard let userID = Auth.auth().currentUser?.uid, let groupEmoji = groupEmoji else { return }
             
             var membersIDs = model.userSelectedState
                 .filter { $0.value }
@@ -526,7 +530,8 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             
             membersIDs.append(userID)
             
-            self.group = Group(name: groupName, leader: userID, membersIDs: membersIDs)
+            self.group = Group(name: groupName, emoji: groupEmoji, membersIDs: membersIDs)
+            
             let groupId = self.addGroup(group: self.group!)
             self.group?.id = groupId
             
@@ -541,12 +546,10 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                 .map { $0.key }
             
             if let groupID = group?.id {
+                let updateGroupName = group?.name != groupName
+                let updateGroupEmoji = group?.emoji != groupEmoji
                 
-                if group?.name != groupName {
-                    self.updateData(groupID: groupID, updateGroupName: true, addMemberIDs: addMemberIDs)
-                } else {
-                    self.updateData(groupID: groupID, updateGroupName: false, addMemberIDs: addMemberIDs)
-                }
+                self.updateData(groupID: groupID, updateGroupName: updateGroupName, updateGroupEmoji: updateGroupEmoji, addMemberIDs: addMemberIDs)
             }
             
         }
@@ -554,6 +557,11 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     
     func groupNameDidChange(to newName: String) {
         groupName = newName
+        updateSaveButtonState()
+    }
+    
+    func groupEmojiDidChange(to newEmoji: String) {
+        groupEmoji = newEmoji
         updateSaveButtonState()
     }
 }
