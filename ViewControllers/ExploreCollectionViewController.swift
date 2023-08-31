@@ -70,6 +70,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         searchController.searchBar.placeholder = "Search Quizzes"
         
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
     }
     
@@ -487,7 +488,7 @@ extension ExploreCollectionViewController {
         UIView.animate(withDuration: 0.2) {
             cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             
-            cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+            cell?.contentView.backgroundColor = UIColor(named: "cellHighlight")
         }
     }
     

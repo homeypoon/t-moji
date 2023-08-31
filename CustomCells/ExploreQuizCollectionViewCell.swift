@@ -28,6 +28,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
         resultGroupButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+            outgoing.backgroundColor = UIColor(named: "primaryLightRed")
             outgoing.foregroundColor = UIColor(named: "primaryRed")
             return outgoing
         }
@@ -43,6 +44,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
             completeStateButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
                 var outgoing = incoming
                 outgoing.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+                outgoing.backgroundColor = UIColor(named: "primaryLightOrange")
                 outgoing.foregroundColor = UIColor(named: "primaryDarkOrange")
                 return outgoing
             }

@@ -17,6 +17,7 @@ class HomeTopBannerCollectionViewCell: UICollectionViewCell {
     @IBOutlet var createTeamButton: UIButton!
     
     func configure() {
+        self.applyRoundedCornerAndShadow(borderType: .homeTopBanner)
 //        createTeamButton.applyRoundedCornerAndShadow(borderType: .quizButton)
     }
     

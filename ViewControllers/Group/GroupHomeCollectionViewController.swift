@@ -20,12 +20,15 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         enum Section: Hashable {
             case tmateResults(quizTitle: String)
             case tmateEmojis(tmate: User)
+            case noTmateEmojis(tmate: User)
         }
         
         enum Item: Hashable, Comparable {
             case unrevealedMember(tmate: User, userQuizHistory: UserQuizHistory)
             case revealedMember(tmate: User, userQuizHistory: UserQuizHistory, isCurrentUser: Bool)
+            case noEmojis(tmate: User)
             case tmateEmoji(tmate: User, resultType: ResultType, isHidden: Bool)
+            
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -38,6 +41,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 case .tmateEmoji(let tmate, let resultType, _):
                     hasher.combine(tmate)
                     hasher.combine(resultType)
+                case .noEmojis(let tmate):
+                    hasher.combine(tmate)
                 }
             }
             
@@ -49,6 +54,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
                 case (.tmateEmoji(let lTmate, let lResultType, _), .tmateEmoji(let rTmate, let rResultType, _)):
                     return lResultType == rResultType && lTmate == rTmate
+                case (.noEmojis(let lTmate), .noEmojis(let rTmate)):
+                    return lTmate == rTmate
                 default:
                     return false
                 }
@@ -172,6 +179,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 cell.configure(withResultType: resultType, isHidden: isHidden)
                 
                 return cell
+            case .noEmojis(_):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NoEmojis", for: indexPath) as! NoEmojisCollectionViewCell
+                
+                return cell
             }
         }
         
@@ -186,6 +197,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 sectionHeader.configure(title: quizTitle, colorName: "Text")
             case .tmateEmojis(let tmate):
                 sectionHeader.configure(title: "\(tmate.username) \(tmate.points)", colorName: "Text")
+            case .noTmateEmojis(tmate: let tmate):
+                sectionHeader.configure(title: "\(tmate.username) \(tmate.points)", colorName: "Text")
             }
             
             return sectionHeader
@@ -193,12 +206,13 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         return dataSource
     }
+
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         
-        let layout =  UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
-            
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+
             let horzSpacing: CGFloat = 20
             
             let sectionHeaderItemSize =
@@ -246,16 +260,64 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 return section
                 
             case .tmateEmojis:
-                let vertSpacing: CGFloat = 10
+                // No Emojis
+                    let vertSpacing: CGFloat = 10
+                    
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
+                    let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                    
+                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
+                    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+                    group.interItemSpacing = .fixed(12)
+                    
+                    let section = NSCollectionLayoutSection(group: group)
+                    section.boundarySupplementaryItems = [sectionHeader]
+                    
+                    let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
+                    
+                    backgroundItem.contentInsets = NSDirectionalEdgeInsets(
+                        top: 8,
+                        leading: 20,
+                        bottom: 16,
+                        trailing: 20
+                    )
+                    
+                    section.decorationItems = [backgroundItem]
+                    
+                    section.interGroupSpacing = 12
+                    
+                    section.contentInsets = NSDirectionalEdgeInsets(
+                        top: 12,
+                        leading: 40,
+                        bottom: 40,
+                        trailing: 40
+                    )
+                    
+                    return section
                 
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
+            case .noTmateEmojis(tmate: let tmate):
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
-                let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                group.interItemSpacing = .fixed(12)
-                                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(48))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: Padding.smallItemVertPadding,
+                    trailing: 0
+                )
+                
                 let section = NSCollectionLayoutSection(group: group)
+                
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
@@ -265,12 +327,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     leading: 20,
                     bottom: 16,
                     trailing: 20
-                    )
-
+                )
+                
                 section.decorationItems = [backgroundItem]
-                
-                section.interGroupSpacing = 12
-                
+                                    
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 12,
                     leading: 40,
@@ -355,7 +415,21 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     itemsBySection[.tmateEmojis(tmate: currentUser), default: []].append(ViewModel.Item.tmateEmoji(tmate: currentUser, resultType: resultType, isHidden: false))
                     print("emoji")
                 }
+                
+                print("current user items emojis \(itemsBySection[.tmateEmojis(tmate: currentUser)])")
+
+                
+                if itemsBySection[.tmateEmojis(tmate: currentUser)] == nil {
+                    sectionIDs.append(.noTmateEmojis(tmate: currentUser))
+                    itemsBySection[.noTmateEmojis(tmate: currentUser)] = [ViewModel.Item.noEmojis(tmate: currentUser)]
+                }
+                
+                if let emojiSection = itemsBySection[.tmateEmojis(tmate: currentUser)], emojiSection.isEmpty {
+                    sectionIDs.append(.noTmateEmojis(tmate: currentUser))
+                    itemsBySection[.noTmateEmojis(tmate: currentUser)] = [ViewModel.Item.noEmojis(tmate: currentUser)]
+                }
             }
+            
             for (userMasterTmate, userQuizHistories) in model.userQuizHistoriesDict {
                 sectionIDs.append(.tmateEmojis(tmate: userMasterTmate))
                                 
@@ -372,6 +446,16 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         }
                     }
                 }
+                
+                if itemsBySection[.tmateEmojis(tmate: userMasterTmate)] == nil {
+                    sectionIDs.append(.noTmateEmojis(tmate: userMasterTmate))
+                    itemsBySection[.noTmateEmojis(tmate: userMasterTmate)] = [ViewModel.Item.noEmojis(tmate: userMasterTmate)]
+                }
+                
+                if let emojiSection = itemsBySection[.tmateEmojis(tmate: userMasterTmate)], emojiSection.isEmpty {
+                    sectionIDs.append(.noTmateEmojis(tmate: userMasterTmate))
+                    itemsBySection[.noTmateEmojis(tmate: userMasterTmate)] = [ViewModel.Item.noEmojis(tmate: userMasterTmate)]
+                }
             }
             
             // Sort the section IDs based on quiz titles
@@ -383,6 +467,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     } else {
                         return lTmate < rTmate
                     }
+                case (.tmateEmojis, .noTmateEmojis):
+                    return true 
                 default:
                     return false
                 }
@@ -396,6 +482,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         default:
             break
         }
+            
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
@@ -466,6 +553,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 print("tmatee \(tmate)")
                 
             case .tmateEmoji(tmate: let tmate, _, _):
+                self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
+            case .noEmojis(tmate: let tmate):
                 self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
             }
         }

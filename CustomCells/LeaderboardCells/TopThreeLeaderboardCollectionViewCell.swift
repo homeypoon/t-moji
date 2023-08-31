@@ -17,13 +17,11 @@ class TopThreeLeaderboardCollectionViewCell: UICollectionViewCell {
     func configure(withOrdinal ordinal: String, withUsername username: String?, withPoints points: Int, isCurrentUser: Bool) {
         
         if isCurrentUser {
-            usernameLabel.applyStyle(labelType: .currentUser)
-            self.applyBackground(backgroundType: .currentUser)
-            
+            usernameLabel.text = "Me"
+            usernameLabel.textColor = UIColor(named: "lightCurrentUserText")
         } else {
+            usernameLabel.textColor = UIColor(named: "white")
             usernameLabel.text = username
-            usernameLabel.applyStyle(labelType: .leaderboardTopUser)
-            self.applyBackground(backgroundType: .othersUser)
         }
         
         ordinalLabel.text = ordinal

@@ -14,15 +14,16 @@ private let reuseIdentifier = "Cell"
 class SectionBackgroundView: UICollectionReusableView {
     
     override func didMoveToSuperview() {
-        translatesAutoresizingMaskIntoConstraints = true
-        clipsToBounds = true
-        
-        backgroundColor = .white
-        layer.cornerRadius = 15
-    
-        layer.borderWidth = 3
-        layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
-        layer.masksToBounds = true
+//        translatesAutoresizingMaskIntoConstraints = false
+        self.applyRoundedCornerAndShadow(reusableViewType: .tmatesEmojiCollection)
+//        clipsToBounds = true
+//
+//        backgroundColor = .white
+//        layer.cornerRadius = 15
+//
+//        layer.borderWidth = 3
+//        layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+//        layer.masksToBounds = true
     }
 }
 
@@ -44,8 +45,8 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
         enum Item: Hashable {
             case profile(user: User)
-            case noEmojis
             case emoji(resultType: ResultType, isHidden: Bool)
+            case noEmojis
             case userQuizHistory(userQuizHistory: UserQuizHistory)
             case hiddenUserQuizHistory(userQuizHistory: UserQuizHistory)
             
@@ -293,7 +294,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: 0,
-                    bottom: 40,
+                    bottom: 30,
                     trailing: 0
                 )
                     
@@ -333,7 +334,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     backgroundItem.contentInsets = NSDirectionalEdgeInsets(
                         top: 8,
                         leading: 20,
-                        bottom: 16,
+                        bottom: 20,
                         trailing: 20
                     )
                     
@@ -486,7 +487,6 @@ class ProfileCollectionViewController: UICollectionViewController {
             
         }
         
-        print("items emojis \(itemsBySection[.userEmojis])")
         
         if let emojiSection = itemsBySection[.userEmojis], emojiSection.isEmpty {
             itemsBySection[.userEmojis] = [ViewModel.Item.noEmojis]
@@ -531,7 +531,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             UIView.animate(withDuration: 0.1) {
                 cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
                     
-                cell?.contentView.backgroundColor = UIColor(named: "primaryDarkBlue")?.withAlphaComponent(0.1)
+                cell?.contentView.backgroundColor = UIColor(named: "cellHighlight")
                 
             }
         }

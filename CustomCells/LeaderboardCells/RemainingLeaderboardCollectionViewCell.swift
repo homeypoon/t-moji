@@ -15,13 +15,11 @@ class RemainingLeaderboardCollectionViewCell: UICollectionViewCell {
     
     func configure(withOrdinal ordinal: String, withUsername username: String?, withPoints points: Int, isCurrentUser: Bool) {
         if isCurrentUser {
-            usernameLabel.applyStyle(labelType: .currentUser)
-            
-            self.applyBackground(backgroundType: .currentUser)
+            usernameLabel.text = "Me"
+            usernameLabel.textColor = UIColor(named: "darkCurrentUserText")
         } else {
+            usernameLabel.textColor = UIColor(named: "Text")
             usernameLabel.text = username
-            usernameLabel.applyStyle(labelType: .leaderboardRemainingUser)
-            self.applyBackground(backgroundType: .othersUser)
         }
         
         ordinalLabel.text = ordinal

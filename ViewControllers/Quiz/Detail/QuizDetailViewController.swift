@@ -22,22 +22,23 @@ class QuizDetailViewController: UIViewController {
     
     private var rewardedAd: GADRewardedAd?
     
-    @IBOutlet var quizTitleLabel: UILabel!
-    @IBOutlet var resultGroupButton: UIButton!
+    @IBOutlet var withResultQuizTitleLabel: UILabel!
+    @IBOutlet var withoutResultQuizTitleLabel: UILabel!
+    @IBOutlet var withResultResultGroupButton: UIButton!
+    @IBOutlet var withoutResultResultGroupButton: UIButton!
     @IBOutlet var myResultLabel: UILabel!
     @IBOutlet var resultDetailButton: UIButton!
     @IBOutlet var takeQuizButton: UIButton!
     @IBOutlet var guessForTmatesButton: UIButton!
-    @IBOutlet var quizDetailStackView: UIStackView!
+    
+    @IBOutlet var withResultView: UIView!
+    @IBOutlet var withoutResultView: UIView!
     
     
     @IBOutlet var quizButtons: [UIButton]!
     
     var isRetakeQuiz: Bool?
     
-    
-    
-    @IBOutlet var resultStackView: UIStackView!
     var takeQuizState: Int!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,13 +46,20 @@ class QuizDetailViewController: UIViewController {
         
         self.tabBarController?.tabBar.isHidden = false
         
-        fetchQuizHistory()
-        fetchUser()
+        self.takeQuizState = currentUserResultType != nil ? ButtonState.retakeQuiz : ButtonState.takeQuiz
+        
+        updateUIText()
+        updateButtonFont()
+        
+        fetchQuizHistory() {
+            self.fetchUser()
+        }
+        
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateButtonFont()
     }
     
     func loadRetakeQuizRewardedAd() {
@@ -83,35 +91,34 @@ class QuizDetailViewController: UIViewController {
     }
     
     private func updateUIText() {
-        
-        print("updating uitext")
-        print("self \(currentUserResultType)")
         guard let userID = Auth.auth().currentUser?.uid else { return }
-        takeQuizState = quizHistory.completedUsers.contains(userID) ? ButtonState.retakeQuiz : ButtonState.takeQuiz
+        
         
         if takeQuizState == ButtonState.takeQuiz {
-            myResultLabel.isHidden = true
-            resultDetailButton.isHidden = true
-            resultStackView.isHidden = true
-            
+            withResultView.isHidden = true
+            withoutResultView.isHidden = false
+            withoutResultQuizTitleLabel.text = quiz?.title
+
             takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
+            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+            
+            updateResultGroupButton(resultGroupButton: withoutResultResultGroupButton)
             
         } else if takeQuizState == ButtonState.retakeQuiz {
-            myResultLabel.isHidden = false
-            resultDetailButton.isHidden = false
-            resultStackView.isHidden = false
+            withResultView.isHidden = false
+            withoutResultView.isHidden = true
+            
+            withResultQuizTitleLabel.text = quiz?.title
             
             myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
             takeQuizButton.setTitle("  Retake Quiz", for: [])
             takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
+            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+            updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
         }
+        
         guessForTmatesButton.configuration?.subtitle = takenByText
-        
-        quizDetailStackView.layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
-        quizDetailStackView.isLayoutMarginsRelativeArrangement = true
-        
-        quizDetailStackView.applyRoundedCornerAndShadow(borderType: .quizDetailBanner)
     }
     
     private func updateButtonFont() {
@@ -124,7 +131,9 @@ class QuizDetailViewController: UIViewController {
             }
 
         }
-        
+    }
+    
+    private func updateResultGroupButton(resultGroupButton: UIButton) {
         resultGroupButton.setTitle(quiz?.resultGroup.rawValue.capitalized, for: [])
         
         resultGroupButton.applyRoundedCornerAndShadow(borderType: .exploreTag)
@@ -174,24 +183,23 @@ class QuizDetailViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    func fetchQuizHistory() {
+    func fetchQuizHistory(completion: @escaping () -> Void) {
         guard let quizID = quiz?.id else {return}
         
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
             if let error = error {
                 self.presentErrorAlert(withMessage: error.localizedDescription)
+                completion()
             } else {
                 for document in querySnapshot!.documents {
                     do {
                         self.quizHistory = try document.data(as: QuizHistory.self)
                         print("q \(self.quizHistory)")
-                        DispatchQueue.main.async { // Ensure UI updates are on the main thread
-                            self.updateUIText()
-                            self.updateButtonFont()
-                            print("updating")
-                        }
+                        
+                        completion()
                     } catch {
                         self.presentErrorAlert(withMessage: error.localizedDescription)
+                        completion()
                     }
                 }
             }
@@ -209,8 +217,12 @@ class QuizDetailViewController: UIViewController {
                 self.currentUser = user
                 print("result type \(user)")
                 self.currentUserResultType = user.userQuizHistory.first(where: { $0.quizID == self.quiz?.id })?.finalResult
-                print("currentUserResultType")
-                self.updateUIText()
+                
+                DispatchQueue.main.async {
+                    self.takeQuizState = self.quizHistory.completedUsers.contains(userID) ? ButtonState.retakeQuiz : ButtonState.takeQuiz
+                    self.updateUIText()
+                    print("updating")
+                }
             case .failure(let error):
                 // Handle the error appropriately
                 self.presentErrorAlert(withMessage: error.localizedDescription)

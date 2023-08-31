@@ -25,10 +25,6 @@ class ProfileInfoCollectionViewCell: UICollectionViewCell {
         levelProgressView.applyStyle(progressType: .levelProgress)
         
         self.applyRoundedCornerAndShadow(borderType: .topBigBanner)
-        
-        
-        
-        print("currentPoints \(currentPoints)")
 
         updateProgress(for: currentPoints)
         updateGuessStats(correctGuesses: correctGuesses, wrongGuesses: wrongGuesses)

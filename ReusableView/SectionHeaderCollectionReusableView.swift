@@ -45,4 +45,10 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
         titleLabel.textColor = UIColor(named: colorName)
     }
     
+    func configureBigHeader(title: String, colorName: String) {
+        titleLabel.text = title
+        titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+        titleLabel.textColor = UIColor(named: colorName)
+    }
+        
 }

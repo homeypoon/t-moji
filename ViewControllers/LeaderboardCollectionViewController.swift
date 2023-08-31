@@ -130,14 +130,16 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         
         return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
             
+            let vertSpacing: CGFloat = 8
+            let horzSpacing: CGFloat = 12
+            
             // top three
             if sectionIndex == 0  {
-                let vertSpacing: CGFloat = 10
-                let horzSpacing: CGFloat = 12
+                
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(95))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(85))
                 
                 var group: NSCollectionLayoutGroup!
                 
@@ -150,7 +152,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 group.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: horzSpacing,
-                    bottom: vertSpacing,
+                    bottom: 6,
                     trailing: horzSpacing
                 )
                 
@@ -158,19 +160,17 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 10,
                     leading: 0,
-                    bottom: 0,
+                    bottom: 4,
                     trailing: 0
                 )
                 
                 return section
             } else {
-                let vertSpacing: CGFloat = 8
-                let horzSpacing: CGFloat = 12
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(82))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(80))
                 
                 var group: NSCollectionLayoutGroup!
                 
@@ -190,7 +190,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                 let section = NSCollectionLayoutSection(group: group)
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 8,
+                    top: 0,
                     leading: 0,
                     bottom: 0,
                     trailing: 0

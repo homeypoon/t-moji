@@ -16,7 +16,6 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         performSegue(withIdentifier: "showAddUsersToGroup", sender: nil)
     }
     
-    
     var unwindCreatedGroup: Group?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
@@ -70,6 +69,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -134,7 +134,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             
             switch section {
             case .groups:
-                sectionHeader.configure(title: "T--ms", colorName: "Text")
+                sectionHeader.configureBigHeader(title: "T--ms", colorName: "Text")
+
                 return sectionHeader
             case .homeTopBanner:
                 sectionHeader.configure(title: "", colorName: "Text")
@@ -154,24 +155,16 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(220))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(170))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                
-                
-//                group.contentInsets = NSDirectionalEdgeInsets(
-//                    top: 0,
-//                    leading: infoHorzSpacing,
-//                    bottom: vertSpacing,
-//                    trailing: infoHorzSpacing
-//                )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
-                    top: 0,
-                    leading: 0,
-                    bottom: 40,
-                    trailing: 0
+                    top: 20,
+                    leading: 12,
+                    bottom: 16,
+                    trailing: 12
                 )
                     
                 return section
@@ -202,9 +195,9 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 8,
-                    leading: 16,
+                    leading: 24,
                     bottom: 10,
-                    trailing: 16
+                    trailing: 24
                 )
                 section.boundarySupplementaryItems = [sectionHeader]
                 

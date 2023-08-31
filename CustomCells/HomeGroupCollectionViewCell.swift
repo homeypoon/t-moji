@@ -13,6 +13,6 @@ class HomeGroupCollectionViewCell: UICollectionViewCell {
     func configure(groupName: String) {
         groupNameLabel.text = groupName
         
-        self.applyRoundedCornerAndShadow(borderType: .homeGroup)
+        self.applyRoundedCornerAndShadow(borderType: .smallItem)
     }
 }

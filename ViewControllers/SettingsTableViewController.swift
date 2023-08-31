@@ -24,7 +24,7 @@ class SettingsTableViewController: UITableViewController {
     @IBAction func logOutPressed(_ sender: UIButton) {
         let alert = UIAlertController(title: "Log Out", message: "Are you sure you want to log out?", preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "Ok", style: .destructive, handler: { (action: UIAlertAction!) in
             do {
               try Auth.auth().signOut()
             } catch let signOutError as NSError {
@@ -40,12 +40,6 @@ class SettingsTableViewController: UITableViewController {
         
     }
     
-    func presentLogOutConfirmation(with message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
-    }
     
     func presentErrorAlert(with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
