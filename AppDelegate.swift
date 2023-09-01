@@ -10,6 +10,7 @@ import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
 import GoogleMobileAds
+import FirebaseFirestore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,6 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Initialize the Google Mobile Ads SDK.
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+        let settings = FirestoreSettings()
+
+        settings.cacheSettings =
+            MemoryCacheSettings(garbageCollectorSettings: MemoryLRUGCSettings())
+
+        settings.cacheSettings = PersistentCacheSettings(sizeBytes: 100 * 1024 * 1024 as NSNumber)
+
+        let db = Firestore.firestore()
+        db.settings = settings
         
         return true
     }

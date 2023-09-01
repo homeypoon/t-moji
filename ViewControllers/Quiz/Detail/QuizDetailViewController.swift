@@ -70,12 +70,12 @@ class QuizDetailViewController: UIViewController {
                            request: request,
                            completionHandler: { [self] ad, error in
           if let error = error {
-            print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+//            print("Failed to load rewarded ad with error: \(error.localizedDescription)")
             return
           }
           rewardedAd = ad
             showRetakeQuizRewardedAd()
-          print("Rewarded ad loaded.")
+//          print("Rewarded ad loaded.")
         }
         )
       }
@@ -109,7 +109,6 @@ class QuizDetailViewController: UIViewController {
             //            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
 
             
-            if shadowLayer == nil {
                 shadowLayer = CAShapeLayer()
                 
                 shadowLayer.path = UIBezierPath(roundedRect: withoutResultView.bounds, cornerRadius: 18.0).cgPath
@@ -122,7 +121,6 @@ class QuizDetailViewController: UIViewController {
                 shadowLayer.shadowRadius = 2.5
                 
                 withoutResultView.layer.insertSublayer(shadowLayer, at: 0)
-            }
             
         } else if takeQuizState == ButtonState.retakeQuiz {
             withResultView.isHidden = false
@@ -136,7 +134,6 @@ class QuizDetailViewController: UIViewController {
             
             updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
 //            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
-            if shadowLayer == nil {
                 shadowLayer = CAShapeLayer()
                 
                 shadowLayer.path = UIBezierPath(roundedRect: withResultView.bounds, cornerRadius: 18.0).cgPath
@@ -149,7 +146,6 @@ class QuizDetailViewController: UIViewController {
                 shadowLayer.shadowRadius = 2.5
                 
                 withResultView.layer.insertSublayer(shadowLayer, at: 0)
-            }
         }
         
         guessForTmatesButton.configuration?.subtitle = takenByText

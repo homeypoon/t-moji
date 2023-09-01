@@ -121,7 +121,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         let segmentedControl = UISegmentedControl(items: ["All", "Not Taken"])
         
-//        addQuizHistories()
+        addQuizHistories()
         segmentedControl.selectedSegmentIndex = 0
         
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
@@ -171,7 +171,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                                                                 "ExploreInlineAd", for: indexPath)
                 
                 let adSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.exploreItemSize, self.exploreItemSize)
-                // Step 2: Create banner with the inline size and set ad unit ID.
                 let adBannerView = GADBannerView(adSize: adSize)
                 adBannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111"
                 adBannerView.rootViewController = self

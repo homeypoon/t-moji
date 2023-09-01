@@ -19,8 +19,8 @@ struct QuizData {
             ]),
             Question(text: "How introverted or extraverted are you?", type: .ranged, possibleAnswers: [
                 Answer(text: "Introverted", correspondingResult: ResultType.cat),
-                Answer(text: "Slightly Introverted", correspondingResult: ResultType.rabbit),
-                Answer(text: "Slightly Extraverted", correspondingResult: ResultType.tiger),
+                Answer(text: "", correspondingResult: ResultType.rabbit),
+                Answer(text: "", correspondingResult: ResultType.tiger),
                 Answer(text: "Extraverted", correspondingResult: ResultType.dog)
             ]),
             Question(text: "What is your favourite season?", type: .multipleChoice, possibleAnswers: [
@@ -152,8 +152,8 @@ struct QuizData {
             ]),
             Question(text: "City or Countryside?", type: .ranged, possibleAnswers: [
                 Answer(text: "City", correspondingResult: ResultType.ariel),
-                Answer(text: "Slightly City", correspondingResult: ResultType.rapunzel),
-                Answer(text: "Slightly Countryside", correspondingResult: ResultType.mulan),
+                Answer(text: "", correspondingResult: ResultType.rapunzel),
+                Answer(text: "", correspondingResult: ResultType.mulan),
                 Answer(text: "Countryside", correspondingResult: ResultType.belle)
             ]),
             Question(text: "Qualities of Ideal Friend?", type: .multipleChoice, possibleAnswers: [
@@ -225,7 +225,6 @@ struct QuizData {
         // Bear Quiz
         Quiz(id: 5, resultGroup: .bear, title: "What Type of Bear Are You?", quizType: .character, questions: [
             Question(text: "What's your favorite type of pizza topping?", type: .multipleChoice, possibleAnswers: [
-                
                 Answer(text: "Pepperoni", correspondingResult: ResultType.brownBear),
                 Answer(text: "Extra Cheese", correspondingResult: ResultType.koala),
                 Answer(text: "Pineapple", correspondingResult: ResultType.panda),
@@ -269,7 +268,7 @@ struct QuizData {
             ])
         ]),
         
-        Quiz(id: 6, resultGroup: .animal, title: "Which Element Are You?", quizType: .character, questions: [
+        Quiz(id: 6, resultGroup: .element, title: "Which Element Are You?", quizType: .character, questions: [
             Question(text: "What Climate Do You Prefer?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hot", correspondingResult: ResultType.fire),
                 Answer(text: "", correspondingResult: ResultType.water),
@@ -307,14 +306,14 @@ struct QuizData {
                 Answer(text: "Fiery", correspondingResult: ResultType.fire)
             ]),
         ]),
-        Quiz(id: 7, resultGroup: .animal, title: "which weather are you?", quizType: .character, questions: [
+        Quiz(id: 7, resultGroup: .weather, title: "Which Weather Are You?", quizType: .character, questions: [
             Question(text: "How Do You React To Challenges?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Seek Opportunities", correspondingResult: ResultType.rainbow),
                 Answer(text: "Stay Positive", correspondingResult: ResultType.sunny),
                 Answer(text: "Adapt Calmly", correspondingResult: ResultType.cloudy),
                 Answer(text: "Stick to Routine", correspondingResult: ResultType.rainy)
             ]),
-            Question(text: "Choose a Color.", type: .multipleChoice, possibleAnswers: [
+            Question(text: "Choose a Color:", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sunny Yellow", correspondingResult: ResultType.sunny),
                 Answer(text: "Gentle Gray", correspondingResult: ResultType.cloudy),
                 Answer(text: "Soothing Blue", correspondingResult: ResultType.rainy),
@@ -338,15 +337,15 @@ struct QuizData {
                 Answer(text: "Cheerful", correspondingResult: ResultType.sunny),
                 Answer(text: "Witty", correspondingResult: ResultType.cloudy)
             ]),
-            Question(text: "What Is Your Favorite Type of Candy?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What is Your Favorite Type of Candy?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "sour", correspondingResult: ResultType.rainbow),
                 Answer(text: "chocolate", correspondingResult: ResultType.sunny),
                 Answer(text: "hard", correspondingResult: ResultType.cloudy),
                 Answer(text: "gummy", correspondingResult: ResultType.rainy)
             ]),
         ]),
-        Quiz(id: 8, resultGroup: .animal, title: "What Tree Are You?", quizType: .character, questions: [
-            Question(text: "What Is Your Favorite Weather?", type: .multipleChoice, possibleAnswers: [
+        Quiz(id: 8, resultGroup: .tree, title: "What Tree Are You?", quizType: .character, questions: [
+            Question(text: "What is Your Favorite Weather?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sunny", correspondingResult: ResultType.palmTree),
                 Answer(text: "Cloudy", correspondingResult: ResultType.deciduousTree),
                 Answer(text: "Rainy", correspondingResult: ResultType.evergreenTree),
@@ -383,7 +382,349 @@ struct QuizData {
                 Answer(text: "Functionality", correspondingResult: ResultType.deciduousTree)
             ]),
         ]),
-        Quiz(id: 8, resultGroup: .animal, title: "What Insect Are You?", quizType: .character, questions: [
+        Quiz(id: 9, resultGroup: .fastFood, title: "What Fast Food Are You?", quizType: .character, questions: [
+            Question(text: "What Type of Music do you Prefer?", type: .ranged, possibleAnswers: [
+                Answer(text: "Energetic", correspondingResult: ResultType.burger),
+                Answer(text: "", correspondingResult: ResultType.frenchFries),
+                Answer(text: "", correspondingResult: ResultType.hotDog),
+                Answer(text: "Calm", correspondingResult: ResultType.pizza)
+            ]),
+            Question(text: "Which Type of Sports Are More Fun?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Water", correspondingResult: ResultType.hotDog),
+                Answer(text: "Winter", correspondingResult: ResultType.pizza),
+                Answer(text: "Extreme", correspondingResult: ResultType.frenchFries),
+                Answer(text: "Ball", correspondingResult: ResultType.burger)
+            ]),
+            Question(text: "How Do You Travel To Close Places?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "by Foot", correspondingResult: ResultType.hotDog),
+                Answer(text: "Bike", correspondingResult: ResultType.pizza),
+                Answer(text: "Skateboard", correspondingResult: ResultType.frenchFries),
+                Answer(text: "Drive", correspondingResult: ResultType.burger)
+            ]),
+            Question(text: "What is Your Favorite Stationary?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Pencil", correspondingResult: ResultType.burger),
+                Answer(text: "Pen", correspondingResult: ResultType.pizza),
+                Answer(text: "Ruler", correspondingResult: ResultType.frenchFries),
+                Answer(text: "Crayon", correspondingResult: ResultType.hotDog)
+            ]),
+            Question(text: "What Is Your Humor?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Dark", correspondingResult: ResultType.pizza),
+                Answer(text: "", correspondingResult: ResultType.burger),
+                Answer(text: "", correspondingResult: ResultType.hotDog),
+                Answer(text: "Light", correspondingResult: ResultType.frenchFries)
+            ]),
+        ]),
+        Quiz(id: 10, resultGroup: .dessert, title: "What Dessert Are You?", quizType: .character, questions: [
+            Question(text: "Which Cartoon Character Do You Like Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Spongebob", correspondingResult: ResultType.cupcake),
+                Answer(text: "Pink Panther", correspondingResult: ResultType.doughnut),
+                Answer(text: "Snoopy", correspondingResult: ResultType.cookie),
+                Answer(text: "Winnie the Pooh", correspondingResult: ResultType.pie)
+            ]),
+            Question(text: "What Pet Do You Want Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Dog", correspondingResult: ResultType.cookie),
+                Answer(text: "Cat", correspondingResult: ResultType.cupcake),
+                Answer(text: "Bird", correspondingResult: ResultType.pie),
+                Answer(text: "Fish", correspondingResult: ResultType.iceCream)
+            ]),
+            Question(text: "What is the Most Important Thing in a Good Relationship?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Trust", correspondingResult: ResultType.cupcake),
+                Answer(text: "Respect", correspondingResult: ResultType.pie),
+                Answer(text: "Communication", correspondingResult: ResultType.iceCream),
+                Answer(text: "Connection", correspondingResult: ResultType.doughnut)
+            ]),
+            Question(text: "How Do You Like Your Music?", type: .ranged, possibleAnswers: [
+                Answer(text: "Loud", correspondingResult: ResultType.iceCream),
+                Answer(text: "", correspondingResult: ResultType.doughnut),
+                Answer(text: "", correspondingResult: ResultType.cookie),
+                Answer(text: "Quiet", correspondingResult: ResultType.cupcake)
+            ]),
+            Question(text: "How Many Siblings Do You Prefer?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "None", correspondingResult: ResultType.cupcake),
+                Answer(text: "One", correspondingResult: ResultType.pie),
+                Answer(text: "Two", correspondingResult: ResultType.iceCream),
+                Answer(text: "Three or More", correspondingResult: ResultType.doughnut)
+            ]),
+            Question(text: "How Much Do You Like Playing Sports?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Hate it", correspondingResult: ResultType.iceCream),
+                Answer(text: "", correspondingResult: ResultType.doughnut),
+                Answer(text: "", correspondingResult: ResultType.cookie),
+                Answer(text: "Love it", correspondingResult: ResultType.pie)
+            ]),
+        ]),
+        Quiz(id: 11, resultGroup: .bread, title: "What Bread Are You?", quizType: .character, questions: [
+            Question(text: "Which Of These Colors Are Best For Clothing?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Black", correspondingResult: ResultType.pretzel),
+                Answer(text: "Grey", correspondingResult: ResultType.baguette),
+                Answer(text: "Navy Blue", correspondingResult: ResultType.whiteBread),
+                Answer(text: "White", correspondingResult: ResultType.bagel)
+            ]),
+            Question(text: "What Food Is Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Barbecue", correspondingResult: ResultType.baguette),
+                Answer(text: "Seafood", correspondingResult: ResultType.whiteBread),
+                Answer(text: "Vegetarian", correspondingResult: ResultType.bagel),
+                Answer(text: "Dessert", correspondingResult: ResultType.croissant)
+            ]),
+            Question(text: "What Profession would You Want?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Doctor", correspondingResult: ResultType.whiteBread),
+                Answer(text: "Singer", correspondingResult: ResultType.bagel),
+                Answer(text: "Scientist", correspondingResult: ResultType.croissant),
+                Answer(text: "Astronaut", correspondingResult: ResultType.pretzel)
+            ]),
+            Question(text: "What Cold Dessert is the Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Ice Cream", correspondingResult: ResultType.bagel),
+                Answer(text: "Sorbet", correspondingResult: ResultType.croissant),
+                Answer(text: "Gelato", correspondingResult: ResultType.pretzel),
+                Answer(text: "Frozen Yogurt", correspondingResult: ResultType.baguette)
+            ]),
+            Question(text: "Your Opinion on Reading?", type: .ranged, possibleAnswers: [
+                Answer(text: "Hate it", correspondingResult: ResultType.croissant),
+                Answer(text: "", correspondingResult: ResultType.pretzel),
+                Answer(text: "", correspondingResult: ResultType.baguette),
+                Answer(text: "Love it", correspondingResult: ResultType.whiteBread)
+            ]),
+            Question(text: "Which Do You Want Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Fame", correspondingResult: ResultType.croissant),
+                Answer(text: "Power", correspondingResult: ResultType.pretzel),
+                Answer(text: "Money", correspondingResult: ResultType.baguette),
+                Answer(text: "Love", correspondingResult: ResultType.whiteBread)
+            ]),
+        ]),
+        Quiz(id: 12, resultGroup: .vegetable, title: "What Vegetable Are You?", quizType: .character, questions: [
+            Question(text: "How Do You Like To Write Notes?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Pencil", correspondingResult: ResultType.broccoli),
+                Answer(text: "Mechanical Pencil", correspondingResult: ResultType.corn),
+                Answer(text: "Pen", correspondingResult: ResultType.sweetPotato),
+                Answer(text: "Marker", correspondingResult: ResultType.chiliPepper)
+            ]),
+            Question(text: "What Fruit Tastes Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Apple", correspondingResult: ResultType.corn),
+                Answer(text: "Banana", correspondingResult: ResultType.sweetPotato),
+                Answer(text: "Orange", correspondingResult: ResultType.chiliPepper),
+                Answer(text: "Strawberry", correspondingResult: ResultType.onion)
+            ]),
+            Question(text: "What’s Your Favorite Condiment?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Ketchup", correspondingResult: ResultType.sweetPotato),
+                Answer(text: "Hot Sauce", correspondingResult: ResultType.chiliPepper),
+                Answer(text: "Soy Sauce", correspondingResult: ResultType.onion),
+                Answer(text: "Barbeque Sauce", correspondingResult: ResultType.potato)
+            ]),
+            Question(text: "Hot or Cold", type: .ranged, possibleAnswers: [
+                Answer(text: "Hot", correspondingResult: ResultType.chiliPepper),
+                Answer(text: "", correspondingResult: ResultType.onion),
+                Answer(text: "", correspondingResult: ResultType.potato),
+                Answer(text: "Cold", correspondingResult: ResultType.broccoli)
+            ]),
+            Question(text: "What Color is Math?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Blue", correspondingResult: ResultType.sweetPotato),
+                Answer(text: "Yellow", correspondingResult: ResultType.chiliPepper),
+                Answer(text: "Red", correspondingResult: ResultType.onion),
+                Answer(text: "Orange", correspondingResult: ResultType.potato)
+            ]),
+            Question(text: "What’s your Favorite Comfort Food?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Mac N Cheese", correspondingResult: ResultType.onion),
+                Answer(text: "Mashed Potatoes", correspondingResult: ResultType.potato),
+                Answer(text: "Grilled Cheese", correspondingResult: ResultType.broccoli),
+                Answer(text: "Ice Cream", correspondingResult: ResultType.corn)
+            ]),
+        ]),
+        
+        Quiz(id: 13, resultGroup: .stationary, title: "What Stationary Are You?", quizType: .character, questions: [
+            
+            Question(text: "Which Flower Looks Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Rose", correspondingResult: ResultType.ruler),
+                Answer(text: "Tulip", correspondingResult: ResultType.pencil),
+                Answer(text: "Lily", correspondingResult: ResultType.scissors),
+                Answer(text: "Daisy", correspondingResult: ResultType.crayon)
+            ]),
+            Question(text: "What Candy Flavour Tastes Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Fruit", correspondingResult: ResultType.pencil),
+                Answer(text: "Chocolate", correspondingResult: ResultType.scissors),
+                Answer(text: "Mint", correspondingResult: ResultType.crayon),
+                Answer(text: "Caramel", correspondingResult: ResultType.pen)
+            ]),
+            Question(text: "What Apple Product Do You Like The Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "iPhone", correspondingResult: ResultType.pen),
+                Answer(text: "iPad", correspondingResult: ResultType.ruler),
+                Answer(text: "MacBook", correspondingResult: ResultType.pencil),
+                Answer(text: "AirPods", correspondingResult: ResultType.scissors)
+            ]),
+            Question(text: "What Juice Flavor Tastes Best", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Apple", correspondingResult: ResultType.scissors),
+                Answer(text: "Orange", correspondingResult: ResultType.crayon),
+                Answer(text: "Mango", correspondingResult: ResultType.pen),
+                Answer(text: "Raspberry", correspondingResult: ResultType.ruler)
+            ]),
+            Question(text: "How Much Do You Like To Draw?", type: .ranged, possibleAnswers: [
+                Answer(text: "Hate it", correspondingResult: ResultType.crayon),
+                Answer(text: "", correspondingResult: ResultType.pen),
+                Answer(text: "", correspondingResult: ResultType.ruler),
+                Answer(text: "Love it", correspondingResult: ResultType.pencil)
+            ]),
+            Question(text: "What Type of Shoe Is best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sneakers", correspondingResult: ResultType.pen),
+                Answer(text: "Boots", correspondingResult: ResultType.ruler),
+                Answer(text: "Sandals", correspondingResult: ResultType.pencil),
+                Answer(text: "High Heels", correspondingResult: ResultType.scissors)
+            ]),
+        ]),
+        
+        Quiz(id: 14, resultGroup: .animal, title: "What Math Operation Are You?", quizType: .character, questions: [
+            Question(text: "What is the Best Type Of Pizza?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Margherita", correspondingResult: ResultType.addition),
+                Answer(text: "Pepperoni", correspondingResult: ResultType.subtraction),
+                Answer(text: "Hawaiian", correspondingResult: ResultType.division),
+                Answer(text: "Supreme", correspondingResult: ResultType.multiplication)
+            ]),
+            Question(text: "What are the Best Type of Games?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Video Games", correspondingResult: ResultType.subtraction),
+                Answer(text: "Board Games", correspondingResult: ResultType.division),
+                Answer(text: "Card Games", correspondingResult: ResultType.multiplication),
+                Answer(text: "Puzzles", correspondingResult: ResultType.addition)
+            ]),
+            Question(text: "What is the Best Breakfast?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Cereal with Milk", correspondingResult: ResultType.division),
+                Answer(text: "Eggs", correspondingResult: ResultType.multiplication),
+                Answer(text: "Toast", correspondingResult: ResultType.addition),
+                Answer(text: "Oatmeal", correspondingResult: ResultType.subtraction)
+            ]),
+            Question(text: "What is The Tastiest Beverage?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Coffee", correspondingResult: ResultType.multiplication),
+                Answer(text: "Tea", correspondingResult: ResultType.addition),
+                Answer(text: "Orange Juice", correspondingResult: ResultType.subtraction),
+                Answer(text: "Hot Chocolate", correspondingResult: ResultType.division)
+            ]),
+            Question(text: "What Type Of Song Lyrics Do You Like Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Love & Romantic", correspondingResult: ResultType.addition),
+                Answer(text: "Social & political", correspondingResult: ResultType.subtraction),
+                Answer(text: "Self Expression", correspondingResult: ResultType.division),
+                Answer(text: "Story Telling", correspondingResult: ResultType.multiplication)
+            ]),
+            Question(text: "What Type Of Hats Are the Most Stylish?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Baseball Caps", correspondingResult: ResultType.addition),
+                Answer(text: "Fedoras", correspondingResult: ResultType.subtraction),
+                Answer(text: "Bucket Hats", correspondingResult: ResultType.division),
+                Answer(text: "Beanies", correspondingResult: ResultType.multiplication)
+            ]),
+        ]),
+        Quiz(id: 15, resultGroup: .flower, title: "What Flower Are You?", quizType: .character, questions: [
+            Question(text: "What Color Palette Do You Prefer?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Vibrant", correspondingResult: ResultType.tulip),
+                Answer(text: "Romantic", correspondingResult: ResultType.rose),
+                Answer(text: "Pastels", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "simple", correspondingResult: ResultType.sunflower)
+            ]),
+            Question(text: "What Is Your Social Style?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Deep", correspondingResult: ResultType.rose),
+                Answer(text: "Observant", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "Friendly", correspondingResult: ResultType.sunflower),
+                Answer(text: "Energetic", correspondingResult: ResultType.tulip)
+            ]),
+            Question(text: "How Do You Handle Stress?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Reflect", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "Stay Positive", correspondingResult: ResultType.sunflower),
+                Answer(text: "Embrace Change", correspondingResult: ResultType.tulip),
+                Answer(text: "Seek Support", correspondingResult: ResultType.rose)
+            ]),
+            Question(text: "What Word Resonates Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Simplicity", correspondingResult: ResultType.sunflower),
+                Answer(text: "Diversity", correspondingResult: ResultType.tulip),
+                Answer(text: "Romance", correspondingResult: ResultType.rose),
+                Answer(text: "Nurturing", correspondingResult: ResultType.cherryBlossom)
+            ]),
+            Question(text: "Would You Rather Explore:", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Space", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "Sea", correspondingResult: ResultType.tulip),
+                Answer(text: "Forest", correspondingResult: ResultType.rose),
+                Answer(text: "Dessert", correspondingResult: ResultType.sunflower)
+            ]),
+            Question(text: "Where Is Your Ideal Weekend Getaway?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Countryside", correspondingResult: ResultType.rose),
+                Answer(text: "Village", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "Coastal", correspondingResult: ResultType.sunflower),
+                Answer(text: "City", correspondingResult: ResultType.tulip)
+                
+            ]),
+        ]),
+        Quiz(id: 16, resultGroup: .animal, title: "What Bathroom Item Are You?", quizType: .character, questions: [
+            Question(text: "What do you like to do in your free time?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Clean your room", correspondingResult: ResultType.soap),
+                Answer(text: "Watch TV", correspondingResult: ResultType.toiletPaper),
+                Answer(text: "Explore new hobbies", correspondingResult: ResultType.bathtub),
+                Answer(text: "Play sports", correspondingResult: ResultType.toothbrush)
+            ]),
+            Question(text: "How organized are you?", type: .ranged, possibleAnswers: [
+                Answer(text: "Not Organized", correspondingResult: ResultType.bathtub),
+                Answer(text: "", correspondingResult: ResultType.soap),
+                Answer(text: "", correspondingResult: ResultType.toothbrush),
+                Answer(text: "Very Organized", correspondingResult: ResultType.toiletPaper)
+            ]),
+            Question(text: "What is your favorite sport?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Soccer", correspondingResult: ResultType.toiletPaper),
+                Answer(text: "Swimming", correspondingResult: ResultType.bathtub),
+                Answer(text: "Basketball", correspondingResult: ResultType.soap),
+                Answer(text: "Frisbee", correspondingResult: ResultType.toothbrush)
+            ]),
+            Question(text: "Which animal do you like?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Dog", correspondingResult: ResultType.toiletPaper),
+                Answer(text: "Cat", correspondingResult: ResultType.soap),
+                Answer(text: "Hamster", correspondingResult: ResultType.bathtub),
+                Answer(text: "Snake", correspondingResult: ResultType.toothbrush)
+            ]),
+            Question(text: "What’s your favorite day of the week?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Monday", correspondingResult: ResultType.toiletPaper),
+                Answer(text: "Friday", correspondingResult: ResultType.bathtub),
+                Answer(text: "Saturday", correspondingResult: ResultType.soap),
+                Answer(text: "Sunday", correspondingResult: ResultType.toothbrush)
+            ]),
+            Question(text: "Who’s your favorite Harry Potter character?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Harry Potter", correspondingResult: ResultType.toothbrush),
+                Answer(text: "Hermione Granger", correspondingResult: ResultType.toiletPaper),
+                Answer(text: "Ron Weasley", correspondingResult: ResultType.soap),
+                Answer(text: "Snape", correspondingResult: ResultType.bathtub)
+            ])
+        ]),
+        Quiz(id: 17, resultGroup: .animal, title: "What Ball Sport Are You?", quizType: .character, questions: [
+            Question(text: "What do you value most in friendship?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Hanging out", correspondingResult: ResultType.basketball),
+                Answer(text: "Improving together", correspondingResult: ResultType.tennis),
+                Answer(text: "Supporting one another", correspondingResult: ResultType.volleyball),
+                Answer(text: "Having fun", correspondingResult: ResultType.soccer)
+            ]),
+            Question(text: "What do you think is the #1 rule for success?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Collaboration", correspondingResult: ResultType.soccer),
+                Answer(text: "Flawless execution", correspondingResult: ResultType.tennis),
+                Answer(text: "Smart decision-making", correspondingResult: ResultType.football),
+                Answer(text: "Unwavering dedication", correspondingResult: ResultType.volleyball)
+            ]),
+            Question(text: "How do you react to a challenge?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Ask for help", correspondingResult: ResultType.soccer),
+                Answer(text: "Find a solution", correspondingResult: ResultType.tennis),
+                Answer(text: "Cry", correspondingResult: ResultType.volleyball),
+                Answer(text: "Run away", correspondingResult: ResultType.basketball)
+            ]),
+            Question(text: "What’s your favorite ride at a theme park?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Ferris Wheel", correspondingResult: ResultType.volleyball),
+                Answer(text: "Game Booths", correspondingResult: ResultType.tennis),
+                Answer(text: "Roller Coaster", correspondingResult: ResultType.football),
+                Answer(text: "Bumper Cars", correspondingResult: ResultType.basketball)
+            ]),
+            Question(text: "Which word resonates with you the most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Teamwork", correspondingResult: ResultType.volleyball),
+                Answer(text: "Precision", correspondingResult: ResultType.basketball),
+                Answer(text: "Strategy", correspondingResult: ResultType.football),
+                Answer(text: "Passion", correspondingResult: ResultType.soccer)
+            ]),
+            
+            Question(text: "What’s your favorite summertime activity?", type: .multipleChoice, possibleAnswers: [
+                
+                Answer(text: "Hiking", correspondingResult: ResultType.soccer),
+                Answer(text: "Fishing", correspondingResult: ResultType.football),
+                Answer(text: "Fruit-Picking", correspondingResult: ResultType.basketball),
+                Answer(text: "Camping", correspondingResult: ResultType.volleyball)
+            ]),
+        ]),
+        Quiz(id: 18, resultGroup: .insect, title: "What Insect Are You?", quizType: .character, questions: [
             Question(text: "What Does Your Weekend Look Like?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sports", correspondingResult: ResultType.ant),
                 Answer(text: "Creativity", correspondingResult: ResultType.butterfly),
