@@ -16,6 +16,11 @@ enum ResultType: String {
     
     case baby = "baby", child = "child", adult = "adult", senior = "senior"
     case brownBear = "brown bear", polarBear = "polar bear", panda = "panda", koala = "koala"
+    case ice = "ice", water = "water", fire = "fire", nature = "nature"
+    case rainbow = "rainbow", sunny = "sunny", cloudy = "cloudy", rainy = "rainy", thunderstorm = "thunderstorm"
+    case evergreenTree = "evergreen tree", deciduousTree = "deciduous tree", palmTree = "palmTree", christmasTree = "christmas tree"
+    case ant = "ant", ladybug = "ladybug", bee = "bee", butterfly = "butterfly"
+    
     
     // ALERT: Watch how long each result message is + word length
     var message: String {
@@ -81,6 +86,7 @@ enum ResultType: String {
             return "Your demeanor exudes a sense of purpose and self-assuredness that comes from navigating life's twists and turns. Each step you take is deliberate, a reflection of the wisdom you've gained over the years."
         case .senior:
             return "Your presence is a source of comfort, offering reassurance to others as they navigate their own journeys. Your ability to listen without judgment and offer guidance is a beacon of light in the world."
+            
             // Bear
         case .brownBear:
             return "Your interactions are marked by a balanced blend of assertiveness and empathy. You have a natural gift for leadership, and you’re great at guiding others with a calm and authoritative presence."
@@ -91,6 +97,42 @@ enum ResultType: String {
             return "Your interactions are marked by a gentle and approachable nature. Your ability to listen without judgment is a gift that fosters trust and encourages open communication."
         case .polarBear:
             return "You understand the value of self-reliance and introspection. Your ability to find strength in introspection and channel it into growth is an inspiration to those around you."
+            // Elements
+        case .fire:
+            return "Your inner fire is a powerful force that fuels your passions and drives you toward your goals. Keep burning bright on your unique journey, and let your passion ignite the world."
+        case .ice:
+            return "Your effortless style and confident charm are truly magnetic. Keep being your amazing, cool self, because you add a special kind of magic to the world."
+        case .water:
+            return "Your adaptable nature is a calming presence in our lives. Your ability to navigate life's twists and turns with ease and your capacity for deep empathy remind us of the soothing power of understanding and flexibility."
+        case .nature:
+            return "Your grounded and steady nature is a true anchor in our lives. Your practicality, reliability, and nurturing presence provide a sense of stability that is deeply cherished."
+        case .rainbow:
+            return "Your colorful and vibrant spirits are a beacon of joy and positivity.Keep shining brightly and inspiring us all to celebrate our unique colors."
+        case .sunny:
+            return "Your radiant and positive energy is like a burst of sunshine on even the cloudiest of days. Your cheerful disposition and warm smiles are infectious, brightening the lives of those around you."
+        case .cloudy:
+            return "Your calm and tranquil presence resembles the gentle embrace of a passing cloud. Your ability to bring a sense of serenity and perspective to life's challenges is truly remarkable."
+        case .rainy:
+            return "Your nurturing and rejuvenating presence is like a refreshing rain shower in the heat of summer. Keep showering the world with your empathy and compassion."
+        case .thunderstorm:
+            return "Your energy and intensity shakes up the status quo and sparks change. Your passion and determination to make a difference inspire those around you, bringing growth and transformation."
+        case .deciduousTree:
+            return "Your ability to gracefully embrace change and transition is truly admirable. Just as leaves fall in the autumn, you shed the old to make way for the new with elegance and resilience."
+        case .christmasTree:
+            return "Your boundless enthusiasm for celebration and spreading joy is truly contagious. Like the twinkle of holiday lights, your positivity lights up the world around you."
+        case .palmTree:
+            return "Your laid-back and sunny disposition brings a breath of fresh air wherever you go. Just as palm fronds sway with ease in the breeze, you navigate life's challenges with a calm and adaptable spirit."
+        case .evergreenTree:
+            return "Your steadfast and unwavering nature is like the constant presence of a reliable friend. Much like the resilient branches that bear leaves throughout the year, you remain strong and dependable through life's seasons."
+        case .ladybug:
+            return "Your cheerful and vibrant presence lights up every room you enter. Your positivity and warmth are like a lucky charm, spreading happiness to those around you."
+        case .butterfly:
+            return "Your ability to gracefully embrace change, spread your wings, and bring beauty to the world is truly remarkable. Keep fluttering through life's challenges and joys, inspiring those around you with your radiant spirit."
+        case .ant:
+            return "Your dedication, diligence, and remarkable work ethic are admirable. Your ability to focus on your goals with unwavering determination and to collaborate effectively in achieving them is truly inspiring."
+        case .bee:
+            return "Your ability to work tirelessly for the collective good, whether in your career or community, is a testament to your character. Keep buzzing with your determination, for your efforts are vital in creating a sweeter world for all!"
+            
         }
     }
     
@@ -160,8 +202,62 @@ enum ResultType: String {
             return "🐼"
         case .koala:
             return "🐨"
+            
+            // elements
+        case .ice:
+            return "❄️"
+        case .water:
+            return "💧"
+        case .fire:
+            return "🔥"
+        case .nature:
+            return "🌱"
+            
+            // Weather
+        case .rainbow:
+            return "🌈"
+        case .sunny:
+            return "☀️"
+        case .cloudy:
+            return "☁️"
+        case .rainy:
+            return "🌨️"
+        case .thunderstorm:
+            return "⚡️"
+            
+            // Tree
+        case .evergreenTree:
+            return "🌲"
+        case .deciduousTree:
+            return "🌳"
+        case .palmTree:
+            return "🌴"
+        case .christmasTree:
+            return "🎄"
+            
+            // Insect
+        case .ant:
+            return "🐜"
+        case .ladybug:
+            return "🐞"
+        case .bee:
+            return "🐝"
+        case .butterfly:
+            return "🦋"
         }
     }
+}
+
+enum ResultGroup: String {
+    case fruit = "Fruit"
+    case vehicle = "Vehicle"
+    case animal = "Animal"
+    case disneyPrincess = "Disney Princess"
+    case mentalAge = "Mental Age"
+    case bear = "Bear"
+    case element = "Element"
+    case tree = "Tree"
+    case insect = "Insect"
 }
 
 extension ResultType {
@@ -173,7 +269,10 @@ extension ResultType {
             .disneyPrincess: [.belle, .mulan, .moana, .ariel, .rapunzel, .elsa],
             .mentalAge: [.baby, .child, .adult, .senior],
             .bear: [.polarBear, .koala, .panda, .brownBear],
-            // Add more groups as needed
+            .element: [.ice, .water, .fire, .nature],
+            .tree: [.palmTree, .christmasTree, .deciduousTree, .evergreenTree],
+            .insect: [.ant, .ladybug, .bee, .butterfly],
+            
         ]
     }()
 }
@@ -204,13 +303,4 @@ extension ResultType: Comparable {
     static func < (lhs: ResultType, rhs: ResultType) -> Bool {
         return lhs.emoji < rhs.emoji
     }
-}
-
-enum ResultGroup: String {
-    case fruit = "Fruit"
-    case vehicle = "Vehicle"
-    case animal = "Animal"
-    case disneyPrincess = "Disney Princess"
-    case mentalAge = "Mental Age"
-    case bear = "Bear"
 }

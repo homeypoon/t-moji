@@ -127,6 +127,11 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
             
             // Delay the resetting of the progress view
             DispatchQueue.main.asyncAfter(deadline: .now() + delayBaseTime) {
+                // Update label text
+                UIView.transition(with: self.levelLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                    self.levelLabel.text = "\(currentLevelTracker.currentLevel)"
+                }, completion: nil)
+                
                 self.levelProgressView.setProgress(Float(0) / Float(currentLevelTracker.requiredPointsToNextLevel), animated: true)
             }
             
@@ -149,10 +154,6 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
                         self.levelLabel.transform = .identity // Bounce back
                     }, completion: nil)
 
-                    // Update label text
-                    UIView.transition(with: self.levelLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                        self.levelLabel.text = "\(currentLevelTracker.currentLevel)"
-                    }, completion: nil)
                 })
 
             }

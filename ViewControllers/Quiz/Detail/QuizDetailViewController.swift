@@ -19,6 +19,7 @@ class QuizDetailViewController: UIViewController {
     var quizCompleteState: Bool = false
     var currentUserResultType: ResultType?
     var takenByText: String!
+    var shadowLayer: CAShapeLayer!
     
     private var rewardedAd: GADRewardedAd?
     
@@ -60,6 +61,7 @@ class QuizDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
     
     func loadRetakeQuizRewardedAd() {
@@ -101,9 +103,26 @@ class QuizDetailViewController: UIViewController {
 
             takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
-            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
             
             updateResultGroupButton(resultGroupButton: withoutResultResultGroupButton)
+            
+            //            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+
+            
+            if shadowLayer == nil {
+                shadowLayer = CAShapeLayer()
+                
+                shadowLayer.path = UIBezierPath(roundedRect: withoutResultView.bounds, cornerRadius: 18.0).cgPath
+                shadowLayer.fillColor = UIColor.white.cgColor
+                
+                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+                shadowLayer.shadowPath = shadowLayer.path
+                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowLayer.shadowOpacity = 1
+                shadowLayer.shadowRadius = 2.5
+                
+                withoutResultView.layer.insertSublayer(shadowLayer, at: 0)
+            }
             
         } else if takeQuizState == ButtonState.retakeQuiz {
             withResultView.isHidden = false
@@ -114,8 +133,23 @@ class QuizDetailViewController: UIViewController {
             myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
             takeQuizButton.setTitle("  Retake Quiz", for: [])
             takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
-            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+            
             updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
+//            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+            if shadowLayer == nil {
+                shadowLayer = CAShapeLayer()
+                
+                shadowLayer.path = UIBezierPath(roundedRect: withResultView.bounds, cornerRadius: 18.0).cgPath
+                shadowLayer.fillColor = UIColor.white.cgColor
+                
+                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+                shadowLayer.shadowPath = shadowLayer.path
+                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowLayer.shadowOpacity = 1
+                shadowLayer.shadowRadius = 2.5
+                
+                withResultView.layer.insertSublayer(shadowLayer, at: 0)
+            }
         }
         
         guessForTmatesButton.configuration?.subtitle = takenByText

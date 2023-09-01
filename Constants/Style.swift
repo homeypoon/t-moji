@@ -25,7 +25,7 @@ extension UICollectionViewCell {
         case .exploreItem:
             // explore
             self.contentView.layer.cornerRadius = 12.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 0.5
@@ -39,7 +39,7 @@ extension UICollectionViewCell {
         case .smallItem:
             // guess, leaderboard
             self.contentView.layer.cornerRadius = 8.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -51,7 +51,7 @@ extension UICollectionViewCell {
             self.contentView.backgroundColor = UIColor.white
         case .topThreeLeaderboard:
             self.contentView.layer.cornerRadius = 8.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -63,7 +63,7 @@ extension UICollectionViewCell {
             
         case .remainingLeaderboard:
             self.contentView.layer.cornerRadius = 8.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -103,7 +103,7 @@ extension UICollectionViewCell {
             
         case .currentResult:
             self.contentView.layer.cornerRadius = 12.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -116,7 +116,7 @@ extension UICollectionViewCell {
             
         case .othersResult:
             self.contentView.layer.cornerRadius = 8.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -133,7 +133,7 @@ extension UICollectionViewCell {
             self.contentView.layer.borderColor = UIColor(named: "primaryDarkBlue")?.cgColor
             self.contentView.layer.masksToBounds = true
             
-        
+            
         }
     }
     
@@ -143,23 +143,29 @@ extension UICollectionViewCell {
 }
 
 extension UICollectionReusableView {
-        enum ReusableViewType {
-            case tmatesEmojiCollection
-        }
-        func applyRoundedCornerAndShadow(reusableViewType: ReusableViewType) {
-            switch reusableViewType {
-            case .tmatesEmojiCollection:
-                layer.cornerRadius = 24.0
+    enum ReusableViewType {
+        case tmatesEmojiCollection
+    }
+    func applyRoundedCornerAndShadow(reusableViewType: ReusableViewType) {
+        switch reusableViewType {
+        case .tmatesEmojiCollection:
+            var shadowLayer: CAShapeLayer!
+            
+            if shadowLayer == nil {
+                shadowLayer = CAShapeLayer()
                 
-                layer.masksToBounds = false
-                layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-                layer.shadowOpacity = 1
-                layer.shadowOffset = CGSize(width: 1, height: 1)
-                layer.shadowRadius = 1.5
-                self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+                shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 24.0).cgPath
+                shadowLayer.fillColor = UIColor.white.cgColor
                 
-                self.backgroundColor = UIColor.white
+                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+                shadowLayer.shadowPath = shadowLayer.path
+                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowLayer.shadowOpacity = 1
+                shadowLayer.shadowRadius = 1.5
+                
+                layer.insertSublayer(shadowLayer, at: 0)
             }
+        }
     }
 }
 
@@ -172,10 +178,10 @@ extension UIStackView {
         case .quizDetailBanner:
             // explore
             layoutMargins = UIEdgeInsets(top: 40, left: 20, bottom: 30, right: 20)
-//            isLayoutMarginsRelativeArrangement = true
+            //            isLayoutMarginsRelativeArrangement = true
             
             layer.cornerRadius = 18.0
-
+            
             layer.masksToBounds = false
             layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
             layer.shadowOpacity = 1
@@ -203,7 +209,7 @@ extension UIButton {
             self.layer.shadowOpacity = 0.7
             self.layer.shadowRadius = 3
             self.layer.masksToBounds = false
-
+            
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
             self.backgroundColor = UIColor.clear
             
@@ -215,7 +221,7 @@ extension UIButton {
             self.layer.shadowOpacity = 0.7
             self.layer.shadowRadius = 3
             self.layer.masksToBounds = false
-
+            
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
             self.backgroundColor = UIColor.clear
             
@@ -324,7 +330,7 @@ extension UIProgressView {
         // Set the rounded edge for the outer bar
         self.layer.cornerRadius = 12
         self.clipsToBounds = true
-
+        
         // Set the rounded edge for the inner bar
         self.layer.sublayers![1].cornerRadius = 12
         self.subviews[1].clipsToBounds = true
@@ -350,15 +356,30 @@ extension UIView {
             self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
         case .quizDetailBanner:
             // explore
-
-            layer.cornerRadius = 18.0
+            var shadowLayer: CAShapeLayer!
             
-            layer.masksToBounds = false
-            layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-            layer.shadowOpacity = 1
-            layer.shadowOffset = CGSize(width: 2.5, height: 4)
-            layer.shadowRadius = 5
-            layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+            if shadowLayer == nil {
+                shadowLayer = CAShapeLayer()
+                
+                shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 18.0).cgPath
+                shadowLayer.fillColor = UIColor.white.cgColor
+                
+                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+                shadowLayer.shadowPath = shadowLayer.path
+                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowLayer.shadowOpacity = 1
+                shadowLayer.shadowRadius = 2.5
+                
+                layer.insertSublayer(shadowLayer, at: 0)
+            }
+//            layer.cornerRadius = 18.0
+            
+//            layer.masksToBounds = false
+//            layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+//            layer.shadowOpacity = 1
+//            layer.shadowOffset = CGSize(width: 2.5, height: 4)
+//            layer.shadowRadius = 5
+//            layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
         }
     }
 }

@@ -93,7 +93,7 @@ struct QuizData {
                 Answer(text: "Snowy and cold", correspondingResult: ResultType.ship),
                 Answer(text: "Breezy and mild", correspondingResult: ResultType.helicopter)
             ])
-
+            
         ]),
         
         // Fruit Quiz
@@ -144,7 +144,7 @@ struct QuizData {
                 Answer(text: "Make others proud of me", correspondingResult: ResultType.mulan),
                 Answer(text: "Understand my identity", correspondingResult: ResultType.rapunzel)
             ]),
-            Question(text: "What's Your Greatest Fear?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What's your Greatest Fear?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Losing family", correspondingResult: ResultType.moana),
                 Answer(text: "Isolation", correspondingResult: ResultType.ariel),
                 Answer(text: "Being judged", correspondingResult: ResultType.belle),
@@ -231,7 +231,7 @@ struct QuizData {
                 Answer(text: "Pineapple", correspondingResult: ResultType.panda),
                 Answer(text: "Mushroom", correspondingResult: ResultType.polarBear)
             ]),
-            Question(text: "Which celebrity would you like to meet the most?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "Which celebrity would you like to meet?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Adele", correspondingResult: ResultType.polarBear),
                 Answer(text: "Taylor Swift", correspondingResult: ResultType.panda),
                 Answer(text: "Ed Sheeran", correspondingResult: ResultType.koala),
@@ -268,6 +268,158 @@ struct QuizData {
                 Answer(text: "Game of Life", correspondingResult: ResultType.panda)
             ])
         ]),
+        
+        Quiz(id: 6, resultGroup: .animal, title: "Which Element Are You?", quizType: .character, questions: [
+            Question(text: "What Climate Do You Prefer?", type: .ranged, possibleAnswers: [
+                Answer(text: "Hot", correspondingResult: ResultType.fire),
+                Answer(text: "", correspondingResult: ResultType.water),
+                Answer(text: "", correspondingResult: ResultType.nature),
+                Answer(text: "Cold", correspondingResult: ResultType.ice)
+            ]),
+            Question(text: "How Do You Respond To Conflict", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Mediate", correspondingResult: ResultType.water),
+                Answer(text: "Avoid", correspondingResult: ResultType.nature),
+                Answer(text: "Reflect", correspondingResult: ResultType.ice),
+                Answer(text: "Confront", correspondingResult: ResultType.fire)
+            ]),
+            Question(text: "Which Of These Describe You Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Grounded", correspondingResult: ResultType.nature),
+                Answer(text: "Reserved", correspondingResult: ResultType.ice),
+                Answer(text: "Passionate", correspondingResult: ResultType.fire),
+                Answer(text: "Adaptable", correspondingResult: ResultType.water)
+            ]),
+            Question(text: "What Is The Most Important For Decision making?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Analysis", correspondingResult: ResultType.ice),
+                Answer(text: "Intuition", correspondingResult: ResultType.fire),
+                Answer(text: "Logic", correspondingResult: ResultType.water),
+                Answer(text: "Empathy", correspondingResult: ResultType.nature)
+            ]),
+            Question(text: "Which one are you?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Leader", correspondingResult: ResultType.fire),
+                Answer(text: "Harmonizer", correspondingResult: ResultType.ice),
+                Answer(text: "Observer", correspondingResult: ResultType.water),
+                Answer(text: "Listener", correspondingResult: ResultType.nature)
+            ]),
+            Question(text: "What Is Your Creative Style?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Versatile", correspondingResult: ResultType.nature),
+                Answer(text: "Practical", correspondingResult: ResultType.water),
+                Answer(text: "thoughtful", correspondingResult: ResultType.ice),
+                Answer(text: "Fiery", correspondingResult: ResultType.fire)
+            ]),
+        ]),
+        Quiz(id: 7, resultGroup: .animal, title: "which weather are you?", quizType: .character, questions: [
+            Question(text: "How Do You React To Challenges?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Seek Opportunities", correspondingResult: ResultType.rainbow),
+                Answer(text: "Stay Positive", correspondingResult: ResultType.sunny),
+                Answer(text: "Adapt Calmly", correspondingResult: ResultType.cloudy),
+                Answer(text: "Stick to Routine", correspondingResult: ResultType.rainy)
+            ]),
+            Question(text: "Choose a Color.", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sunny Yellow", correspondingResult: ResultType.sunny),
+                Answer(text: "Gentle Gray", correspondingResult: ResultType.cloudy),
+                Answer(text: "Soothing Blue", correspondingResult: ResultType.rainy),
+                Answer(text: "Stormy Blue-Gray", correspondingResult: ResultType.thunderstorm)
+            ]),
+            Question(text: "What Is Your Approach To Making Friends.", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "casual", correspondingResult: ResultType.cloudy),
+                Answer(text: "Cautious", correspondingResult: ResultType.rainy),
+                Answer(text: "Enthusiastic", correspondingResult: ResultType.thunderstorm),
+                Answer(text: "Care Free", correspondingResult: ResultType.rainbow)
+            ]),
+            Question(text: "How Do You Deal With change?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Approach", correspondingResult: ResultType.rainy),
+                Answer(text: "Confront", correspondingResult: ResultType.thunderstorm),
+                Answer(text: "Embrace", correspondingResult: ResultType.rainbow),
+                Answer(text: "Adapt", correspondingResult: ResultType.sunny)
+            ]),
+            Question(text: "What Is Your Type of Humor?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sarcastic", correspondingResult: ResultType.thunderstorm),
+                Answer(text: "Playful", correspondingResult: ResultType.rainbow),
+                Answer(text: "Cheerful", correspondingResult: ResultType.sunny),
+                Answer(text: "Witty", correspondingResult: ResultType.cloudy)
+            ]),
+            Question(text: "What Is Your Favorite Type of Candy?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "sour", correspondingResult: ResultType.rainbow),
+                Answer(text: "chocolate", correspondingResult: ResultType.sunny),
+                Answer(text: "hard", correspondingResult: ResultType.cloudy),
+                Answer(text: "gummy", correspondingResult: ResultType.rainy)
+            ]),
+        ]),
+        Quiz(id: 8, resultGroup: .animal, title: "What Tree Are You?", quizType: .character, questions: [
+            Question(text: "What Is Your Favorite Weather?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sunny", correspondingResult: ResultType.palmTree),
+                Answer(text: "Cloudy", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "Rainy", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Snowy", correspondingResult: ResultType.christmasTree)
+            ]),
+            Question(text: "Reading or Watching", type: .ranged, possibleAnswers: [
+                Answer(text: "Reading", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "", correspondingResult: ResultType.palmTree),
+                Answer(text: "", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Watching", correspondingResult: ResultType.evergreenTree)
+            ]),
+            Question(text: "Which Would You Ride?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Roller Coaster", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Rocket", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Hot Air Balloon", correspondingResult: ResultType.palmTree),
+                Answer(text: "Submarine", correspondingResult: ResultType.deciduousTree)
+            ]),
+            Question(text: "Which Of These Describe You Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Funny", correspondingResult: ResultType.palmTree),
+                Answer(text: "Dark", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Soothing", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Brave", correspondingResult: ResultType.deciduousTree)
+            ]),
+            Question(text: "Which Of These Taste Better?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Burgers", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "French Fries", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Pizza", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Ice Cream", correspondingResult: ResultType.palmTree)
+            ]),
+            Question(text: "Which Is More Important When Choosing Clothes?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Protection", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Modesty", correspondingResult: ResultType.palmTree),
+                Answer(text: "Expression", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Functionality", correspondingResult: ResultType.deciduousTree)
+            ]),
+        ]),
+        Quiz(id: 8, resultGroup: .animal, title: "What Insect Are You?", quizType: .character, questions: [
+            Question(text: "What Does Your Weekend Look Like?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sports", correspondingResult: ResultType.ant),
+                Answer(text: "Creativity", correspondingResult: ResultType.butterfly),
+                Answer(text: "travel", correspondingResult: ResultType.bee),
+                Answer(text: "Enjoying Content", correspondingResult: ResultType.ladybug)
+            ]),
+            Question(text: "Indoors Or Outdoors", type: .ranged, possibleAnswers: [
+                Answer(text: "Indoors", correspondingResult: ResultType.ladybug),
+                Answer(text: "", correspondingResult: ResultType.ant),
+                Answer(text: "", correspondingResult: ResultType.butterfly),
+                Answer(text: "Outdoors", correspondingResult: ResultType.bee)
+            ]),
+            Question(text: "Who Are You In Parties?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Socialite", correspondingResult: ResultType.ladybug),
+                Answer(text: "Foodie", correspondingResult: ResultType.bee),
+                Answer(text: "Wallflower", correspondingResult: ResultType.ant),
+                Answer(text: "Entertainer", correspondingResult: ResultType.butterfly)
+            ]),
+            Question(text: "Which Of These Senses Would You Rather Have Heightened?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sight", correspondingResult: ResultType.butterfly),
+                Answer(text: "Hearing", correspondingResult: ResultType.ladybug),
+                Answer(text: "Taste", correspondingResult: ResultType.bee),
+                Answer(text: "Smell", correspondingResult: ResultType.ant)
+            ]),
+            Question(text: "What Side Should Face The Bed?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Right side", correspondingResult: ResultType.butterfly),
+                Answer(text: "Stomach", correspondingResult: ResultType.ladybug),
+                Answer(text: "Left Side", correspondingResult: ResultType.bee),
+                Answer(text: "Back", correspondingResult: ResultType.ant)
+            ]),
+            Question(text: "Which Instrument Group Sounds Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Woodwinds", correspondingResult: ResultType.butterfly),
+                Answer(text: "Brass", correspondingResult: ResultType.ladybug),
+                Answer(text: "Percussion", correspondingResult: ResultType.bee),
+                Answer(text: "Strings", correspondingResult: ResultType.ant)
+            ]),
+        ]),
     ]
 }
-

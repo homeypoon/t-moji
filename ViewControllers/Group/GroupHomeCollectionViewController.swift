@@ -210,9 +210,9 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             case .tmateResults(let quizTitle):
                 sectionHeader.configure(title: quizTitle, colorName: "Text")
             case .tmateEmojis(let tmate):
-                sectionHeader.configure(title: "\(tmate.username) \(tmate.points)", colorName: "Text")
+                sectionHeader.configure(title: "\(tmate.username) (\(tmate.points) pts)", colorName: "Text")
             case .noTmateEmojis(tmate: let tmate):
-                sectionHeader.configure(title: "\(tmate.username) \(tmate.points)", colorName: "Text")
+                sectionHeader.configure(title: "\(tmate.username) (\(tmate.points) pts)", colorName: "Text")
             }
             
             return sectionHeader
@@ -234,13 +234,6 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     .fractionalWidth(1), heightDimension: .estimated(48))
             let sectionHeader =
             NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
-            
-            let sectionEdgeInsets = NSDirectionalEdgeInsets(
-                top: 8,
-                leading: 0,
-                bottom: 0,
-                trailing: 0
-            )
             
             // Guess Select Member
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {

@@ -16,14 +16,13 @@ class SectionBackgroundView: UICollectionReusableView {
     override func didMoveToSuperview() {
 //        translatesAutoresizingMaskIntoConstraints = false
         self.applyRoundedCornerAndShadow(reusableViewType: .tmatesEmojiCollection)
-//        clipsToBounds = true
 //
 //        backgroundColor = .white
 //        layer.cornerRadius = 15
 //
 //        layer.borderWidth = 3
 //        layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
-//        layer.masksToBounds = true
+//        layer.masksToBounds = false
     }
 }
 

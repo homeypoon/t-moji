@@ -50,5 +50,4 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
         titleLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         titleLabel.textColor = UIColor(named: colorName)
     }
-        
 }

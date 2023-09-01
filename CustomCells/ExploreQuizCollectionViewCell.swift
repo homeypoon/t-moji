@@ -32,6 +32,7 @@ class ExploreQuizCollectionViewCell: UICollectionViewCell {
             outgoing.foregroundColor = UIColor(named: "primaryRed")
             return outgoing
         }
+        resultGroupButton.setTitle(quiz.resultGroup.rawValue.capitalized, for: [])
         
         quizTitleLabel.text = quiz.title
         

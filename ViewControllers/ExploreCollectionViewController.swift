@@ -371,7 +371,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             fetchTmatesDispatchGroup.enter()
             print("entered")
             
-            
             var membersIDs = [String]()
             
             if quizHistory.completedUsers.count == 1 {
@@ -429,8 +428,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                         
                         quizHistory.completedUsers = quizHistory.completedUsers.filter { userID in
                             currentUser.masterGroupmatesIDs.contains(userID) || userID == currentUid }
-                        print("filtered")
-                        print("mastergorupmatedsid \(currentUser.masterGroupmatesIDs)")
                         print("quizHistory \(quizHistory)")
                         self.model.quizHistories.append(quizHistory)
                         
