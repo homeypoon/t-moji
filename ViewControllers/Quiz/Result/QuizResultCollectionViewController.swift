@@ -37,8 +37,8 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     var members = [User]() // test delete
     var resultUser: User?
     var userQuizHistory: UserQuizHistory?
-    
     var quizHistory: QuizHistory?
+    var loadingSpinner: UIActivityIndicatorView?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -104,13 +104,9 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
         super.viewWillAppear(animated)
         
         fetchQuizHistory { [weak self] in
-            
-            guard let currentUid = Auth.auth().currentUser?.uid else { return }
-            //
-            
+                        
             self?.fetchUser {
                 if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
-                    print("masterGroupmatesIDssss\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
                 } else {
                     self?.updateCollectionView()
@@ -122,6 +118,14 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -283,6 +287,8 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     }
     
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
+
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
@@ -374,7 +380,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
         
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
                 completion()
             } else {
                 for document in querySnapshot!.documents {
@@ -382,7 +388,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                         self.quizHistory = try document.data(as: QuizHistory.self)
                         completion()
                     } catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
                         completion()
                     }
                 }
@@ -393,11 +399,10 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
         
-        print("membersIDS in fetchuser \(membersIDs)")
-        
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "A network error occured!")
             } else {
                 for document in querySnapshot!.documents {
                     do {
@@ -405,7 +410,8 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                         self.model.userMasterTmates.append(member)
                     }
                     catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
+                        self.presentErrorAlert(with: "A network error occured!")
                     }
                 }
                 self.updateCollectionView()
@@ -428,7 +434,8 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                 
             case .failure(let error):
                 // Handle the error appropriately
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "An error occured!")
                 completion()
             }
         }

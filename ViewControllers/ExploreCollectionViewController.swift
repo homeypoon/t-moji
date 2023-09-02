@@ -11,7 +11,6 @@ import FirebaseAuth
 import GoogleMobileAds
 
 class ExploreCollectionViewController: UICollectionViewController, UISearchBarDelegate, UISearchResultsUpdating {
-    var loadingSpinner: UIActivityIndicatorView!
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -58,6 +57,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     var dataSource: DataSourceType!
     var model = Model()
     var selectedSegmentIndex: Int = 0
+    var loadingSpinner: UIActivityIndicatorView?
     
     
     var searchController: UISearchController!
@@ -116,11 +116,14 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         super.viewDidLoad()
         // Create and configure the loading spinner
         loadingSpinner = UIActivityIndicatorView(style: .large)
-        loadingSpinner.center = view.center
-        loadingSpinner.hidesWhenStopped = true
-        view.addSubview(loadingSpinner)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
 
-        self.loadingSpinner.startAnimating()
+            loadingSpinner.startAnimating()
+        }
+        
 
         
         dataSource = createDataSource()
@@ -408,7 +411,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             }
         }
         fetchTmatesDispatchGroup.notify(queue: .main) {
-            self.loadingSpinner.stopAnimating()
+            self.loadingSpinner?.stopAnimating()
             self.updateCollectionView()
             print("calling colleciton view update")
         }

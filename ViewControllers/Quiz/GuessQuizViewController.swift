@@ -116,7 +116,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 return outgoing
             }
             
-            button.applyRoundedCornerAndShadow(borderType: .quizButton)
+            button.applyRoundedCornerAndShadow(borderType: .guessButton)
             
             button.titleLabel?.textAlignment = .center
         }

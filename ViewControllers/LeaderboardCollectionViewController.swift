@@ -60,6 +60,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     var dataSource: DataSourceType!
     var model = Model()
     var selectedSegmentIndex: Int = 0
+    var loadingSpinner: UIActivityIndicatorView?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -75,6 +76,15 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         let segmentedControl = UISegmentedControl(items: ["Global", "T-mates"])
         segmentedControl.selectedSegmentIndex = 0
@@ -225,6 +235,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     
     func updateCollectionView() {
         // Sort the user master team members by points in descending order
+        self.loadingSpinner?.stopAnimating()
         
         var sortedUsers: [User]
         
@@ -331,7 +342,8 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         
         FirestoreService.shared.db.collection("users").getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "An error occured!")
             } else {
                 for document in querySnapshot!.documents {
                     do {
@@ -339,6 +351,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
                         self.model.sortedGlobalUsers.append(member)
                     }
                     catch {
+                        self.loadingSpinner?.stopAnimating()
                         self.presentErrorAlert(with: error.localizedDescription)
                     }
                 }

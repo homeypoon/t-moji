@@ -27,13 +27,13 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
             correctLabel.text = "Correct Guess"
             pointsLabel.text = "+ \(Points.guessCorrect) pts"
             pointsDescriptionLabel.text = "Correct Guess"
-            self.layer.backgroundColor = UIColor(named: "correctGreen")?.cgColor
+            self.contentView.layer.backgroundColor = UIColor(named: "correctGreen")?.cgColor
 
         } else {
             correctLabel.text = "Wrong Guess"
             pointsLabel.text = "+ \(Points.guessIncorrect) pt"
             pointsDescriptionLabel.text = "Wrong Guess"
-            self.layer.backgroundColor = UIColor(named: "wrongRed")?.cgColor
+            self.contentView.layer.backgroundColor = UIColor(named: "wrongRed")?.cgColor
 
         }
         

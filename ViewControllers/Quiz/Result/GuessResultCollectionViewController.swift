@@ -31,8 +31,8 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     var guessedUser: User?
     var userQuizHistory: UserQuizHistory?
     var guessedResultType: ResultType?
-    
     var quizHistory: QuizHistory?
+    var loadingSpinner: UIActivityIndicatorView?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -86,7 +86,6 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
             
             self?.fetchUser {
                 if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
-                    print("masterGroupmatesIDs\(masterGroupmatesIDs)")
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
                 } else {
                     self?.updateCollectionView()
@@ -98,6 +97,15 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -259,6 +267,8 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     }
     
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
+
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
@@ -343,7 +353,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
         
         FirestoreService.shared.db.collection("quizHistories").whereField("quizID", isEqualTo: quizID).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
                 completion()
             } else {
                 for document in querySnapshot!.documents {
@@ -351,7 +361,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                         self.quizHistory = try document.data(as: QuizHistory.self)
                         completion()
                     } catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
                         completion()
                     }
                 }
@@ -361,23 +371,21 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     
     private func fetchUserMasterTmates(membersIDs: [String]) {
         self.model.userMasterTmates.removeAll()
-        
-        print("in memberids \(membersIDs)")
-        
+            
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "A network error occured!")
             } else {
                 
                 for document in querySnapshot!.documents {
-                    print("new")
                     do {
                         let member = try document.data(as: User.self)
                         self.model.userMasterTmates.append(member)
-                        print("new member \(member)")
                     }
                     catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
+                        self.presentErrorAlert(with: "A network error occured!")
                     }
                 }
                 self.updateCollectionView()
@@ -396,9 +404,10 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 self.model.currentUser = user
                 completion()
                 
-            case .failure(let error):
+            case .failure(_):
                 // Handle the error appropriately
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "A network error occured!")
                 completion()
             }
         }

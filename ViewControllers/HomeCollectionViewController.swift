@@ -59,18 +59,26 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     
     var dataSource: DataSourceType!
     var model = Model()
+    var loadingSpinner: UIActivityIndicatorView?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
 
-        
         fetchGroups()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -86,7 +94,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         
         FirestoreService.shared.db.collection("groups").whereField("membersIDs", arrayContains: userID).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "A network error occured!")
             } else {
                 self.model.groups.removeAll()
                 
@@ -97,11 +106,11 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                         self.model.groups.append(group)
                     }
                     catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
+                        self.presentErrorAlert(with: "An error occured!")
                     }
                     
                 }
-                
                 self.updateCollectionView()
             }
         }
@@ -211,31 +220,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         return layout
     }
     
-//    func updateCollectionView() {
-//
-//        var sectionIDs = [ViewModel.Section]()
-//
-//        sectionIDs.append(.homeTopBanner)
-//        var itemsBySection = [ViewModel.Section.homeTopBanner: [ViewModel.Item.homeTopBanner]]
-//
-//
-//        var itemsBySection = model.groups.reduce(into: [ViewModel.Section: [ViewModel.Item]]()) { partial, group in
-//
-//            partial[.groups, default: []].append(ViewModel.Item.group(group: group))
-//        }
-//
-//        itemsBySection = itemsBySection.mapValues { $0.sorted() }
-//
-//        let sectionIDs = itemsBySection.keys.sorted()
-//
-//        dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
-//
-//        DispatchQueue.main.async {
-//            self.collectionView.reloadData()
-//        }
-//    }
-    
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         

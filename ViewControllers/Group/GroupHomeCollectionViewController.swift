@@ -97,6 +97,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     var dataSource: DataSourceType!
     var model = Model()
     var selectedSegmentIndex: Int = 0
+    var loadingSpinner: UIActivityIndicatorView?
     
     init?(coder: NSCoder, group: Group) {
         self.group = group
@@ -141,6 +142,15 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         navigationItem.hidesBackButton = false
         
@@ -353,6 +363,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
     }
     
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
         var sectionIDs = [ViewModel.Section]()
@@ -508,7 +519,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         FirestoreService.shared.db.collection("quizHistories").getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
                 completion()
             } else {
                 for document in querySnapshot!.documents {
@@ -516,7 +527,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         self.model.quizHistories.append(try document.data(as: QuizHistory.self))
                         completion()
                     } catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
                         completion()
                     }
                 }
@@ -641,7 +652,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         FirestoreService.shared.db.collection("users").whereField("uid", in: membersIDs).getDocuments { (querySnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "An error occured!")
             } else {
                 
                 for document in querySnapshot!.documents {
@@ -667,7 +679,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                         }
                     }
                     catch {
-                        self.presentErrorAlert(with: error.localizedDescription)
+                        self.loadingSpinner?.stopAnimating()
+                        self.presentErrorAlert(with: "An error occured!")
                     }
                 }
                 self.updateCollectionView()
@@ -683,14 +696,14 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         FirestoreService.shared.db.collection("groups").document(groupID).getDocument { (documentSnapshot, error) in
             if let error = error {
-                self.presentErrorAlert(with: error.localizedDescription)
+                self.loadingSpinner?.stopAnimating()
                 completion(nil)
             } else {
                 do {
                     let group = try documentSnapshot?.data(as: Group.self)
                     completion(group)
                 } catch {
-                    self.presentErrorAlert(with: error.localizedDescription)
+                    self.loadingSpinner?.stopAnimating()
                     completion(nil)
                 }
             }

@@ -116,7 +116,7 @@ class QuizDetailViewController: UIViewController {
                 
                 shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
                 shadowLayer.shadowPath = shadowLayer.path
-                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+            shadowLayer.shadowOffset = CGSize(width: 0.8, height: 0.8)
                 shadowLayer.shadowOpacity = 1
                 shadowLayer.shadowRadius = 2.5
                 

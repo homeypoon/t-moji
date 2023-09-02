@@ -14,15 +14,7 @@ private let reuseIdentifier = "Cell"
 class SectionBackgroundView: UICollectionReusableView {
     
     override func didMoveToSuperview() {
-//        translatesAutoresizingMaskIntoConstraints = false
         self.applyRoundedCornerAndShadow(reusableViewType: .tmatesEmojiCollection)
-//
-//        backgroundColor = .white
-//        layer.cornerRadius = 15
-//
-//        layer.borderWidth = 3
-//        layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
-//        layer.masksToBounds = false
     }
 }
 
@@ -33,6 +25,8 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     var user: User?
     var otherUser: User?
+    
+    var loadingSpinner: UIActivityIndicatorView?
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -137,6 +131,15 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -159,8 +162,11 @@ class ProfileCollectionViewController: UICollectionViewController {
                     self.fetchUser()
                     return
                 } else {
+                    self.loadingSpinner?.stopAnimating()
                     self.performSegue(withIdentifier: "editProfile", sender: true) // Mandatory
                 }
+            } else {
+                self.loadingSpinner?.stopAnimating()
             }
         }
         
@@ -187,10 +193,12 @@ class ProfileCollectionViewController: UICollectionViewController {
             case .success(let user):
                 self.user = user
                 
+                self.loadingSpinner?.stopAnimating()
                 self.updateCollectionView()
                 
             case .failure(let error):
                 // could not be initialized from the DocumentSnapshot.
+                self.loadingSpinner?.stopAnimating()
                 self.presentErrorAlert(with: error.localizedDescription)
             }
         }
