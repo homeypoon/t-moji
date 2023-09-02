@@ -344,43 +344,64 @@ struct QuizData {
                 Answer(text: "gummy", correspondingResult: ResultType.rainy)
             ]),
         ]),
-        Quiz(id: 8, resultGroup: .tree, title: "What Tree Are You?", quizType: .character, questions: [
-            Question(text: "What is Your Favorite Weather?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Sunny", correspondingResult: ResultType.palmTree),
-                Answer(text: "Cloudy", correspondingResult: ResultType.deciduousTree),
-                Answer(text: "Rainy", correspondingResult: ResultType.evergreenTree),
-                Answer(text: "Snowy", correspondingResult: ResultType.christmasTree)
+        
+        Quiz(id: 8, resultGroup: .color, title: "What Color Are You?", quizType: .character, questions: [
+            Question(text: "What Is the Best Way To Spend a Rainy Day?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Read Books", correspondingResult: ResultType.red),
+                Answer(text: "Watch TV", correspondingResult: ResultType.purple),
+                Answer(text: "Bake or Cook", correspondingResult: ResultType.blue),
+                Answer(text: "Play in the Rain", correspondingResult: ResultType.green)
             ]),
-            Question(text: "Reading or Watching", type: .ranged, possibleAnswers: [
-                Answer(text: "Reading", correspondingResult: ResultType.deciduousTree),
-                Answer(text: "", correspondingResult: ResultType.palmTree),
-                Answer(text: "", correspondingResult: ResultType.christmasTree),
-                Answer(text: "Watching", correspondingResult: ResultType.evergreenTree)
+            Question(text: "Hot or Cold Showers?", type: .ranged, possibleAnswers: [
+                Answer(text: "Hot", correspondingResult: ResultType.purple),
+                Answer(text: "", correspondingResult: ResultType.blue),
+                Answer(text: "", correspondingResult: ResultType.green),
+                Answer(text: "Cold", correspondingResult: ResultType.yellow)
             ]),
-            Question(text: "Which Would You Ride?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Roller Coaster", correspondingResult: ResultType.evergreenTree),
-                Answer(text: "Rocket", correspondingResult: ResultType.christmasTree),
-                Answer(text: "Hot Air Balloon", correspondingResult: ResultType.palmTree),
-                Answer(text: "Submarine", correspondingResult: ResultType.deciduousTree)
+            Question(text: "What Is Your Favorite Fast Food Chain?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Mac and Cheese", correspondingResult: ResultType.blue),
+                Answer(text: "Pizza", correspondingResult: ResultType.green),
+                Answer(text: "Ice Cream", correspondingResult: ResultType.yellow),
+                Answer(text: "Chicken Soup", correspondingResult: ResultType.orange)
             ]),
-            Question(text: "Which Of These Describe You Best?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Funny", correspondingResult: ResultType.palmTree),
-                Answer(text: "Dark", correspondingResult: ResultType.evergreenTree),
-                Answer(text: "Soothing", correspondingResult: ResultType.christmasTree),
-                Answer(text: "Brave", correspondingResult: ResultType.deciduousTree)
+            Question(text: "Brain or Brawn?", type: .ranged, possibleAnswers: [
+                Answer(text: "Brain", correspondingResult: ResultType.white),
+                Answer(text: "", correspondingResult: ResultType.black),
+                Answer(text: "", correspondingResult: ResultType.red),
+                Answer(text: "Brawn", correspondingResult: ResultType.purple)
             ]),
-            Question(text: "Which Of These Taste Better?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Burgers", correspondingResult: ResultType.deciduousTree),
-                Answer(text: "French Fries", correspondingResult: ResultType.evergreenTree),
-                Answer(text: "Pizza", correspondingResult: ResultType.christmasTree),
-                Answer(text: "Ice Cream", correspondingResult: ResultType.palmTree)
+            Question(text: "What’s your Favorite Karaoke Song?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Call Me Maybe", correspondingResult: ResultType.red),
+                Answer(text: "Fireflies", correspondingResult: ResultType.yellow),
+                Answer(text: "I Want It That Way", correspondingResult: ResultType.brown),
+                Answer(text: "Love Story", correspondingResult: ResultType.white)
             ]),
-            Question(text: "Which Is More Important When Choosing Clothes?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Protection", correspondingResult: ResultType.evergreenTree),
-                Answer(text: "Modesty", correspondingResult: ResultType.palmTree),
-                Answer(text: "Expression", correspondingResult: ResultType.christmasTree),
-                Answer(text: "Functionality", correspondingResult: ResultType.deciduousTree)
+            Question(text: "Which Skill Would You Want?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Multilingual Fluency", correspondingResult: ResultType.yellow),
+                Answer(text: "Culinary expertise", correspondingResult: ResultType.orange),
+                Answer(text: "Musical Virtuosity", correspondingResult: ResultType.brown),
+                Answer(text: "Elite Athleticism", correspondingResult: ResultType.white)
             ]),
+            Question(text: "What is Your Favorite Camping Activity?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Exploring", correspondingResult: ResultType.orange),
+                Answer(text: "Cooking", correspondingResult: ResultType.brown),
+                Answer(text: "Star-gazing", correspondingResult: ResultType.white),
+                Answer(text: "Fishing", correspondingResult: ResultType.black)
+            ]),
+            Question(text: "Movie or Books?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Movie", correspondingResult: ResultType.brown),
+                Answer(text: "", correspondingResult: ResultType.red),
+                Answer(text: "", correspondingResult: ResultType.black),
+                Answer(text: "Book", correspondingResult: ResultType.white)
+            ]),
+            
+            Question(text: "What Type of Sky Looks The Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Blue Sky", correspondingResult: ResultType.orange),
+                Answer(text: "Sunset Sky", correspondingResult: ResultType.brown),
+                Answer(text: "Twilight Sky", correspondingResult: ResultType.white),
+                Answer(text: "Light Sky", correspondingResult: ResultType.black)
+            ]),
+            
         ]),
         Quiz(id: 9, resultGroup: .fastFood, title: "What Fast Food Are You?", quizType: .character, questions: [
             Question(text: "What Type of Music do you Prefer?", type: .ranged, possibleAnswers: [
@@ -760,6 +781,44 @@ struct QuizData {
                 Answer(text: "Brass", correspondingResult: ResultType.ladybug),
                 Answer(text: "Percussion", correspondingResult: ResultType.bee),
                 Answer(text: "Strings", correspondingResult: ResultType.ant)
+            ]),
+        ]),
+        Quiz(id: 19, resultGroup: .tree, title: "What Tree Are You?", quizType: .character, questions: [
+            Question(text: "What is Your Favorite Weather?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Sunny", correspondingResult: ResultType.palmTree),
+                Answer(text: "Cloudy", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "Rainy", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Snowy", correspondingResult: ResultType.christmasTree)
+            ]),
+            Question(text: "Reading or Watching", type: .ranged, possibleAnswers: [
+                Answer(text: "Reading", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "", correspondingResult: ResultType.palmTree),
+                Answer(text: "", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Watching", correspondingResult: ResultType.evergreenTree)
+            ]),
+            Question(text: "Which Would You Ride?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Roller Coaster", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Rocket", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Hot Air Balloon", correspondingResult: ResultType.palmTree),
+                Answer(text: "Submarine", correspondingResult: ResultType.deciduousTree)
+            ]),
+            Question(text: "Which Of These Describe You Best?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Funny", correspondingResult: ResultType.palmTree),
+                Answer(text: "Dark", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Soothing", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Brave", correspondingResult: ResultType.deciduousTree)
+            ]),
+            Question(text: "Which Of These Taste Better?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Burgers", correspondingResult: ResultType.deciduousTree),
+                Answer(text: "French Fries", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Pizza", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Ice Cream", correspondingResult: ResultType.palmTree)
+            ]),
+            Question(text: "Which Is More Important When Choosing Clothes?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Protection", correspondingResult: ResultType.evergreenTree),
+                Answer(text: "Modesty", correspondingResult: ResultType.palmTree),
+                Answer(text: "Expression", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Functionality", correspondingResult: ResultType.deciduousTree)
             ]),
         ]),
     ]

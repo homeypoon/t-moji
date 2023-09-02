@@ -11,6 +11,7 @@ import FirebaseAuth
 import GoogleMobileAds
 
 class ExploreCollectionViewController: UICollectionViewController, UISearchBarDelegate, UISearchResultsUpdating {
+    var loadingSpinner: UIActivityIndicatorView!
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -20,6 +21,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         }
         
         enum Item: Hashable {
+            
             case quiz(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)
             case adInlineBanner(uuid: UUID)
             
@@ -100,6 +102,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
+        
         fetchCurrentUser(userID: userID) { user in
             self.model.user = user
             
@@ -111,6 +114,14 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Create and configure the loading spinner
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner.center = view.center
+        loadingSpinner.hidesWhenStopped = true
+        view.addSubview(loadingSpinner)
+
+        self.loadingSpinner.startAnimating()
+
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
@@ -305,12 +316,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 currentUserResultType: currentUserResultType,
                 takenByText: takenByText
             )
-            
-            // Insert an AdMob banner item every 6 quiz items
-            //            if itemIndex % 6 == 5 {
-            //                itemsBySection[.quizzes, default: []].append(.adInlineBanner)
-            //            }
-            
+    
             // Insert an AdMob banner item every 4 quiz items
             if itemIndex % 4 == 3 {
                 itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
@@ -326,7 +332,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 itemsBySection[.quizzes, default: []].append(item)
                 itemIndex += 1
             }
-            
         }
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
@@ -403,6 +408,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             }
         }
         fetchTmatesDispatchGroup.notify(queue: .main) {
+            self.loadingSpinner.stopAnimating()
             self.updateCollectionView()
             print("calling colleciton view update")
         }

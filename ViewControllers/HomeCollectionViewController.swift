@@ -49,6 +49,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     return false
                 }
             }
+
         }
     }
     

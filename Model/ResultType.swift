@@ -30,6 +30,7 @@ enum ResultType: String {
     case tulip = "tulip", rose = "rose", cherryBlossom = "cherry blossom", sunflower = "sunflower"
     case toothbrush = "toothbrush", soap = "soap", toiletPaper = "toilet paper", bathtub = "bathtub"
     case basketball = "basketball", tennis = "tennis", volleyball = "volleyball", soccer = "soccer", football = "football"
+    case red = "red", purple = "purple", blue = "blue", green = "green", yellow = "yellow", orangeColor = "orange ", brown = "brown", white = "white", black = "black"
     
     
     // ALERT: Watch how long each result message is + word length
@@ -237,6 +238,25 @@ enum ResultType: String {
             return "You embody the spirit of passion and adaptability. You appreciate the art of blending individual brilliance with collective effort. You understand the power of shared accomplishments and strive to create a sense of belonging for others."
         case .football:
             return "You embody the spirit of strategy and resilience. You appreciate the art of preparation and calculated risk-taking. You cherish the power of shared experiences and a sense of belonging."
+            
+        case .red:
+            return "Your passionate and dynamic personalities ignite a vivid spark wherever you go. You bring intensity, courage, and a zest for life, captivating those around you."
+        case .purple:
+            return "Your unique blend of creativity, wisdom, and elegance is truly captivating. You exude a sense of mystery, spirituality, and a touch of extravagance that brings enchantment and depth to the world around you!"
+        case .blue:
+            return "Your calm and introspective nature is a source of serenity and inspiration. Like the tranquil ocean or the open sky, your nuturing presence brings peace and clarity."
+        case .green:
+            return "Your affinity for growth, renewal, and harmony is refreshing. Like the vibrant foliage of a thriving forest, you brings a sense of balance and rejuvenation to those around you."
+        case .yellow:
+            return "Your sunny disposition and optimism brighten every room you enter. Like the golden rays of the sun, your are a beacon of joy and hope to those fortunate enough to know you."
+        case .orangeColor:
+            return "Your enthusiasm, creativity, and zest for life are truly inspiring. Like the warm glow of a sunset, you radiates energy and passion, igniting the spirits of those around you."
+        case .brown:
+            return "Your steadfastness and stability are a source of comfort and trust to those who know you. Your down-to-earth nature is the foundation upon which many rely and find solace."
+        case .white:
+            return "Your clarity, openness, and purity of heart are truly admirable. You are admired for embracing your pure and unpretentious spirit, for you bring a sense of freshness and renewal to our world."
+        case .black:
+            return "Your sophistication, mystery, and strength of character are truly captivating. You inspire with your enigmatic and powerful presence, and your uniqueness adds an aura of intrigue and a touch of timeless class to every situation."
         }
     }
     
@@ -451,6 +471,25 @@ enum ResultType: String {
         case .football:
             return "🏈"
             
+        case .red:
+            return "🔴"
+        case .purple:
+            return "🟣"
+        case .blue:
+            return "🔵"
+        case .green:
+            return "🟢"
+        case .yellow:
+            return "🟡"
+        case .orangeColor:
+            return "🟠"
+        case .brown:
+            return "🟤"
+        case .white:
+            return "⚪️"
+        case .black:
+            return "⚫️"
+            
             
         }
     }
@@ -465,6 +504,7 @@ enum ResultGroup: String {
     case bear = "Bear"
     case element = "Element"
     case weather = "Weather"
+    case color = "Color"
     case tree = "Tree"
     case insect = "Insect"
     case fastFood = "Fast Food"
@@ -476,6 +516,7 @@ enum ResultGroup: String {
     case flower = "Flower"
     case bathroomItem = "Bathroom Item"
     case ballSport = "Ball Sport"
+    
 }
 
 extension ResultType {
@@ -499,6 +540,7 @@ extension ResultType {
             .flower: [.tulip, .rose, .cherryBlossom, .sunflower],
             .bathroomItem: [.toothbrush, .toiletPaper, .soap, .bathtub],
             .ballSport: [.soccer, .football, .tennis, .basketball, .volleyball],
+            .color: [.red, .purple, .blue, .green, .yellow, .orangeColor, .brown, .white, .black],
         ]
     }()
 }
