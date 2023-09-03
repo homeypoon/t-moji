@@ -15,14 +15,14 @@ class RevealedResultCollectionViewCell: UICollectionViewCell {
     
     func configure(withUsername username: String, withResultType resultType: ResultType, isCurrentUser: Bool) {
         
-        var modifiedUsername = username
         
         if isCurrentUser {
-            modifiedUsername = "Me"
-            usernameLabel.textColor = .blue
+            usernameLabel.applyStyle(labelType: .currentUser)
+        } else {
+            usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
         }
 
-        usernameLabel.text = modifiedUsername
         resultTitleLabel.text = "\(resultType.emoji) \(resultType.rawValue.capitalized)"
         resultDescriptionTextView.text = resultType.message
         

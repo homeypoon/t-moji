@@ -51,3 +51,67 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
         titleLabel.textColor = UIColor(named: colorName)
     }
 }
+
+
+class TmateHeaderCollectionReusableView: UICollectionReusableView {
+    static let reuseIdentifier = "TmateHeader"
+    
+    let usernameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        return label
+    }()
+    
+    let pointsLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        return label
+    }()
+    
+    let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setUpView()
+    }
+    
+    private func setUpView() {
+        stackView.addArrangedSubview(usernameLabel)
+        stackView.addArrangedSubview(pointsLabel)
+        
+        addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 0)
+        ])
+    }
+    
+    func configure(username: String, points: String, isCurrentUser: Bool) {
+        usernameLabel.text = username
+        pointsLabel.text = points
+        
+        if isCurrentUser {
+            usernameLabel.text = "Me"
+            usernameLabel.textColor = UIColor(named: "darkCurrentUserText")
+            usernameLabel.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        } else {
+            print("not current")
+            usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
+        }
+    }
+}

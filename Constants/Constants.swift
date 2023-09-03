@@ -43,6 +43,7 @@ enum QuizKind {
 
 enum SupplementaryViewKind {
     static let sectionHeader = "sectionHeader"
+    static let tmateHeader = "tmateHeader"
     static let searchBar = "searchBar"
     static let sectionBackgroundView = "sectionBackgroundView"
     

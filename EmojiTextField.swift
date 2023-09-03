@@ -14,7 +14,20 @@ class EmojiTextField: RoundedTextField {
     }
 }
 
-class RoundedTextField: UITextField {
+class RoundedTextField: IndentedTextField {
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        layer.masksToBounds = false
+        layer.borderColor = UIColor.clear.cgColor
+        
+        layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+        layer.shadowOpacity = 1
+        layer.shadowOffset = CGSize(width: 0.4, height: 0.6)
+        layer.shadowRadius = 1.5
+    }
+}
+
+class IndentedTextField: UITextField {
     var textPadding = UIEdgeInsets(
         top: 8,
         left: 16,
@@ -30,16 +43,5 @@ class RoundedTextField: UITextField {
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
         let rect = super.editingRect(forBounds: bounds)
         return rect.inset(by: textPadding)
-    }
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        layer.masksToBounds = false
-        layer.borderColor = UIColor.clear.cgColor
-        
-        layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-        layer.shadowOpacity = 1
-        layer.shadowOffset = CGSize(width: 0.4, height: 0.6)
-        layer.shadowRadius = 1.5
     }
 }

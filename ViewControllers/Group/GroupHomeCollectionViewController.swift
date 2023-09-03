@@ -166,6 +166,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
+        collectionView.register(TmateHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.tmateHeader,  withReuseIdentifier: TmateHeaderCollectionReusableView.reuseIdentifier)
+        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -213,19 +215,28 @@ class GroupHomeCollectionViewController: UICollectionViewController {
         dataSource.supplementaryViewProvider = { (collectionView, category, indexPath) in
             let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
             
+            let tmateHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.tmateHeader, withReuseIdentifier: TmateHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! TmateHeaderCollectionReusableView
+            
             let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
             
             switch section {
                 
             case .tmateResults(let quizTitle):
                 sectionHeader.configure(title: quizTitle, colorName: "Text")
+                return sectionHeader
             case .tmateEmojis(let tmate):
-                sectionHeader.configure(title: "\(tmate.username) (\(tmate.points) pts)", colorName: "Text")
+                if let currentUid = Auth.auth().currentUser?.uid {
+                    print("tmate.uid == currentUid \(tmate.uid == currentUid)")
+                    tmateHeader.configure(username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
+                }
+                
+                return tmateHeader
             case .noTmateEmojis(tmate: let tmate):
-                sectionHeader.configure(title: "\(tmate.username) (\(tmate.points) pts)", colorName: "Text")
+                if let currentUid = Auth.auth().currentUser?.uid {
+                    tmateHeader.configure(username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
+                }
+                return tmateHeader
             }
-            
-            return sectionHeader
         }
         
         return dataSource
@@ -244,6 +255,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     .fractionalWidth(1), heightDimension: .estimated(48))
             let sectionHeader =
             NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
+            let tmateHeader =
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.tmateHeader, alignment: .top)
             
             // Guess Select Member
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
@@ -277,7 +290,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 return section
                 
             case .tmateEmojis:
-                // No Emojis
+                // tmate emojis
                     let vertSpacing: CGFloat = 10
                     
                     let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
@@ -288,7 +301,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     group.interItemSpacing = .fixed(12)
                     
                     let section = NSCollectionLayoutSection(group: group)
-                    section.boundarySupplementaryItems = [sectionHeader]
+                    section.boundarySupplementaryItems = [tmateHeader]
                     
                     let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
                     
@@ -335,7 +348,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
-                section.boundarySupplementaryItems = [sectionHeader]
+                section.boundarySupplementaryItems = [tmateHeader]
                 
                 let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
                 

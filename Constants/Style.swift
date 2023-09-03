@@ -291,7 +291,7 @@ extension UILabel {
             
         case .currentUser:
             self.text = "Me"
-            self.textColor = UIColor(named: "darkCurrentText")
+            self.textColor = UIColor(named: "darkCurrentUserText")
             self.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         case .otherUser:
             self.textColor = UIColor(named: "Text")

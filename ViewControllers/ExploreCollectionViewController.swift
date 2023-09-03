@@ -370,7 +370,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 itemIndex += 1
             }
         }
-                
+        
+        
         if itemsBySection[.quizzes] == nil  {
             
             sectionIDs.append(.allQuizzesCompleted)

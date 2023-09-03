@@ -16,14 +16,13 @@ class UnrevealedResultCollectionViewCell: UICollectionViewCell {
     weak var delegate: UnrevealedResultCellDelegate?
     
     func configure(withUsername username: String, isCurrentUser: Bool) {
-        var modifiedUsername = username
         
         if isCurrentUser {
-            modifiedUsername = "Me"
-            usernameLabel.textColor = .blue
+            usernameLabel.applyStyle(labelType: .currentUser)
+        } else {
+            usernameLabel.text = username
+            usernameLabel.applyStyle(labelType: .otherUser)
         }
-
-        usernameLabel.text = modifiedUsername
         
         self.applyRoundedCornerAndShadow(borderType: .othersResult)
     }

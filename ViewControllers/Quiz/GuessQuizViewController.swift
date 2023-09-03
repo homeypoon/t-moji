@@ -55,8 +55,6 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
 
     @IBOutlet var extraGuessPopupView: ExtraGuessPopupView!
     
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -95,7 +93,6 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
       }
 
       rewardedInterstitialAd.present(fromRootViewController: self) {
-        // TODO: Reward the user!
           self.updateUI()
           self.loadGuessRewardedAd()
       }
@@ -106,20 +103,24 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         for button in multiChoiceButtons {
             if button == previousWrongSelectedButton {
                 button.isEnabled = false
+                button.tintColor = UIColor(named: "guessedButtonColor")
+                button.layer.borderColor = UIColor(named: "guessedButtonColor")?.withAlphaComponent(0.4).cgColor
+                button.applyRoundedCornerAndShadow(borderType: .guessButton)
+            } else {
+                
+                button.tintColor = UIColor(named: "primaryLightOrange")
+                button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+                
+                button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+                    var outgoing = incoming
+                    outgoing.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+                    return outgoing
+                }
+                
+                button.applyRoundedCornerAndShadow(borderType: .guessButton)
+                
+                button.titleLabel?.textAlignment = .center
             }
-            
-            button.tintColor = UIColor(named: "primaryLightOrange")
-            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
-            
-            button.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-                var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-                return outgoing
-            }
-            
-            button.applyRoundedCornerAndShadow(borderType: .guessButton)
-            
-            button.titleLabel?.textAlignment = .center
         }
         
         submitButton.configuration?.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -324,7 +325,13 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         addBlurEffect()
         view.addSubview(extraGuessPopupView)
 
-        extraGuessPopupView.translatesAutoresizingMaskIntoConstraints = true
+        extraGuessPopupView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                extraGuessPopupView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                extraGuessPopupView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                extraGuessPopupView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
+                extraGuessPopupView.heightAnchor.constraint(equalToConstant: 330)
+            ])
     }
     
     func addBlurEffect() {
