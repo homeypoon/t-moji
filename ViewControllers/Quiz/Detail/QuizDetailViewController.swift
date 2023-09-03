@@ -95,6 +95,9 @@ class QuizDetailViewController: UIViewController {
     private func updateUIText() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
+        if let existingShadowLayer = shadowLayer {
+                existingShadowLayer.removeFromSuperlayer()
+            }
         
         if takeQuizState == ButtonState.takeQuiz {
             withResultView.isHidden = true
@@ -108,7 +111,6 @@ class QuizDetailViewController: UIViewController {
             
             //            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
 
-            
                 shadowLayer = CAShapeLayer()
                 
                 shadowLayer.path = UIBezierPath(roundedRect: withoutResultView.bounds, cornerRadius: 18.0).cgPath

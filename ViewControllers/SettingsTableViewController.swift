@@ -13,12 +13,19 @@ class SettingsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
+    }
+    
+    @objc func networkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool, !isConnected {
+            // The app is offline, present the OfflineViewController
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+            DispatchQueue.main.async {
+                let offlineVC = self.storyboard?.instantiateViewController(withIdentifier: "OfflineViewController") as! OfflineViewController
+                offlineVC.modalPresentationStyle = .fullScreen
+                self.present(offlineVC, animated: true, completion: nil)
+            }
+        }
     }
 
     @IBAction func logOutPressed(_ sender: UIButton) {

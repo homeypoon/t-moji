@@ -49,7 +49,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     return false
                 }
             }
-
+            
         }
     }
     
@@ -64,10 +64,9 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
-
+        
         fetchGroups()
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -76,7 +75,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         loadingSpinner?.hidesWhenStopped = true
         if let loadingSpinner = loadingSpinner {
             view.addSubview(loadingSpinner)
-
+            
             loadingSpinner.startAnimating()
         }
         
@@ -86,6 +85,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         collectionView.dataSource = dataSource
         
         collectionView.collectionViewLayout = createLayout()
+        
     }
     
     // Get groups whose membersIDs contains the current user's id
@@ -145,7 +145,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             switch section {
             case .groups:
                 sectionHeader.configureBigHeader(title: "T--ms", colorName: "Text")
-
+                
                 return sectionHeader
             case .homeTopBanner:
                 sectionHeader.configure(title: "", colorName: "Text")
@@ -176,7 +176,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     bottom: 16,
                     trailing: 12
                 )
-                    
+                
                 return section
             case .groups:
                 
@@ -216,7 +216,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 return section
             }
         }
-    
+        
         return layout
     }
     
@@ -234,6 +234,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         for group in model.groups {
             itemsBySection[.groups, default: []].append(ViewModel.Item.group(group: group))
         }
+        
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         

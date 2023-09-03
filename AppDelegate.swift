@@ -11,26 +11,41 @@ import FirebaseAuth
 import GoogleSignIn
 import GoogleMobileAds
 import FirebaseFirestore
+import Network
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    let monitor = NWPathMonitor()
+    let networkQueue = DispatchQueue(label: "NetworkMonitor")
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                // Internet connection is available
+                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": true])
+            } else {
+                    
+                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": false])
+            }
+        }
+        
+        monitor.start(queue: networkQueue)
         
         FirebaseApp.configure()
         
         // Initialize the Google Mobile Ads SDK.
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         let settings = FirestoreSettings()
-
+        
         settings.cacheSettings =
-            MemoryCacheSettings(garbageCollectorSettings: MemoryLRUGCSettings())
-
+        MemoryCacheSettings(garbageCollectorSettings: MemoryLRUGCSettings())
+        
         settings.cacheSettings = PersistentCacheSettings(sizeBytes: 100 * 1024 * 1024 as NSNumber)
-
+        
         let db = Firestore.firestore()
         db.settings = settings
         
@@ -40,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-      return GIDSignIn.sharedInstance.handle(url)
+        return GIDSignIn.sharedInstance.handle(url)
     }
     
     // MARK: UISceneSession Lifecycle
@@ -56,6 +71,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-    
     
 }

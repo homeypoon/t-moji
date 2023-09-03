@@ -18,12 +18,45 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         case home = 0, explore = 1, leaderboard = 2, profile = 3
     }
     
+    @objc func handleNetworkStatusChange(_ notification: Notification) {
+        print("handle")
+            if let isConnected = notification.userInfo?["isConnected"] as? Bool {
+                if isConnected {
+//                    DispatchQueue.main.async {
+//                        print("scene delegate online")
+//                        let offlineVC = self.storyboard.instantiateViewController(withIdentifier: "OfflineViewController")
+//                        offlineVC.modalPresentationStyle = .fullScreen
+//
+//                        let appDelegate = UIApplication.shared.delegate
+//                        appDelegate?.window??.addSubview(offlineVC.view)
+//                        appDelegate?.window??.bringSubviewToFront(offlineVC.view)
+//                    }
+                } else {
+                    DispatchQueue.main.async {
+                        print("scene delegate offline")
+                        let offlineVC = self.storyboard.instantiateViewController(withIdentifier: "OfflineViewController")
+                        offlineVC.modalPresentationStyle = .fullScreen
+                        
+                        let appDelegate = UIApplication.shared.delegate
+                        appDelegate?.window??.addSubview(offlineVC.view)
+                        appDelegate?.window??.bringSubviewToFront(offlineVC.view)
+                    }
+                }
+            }
+        }
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusChange(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
+
         
         guard let windowScene = scene as? UIWindowScene else { return }
+        
+        
+        
+        // No internet connection
         
         // Check Firestore authentication status
         Auth.auth().addStateDidChangeListener { (auth, user) in

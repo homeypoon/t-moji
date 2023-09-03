@@ -150,7 +150,6 @@ class QuizSummaryCollectionViewCell: UICollectionViewCell {
                     UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.4, initialSpringVelocity: 7, options: [], animations: {
                         self.levelLabel.transform = .identity // Bounce back
                     }, completion: nil)
-
                 })
 
             }

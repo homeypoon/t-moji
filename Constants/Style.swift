@@ -246,8 +246,8 @@ extension UIButton {
             layer.borderColor = UIColor(named: "primaryRed")?.cgColor
             
             layer.shadowOpacity = 1
-            layer.shadowOffset = CGSize(width: 1.5, height: 1)
-            layer.shadowRadius = 3
+            layer.shadowOffset = CGSize(width: 1.2, height: 1)
+            layer.shadowRadius = 2.7
             self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
 
             backgroundColor = UIColor.clear

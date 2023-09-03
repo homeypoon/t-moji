@@ -13,7 +13,6 @@ private let reuseIdentifier = "Cell"
 
 class AddUsersCollectionViewController: UICollectionViewController, GroupNameCollectionViewCellDelegate, UISearchBarDelegate, UISearchResultsUpdating {
     
-    
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text?.lowercased() else {
             // No search text, handle as needed
@@ -118,6 +117,9 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
+        
         self.tabBarController?.tabBar.isHidden = true
         
         // Add More Tmates To Edit
@@ -563,6 +565,17 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     func groupEmojiDidChange(to newEmoji: String) {
         groupEmoji = newEmoji
         updateSaveButtonState()
+    }
+    
+    @objc func networkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool, !isConnected {
+            // The app is offline, present the OfflineViewController
+            DispatchQueue.main.async {
+                let offlineVC = self.storyboard?.instantiateViewController(withIdentifier: "OfflineViewController") as! OfflineViewController
+                offlineVC.modalPresentationStyle = .fullScreen
+                self.present(offlineVC, animated: true, completion: nil)
+            }
+        }
     }
 }
 

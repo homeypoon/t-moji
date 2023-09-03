@@ -17,12 +17,14 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     enum ViewModel {
         enum Section: Hashable, Comparable {
             case quizzes
+            case allQuizzesCompleted
         }
         
         enum Item: Hashable {
             
             case quiz(quiz: Quiz, quizHistory: QuizHistory?, completeState: Bool, currentUserResultType: ResultType?, takenByText: String)
             case adInlineBanner(uuid: UUID)
+            case quizzesCompleted
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -30,6 +32,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                     hasher.combine(quiz)
                 case .adInlineBanner(let uuid):
                     hasher.combine(uuid)
+                case .quizzesCompleted:
+                    hasher.combine("quizzes completed")
                 }
             }
             
@@ -39,6 +43,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                     return lQuiz == rQuiz
                 case (.adInlineBanner(let lUUID), .adInlineBanner(let rUUID)):
                     return lUUID == rUUID
+                case (.quizzesCompleted, .quizzesCompleted):
+                    return true
                 default:
                     return false
                 }
@@ -124,8 +130,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             loadingSpinner.startAnimating()
         }
         
-
-        
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
         
@@ -135,7 +139,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         let segmentedControl = UISegmentedControl(items: ["All", "Not Taken"])
         
-        addQuizHistories()
+//        addQuizHistories()
         segmentedControl.selectedSegmentIndex = 0
         
         segmentedControl.addTarget(self, action: #selector(segmentedControlDidChange(_:)), for: .valueChanged)
@@ -144,6 +148,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     }
     
     @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
+        loadingSpinner?.startAnimating()
+        
         selectedSegmentIndex = sender.selectedSegmentIndex
         
         print("in segmented value change")
@@ -204,6 +210,10 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                     adBannerView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor)
                 ])
                 return cell
+            case .quizzesCompleted:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CompletedQuizzes", for: indexPath) as! CompletedQuizzesCollectionViewCell
+                cell.configure()
+                return cell
             }
             
         }
@@ -217,30 +227,58 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         let vertSpacing: CGFloat = 10
         let horzSpacing: CGFloat = 12
         
-        
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(exploreItemSize))
-        
-        var group: NSCollectionLayoutGroup!
-        
-        if #available(iOS 16.0, *) {
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
-        } else {
-            group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+        return UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            
+            if sectionIndex == 0 {
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(self.exploreItemSize))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 20, trailing: horzSpacing)
+                
+                section.interGroupSpacing = 16
+                
+                return section
+            } else {
+                // All quizzes taken
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(140))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                let section = NSCollectionLayoutSection(group: group)
+
+                                    
+                section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 20, trailing: horzSpacing)
+                
+                return section
+                
+            }
         }
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 20, trailing: horzSpacing)
-        
-        section.interGroupSpacing = 16
-        
-        return UICollectionViewCompositionalLayout(section: section)
     }
     
     func updateCollectionView(filteredQuizzes: [Quiz]? = nil) {
+        loadingSpinner?.stopAnimating()
         print("updating colleciton view explore")
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
@@ -257,10 +295,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         }
         
         print("quizzes \(quizzes)")
-        
-        
-        
-        print("quizzes 2\(quizzes)")
         
         var itemIndex = 0
         
@@ -335,6 +369,15 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 itemsBySection[.quizzes, default: []].append(item)
                 itemIndex += 1
             }
+        }
+                
+        if itemsBySection[.quizzes] == nil  {
+            
+            sectionIDs.append(.allQuizzesCompleted)
+            itemsBySection[.allQuizzesCompleted] = [ViewModel.Item.quizzesCompleted]
+        } else if let quizzes = itemsBySection[.quizzes], quizzes.isEmpty {
+            sectionIDs.append(.allQuizzesCompleted)
+            itemsBySection[.allQuizzesCompleted] = [ViewModel.Item.quizzesCompleted]
         }
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
@@ -411,9 +454,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             }
         }
         fetchTmatesDispatchGroup.notify(queue: .main) {
-            self.loadingSpinner?.stopAnimating()
             self.updateCollectionView()
-            print("calling colleciton view update")
         }
         
     }
@@ -457,6 +498,8 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
             case .quiz(let quiz, let quizHistory, let completeState, let currentUserResultType, let takenByText):
                 self.performSegue(withIdentifier: "showQuizDetail", sender: (quiz, quizHistory, completeState, currentUserResultType, takenByText))
             case .adInlineBanner:
+                break
+            case .quizzesCompleted:
                 break
             }
         }

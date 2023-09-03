@@ -99,9 +99,20 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     var dataSource: DataSourceType!
     var model = Model()
     
+    @objc func networkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool, !isConnected {
+            // The app is offline, present the OfflineViewController
+            DispatchQueue.main.async {
+                let offlineVC = self.storyboard?.instantiateViewController(withIdentifier: "OfflineViewController") as! OfflineViewController
+                offlineVC.modalPresentationStyle = .fullScreen
+                self.present(offlineVC, animated: true, completion: nil)
+            }
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
         
         fetchQuizHistory { [weak self] in
                         
@@ -303,7 +314,9 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
         }
         
         sectionIDs.append(.currentUserResult)
-        itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: resultUser!, quizHistory: userQuizHistory!)]
+        if let userQuizHistory = userQuizHistory {
+            itemsBySection[.currentUserResult] = [ViewModel.Item.currentUserResult(member: resultUser!, quizHistory: userQuizHistory)]
+        }
         
         sectionIDs.append(.membersResults)
         sectionIDs.append(.otherTmatesResults)

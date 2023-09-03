@@ -23,11 +23,13 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         enum Section: Hashable {
             case memberSelections
             case guessedMembers
+            case noTmatesTaken
         }
         
         enum Item: Hashable {
             case memberSelection(tmate: User, userQuizHistory: UserQuizHistory)
             case guessedMember(tmate: User, userQuizHistory: UserQuizHistory)
+            case noTmatesTaken
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -37,6 +39,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 case .guessedMember(let tmate, let userQuizHistory):
                     hasher.combine(tmate)
                     hasher.combine(userQuizHistory)
+                case .noTmatesTaken:
+                    hasher.combine("Not taken by any t-mates yet")
                 }
             }
             
@@ -46,6 +50,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
                 case (.guessedMember(let lTmate, let lUserQuizHistory), .guessedMember(let rTmate, let rUserQuizHistory)):
                     return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
+                case (.noTmatesTaken, .noTmatesTaken):
+                    return true
                 default:
                     return false
                 }
@@ -71,7 +77,6 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             }
         }
         
-        updateCollectionView()
     }
     
     override func viewDidLoad() {
@@ -101,6 +106,10 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 cell.configure(withUsername: tmate.username, withResultType: userQuizHistory.finalResult, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
                 
                 return cell
+            case .noTmatesTaken:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NoTmatesTaken", for: indexPath) as! NoTmatesTakenCollectionViewCell
+                cell.configure()
+                return cell
             }
         }
         
@@ -114,6 +123,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 sectionHeader.configure(title: "Guessed Results", colorName: "Text")
             case .memberSelections:
                 sectionHeader.configure(title: "Unguessed Results", colorName: "Text")
+            case .noTmatesTaken:
+                sectionHeader.configure(title: "T-mate Results", colorName: "Text")
             }
             
             return sectionHeader
@@ -172,7 +183,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 
                                 
                 return section
-            } else  {
+            } else if sectionIndex == 1 {
+                // Revealed Select Member
                 let vertSpacing: CGFloat = 10
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -201,6 +213,51 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 section.interGroupSpacing = vertSpacing
                 
                 return section
+            } else {
+                // No tmates taken
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(48))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                group.contentInsets = NSDirectionalEdgeInsets(
+                    top: 0,
+                    leading: 0,
+                    bottom: Padding.smallItemVertPadding,
+                    trailing: 0
+                )
+                
+                let section = NSCollectionLayoutSection(group: group)
+                
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: SupplementaryViewKind.sectionBackgroundView)
+                
+                backgroundItem.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 20,
+                    bottom: 20,
+                    trailing: 20
+                )
+                
+                section.decorationItems = [backgroundItem]
+                                    
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 12,
+                    leading: 40,
+                    bottom: 40,
+                    trailing: 40
+                )
+                
+                return section
             }
         }
     }
@@ -214,9 +271,6 @@ class SelectMemberCollectionViewController: UICollectionViewController {
         
         sectionIDs.append(.memberSelections)
         sectionIDs.append(.guessedMembers)
-        
-        
-        print("model.usersss \(model.userMasterTmates)")
         
         for userMasterTmate in model.userMasterTmates {
             
@@ -233,6 +287,17 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                     }
                 }
             }
+        }
+        
+        if itemsBySection[.memberSelections] == nil && itemsBySection[.memberSelections] == nil  {
+            
+            sectionIDs.append(.noTmatesTaken)
+            
+            itemsBySection[.noTmatesTaken] = [ViewModel.Item.noTmatesTaken]
+        } else if let memberSelections = itemsBySection[.memberSelections], let guessedMembers = itemsBySection[.guessedMembers], memberSelections.isEmpty, guessedMembers.isEmpty {
+            sectionIDs.append(.noTmatesTaken)
+            
+            itemsBySection[.noTmatesTaken] = [ViewModel.Item.noTmatesTaken]
         }
         
         print("myitems \(itemsBySection)")
@@ -304,7 +369,8 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             case .guessedMember(let tmate, let userQuizHistory):
                 self.performSegue(withIdentifier: "showResultFromSelectMember", sender: (tmate, userQuizHistory))
                 print("tmatee \(tmate)")
-                
+            case .noTmatesTaken:
+                break
             }
         }
     }

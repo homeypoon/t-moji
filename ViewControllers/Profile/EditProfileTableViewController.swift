@@ -15,8 +15,21 @@ class EditProfileTableViewController: UITableViewController {
     @IBOutlet var usernameTextField: UITextField!
     @IBOutlet var saveButton: UIBarButtonItem!
     
+    @objc func networkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool, !isConnected {
+            // The app is offline, present the OfflineViewController
+            DispatchQueue.main.async {
+                let offlineVC = self.storyboard?.instantiateViewController(withIdentifier: "OfflineViewController") as! OfflineViewController
+                offlineVC.modalPresentationStyle = .fullScreen
+                self.present(offlineVC, animated: true, completion: nil)
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
         
         if let user = user {
             usernameTextField.text = user.username

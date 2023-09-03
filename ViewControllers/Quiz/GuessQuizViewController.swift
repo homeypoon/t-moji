@@ -55,11 +55,12 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
 
     @IBOutlet var extraGuessPopupView: ExtraGuessPopupView!
     
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.tabBarController?.tabBar.isHidden = true
-//        extraGuessPopupView.isHidden = true
         extraGuessPopupView.removeFromSuperview()
     }
     

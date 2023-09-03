@@ -100,6 +100,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
     }
     
     @objc func segmentedControlDidChange(_ sender: UISegmentedControl) {
+        loadingSpinner?.startAnimating()
         selectedSegmentIndex = sender.selectedSegmentIndex
 
         updateCollectionView()

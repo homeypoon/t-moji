@@ -27,6 +27,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     var otherUser: User?
     
     var loadingSpinner: UIActivityIndicatorView?
+    var isOffline: Bool = false
     
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
@@ -104,8 +105,21 @@ class ProfileCollectionViewController: UICollectionViewController {
     var dataSource: DataSourceType!
     var model = Model()
     
+    @objc func networkStatusChanged(_ notification: Notification) {
+        if let isConnected = notification.userInfo?["isConnected"] as? Bool, !isConnected {
+            // The app is offline, present the OfflineViewController
+            DispatchQueue.main.async {
+                let offlineVC = self.storyboard?.instantiateViewController(withIdentifier: "OfflineViewController") as! OfflineViewController
+                offlineVC.modalPresentationStyle = .fullScreen
+                self.present(offlineVC, animated: true, completion: nil)
+            }
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
         
         // Current User Profile
         if otherUser == nil {
@@ -114,6 +128,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             self.navigationItem.rightBarButtonItem = self.editProfileBarButton
             self.tabBarController?.navigationItem.hidesBackButton = true
             checkForExistingProfile()
+            
         } else {
             // Other User Profile
             self.tabBarController?.tabBar.isHidden = true
@@ -121,10 +136,12 @@ class ProfileCollectionViewController: UICollectionViewController {
             self.navigationItem.rightBarButtonItem = nil
             self.tabBarController?.navigationItem.hidesBackButton = false
             
-            if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
-                fetchQuizHistory(completedQuizIDs: completedQuizIDs)
-            } else {
-                self.updateCollectionView()
+            if !isOffline {
+                if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
+                    fetchQuizHistory(completedQuizIDs: completedQuizIDs)
+                } else {
+                    self.updateCollectionView()
+                }
             }
         }
     }
@@ -151,7 +168,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     func checkForExistingProfile() {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
+        guard !isOffline, let userId = Auth.auth().currentUser?.uid else { return }
         
         let docRef = FirestoreService.shared.db.collection("users").document(userId)
         
@@ -184,7 +201,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     
     
     private func fetchUser() {
-        guard let userID = Auth.auth().currentUser?.uid else { return }
+        guard !isOffline, let userID = Auth.auth().currentUser?.uid else { return }
         
         let docRef = FirestoreService.shared.db.collection("users").document(userID)
         
@@ -446,11 +463,6 @@ class ProfileCollectionViewController: UICollectionViewController {
         sectionIDs.append(.profileInfo)
         var itemsBySection = [ViewModel.Section.profileInfo: [ViewModel.Item.profile(user: profileUser)]]
         
-        //        let resultTypeItems = getResultTypes(userQuizHistories: profileUser.userQuizHistory).reduce(into: [ViewModel.Item]()) { partial, resultType in
-        //            let item = ViewModel.Item.emoji(resultType: resultType)
-        //            partial.append(item)
-        //        }
-        
         sectionIDs.append(.userEmojis)
         
         sectionIDs.append(.userQuizHistory)
@@ -494,11 +506,9 @@ class ProfileCollectionViewController: UICollectionViewController {
             
         }
         
-        
         if let emojiSection = itemsBySection[.userEmojis], emojiSection.isEmpty {
             itemsBySection[.userEmojis] = [ViewModel.Item.noEmojis]
         }
-        
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         print("itemsbyseeection \(itemsBySection)")
@@ -509,6 +519,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     func fetchQuizHistory(completedQuizIDs: [Int]) {
+        guard !isOffline else { return }
         
         self.model.quizHistories.removeAll()
         
