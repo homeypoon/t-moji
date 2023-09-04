@@ -66,6 +66,7 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     
     var dataSource: DataSourceType!
     var model = Model()
+    var loadingSpinner: UIActivityIndicatorView?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -81,6 +82,15 @@ class SelectMemberCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+
+            loadingSpinner.startAnimating()
+        }
         
         collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind:  SupplementaryViewKind.sectionHeader,  withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier)
         
@@ -261,10 +271,11 @@ class SelectMemberCollectionViewController: UICollectionViewController {
             }
         }
     }
-    
+
     
     
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()

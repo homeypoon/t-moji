@@ -39,7 +39,7 @@ class PersonalQuizViewController: UIViewController {
     @IBOutlet var quizProgressView: UIProgressView!
     
     @IBOutlet var submitButton: UIButton!
-    
+    var loadingSpinner: UIActivityIndicatorView?
     
     var questionIndex: Int = 0
     var currentQuestion: Question!
@@ -56,6 +56,9 @@ class PersonalQuizViewController: UIViewController {
         updateInitialUI()
         updateUI()
 
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
     }
     
     func updateInitialUI() {
@@ -201,6 +204,12 @@ class PersonalQuizViewController: UIViewController {
     }
     
     func submitQuiz() {
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+            
+            loadingSpinner.startAnimating()
+        }
+        
         let dispatchGroup = DispatchGroup()
         self.userQuizHistory = UserQuizHistory(quizID: quiz.id, userCompleteTime: Date(), finalResult: quiz.calculateResult(chosenAnswers: chosenAnswers), chosenAnswers: chosenAnswers)
         
@@ -224,6 +233,7 @@ class PersonalQuizViewController: UIViewController {
             alert.addAction(okAction)
             present(alert, animated: true, completion: nil)
         }
+        submitButton.isUserInteractionEnabled = false
         
         dispatchGroup.enter()
         addQuizHistory {
@@ -237,8 +247,12 @@ class PersonalQuizViewController: UIViewController {
         
         
         dispatchGroup.notify(queue: .main) {
+            self.loadingSpinner?.stopAnimating()
+            self.submitButton.isUserInteractionEnabled = true
+           
             self.performSegue(withIdentifier: "showPersonalResults", sender: nil)
         }
+        
         
     }
     
@@ -256,9 +270,6 @@ class PersonalQuizViewController: UIViewController {
         quizResultVC.userQuizHistory = self.userQuizHistory
         quizResultVC.quizResultType = isRetakeQuiz ? .ownRetake : .ownQuiz
         
-//        presentingViewController?.dismiss(animated: true, completion: nil)
-
-//        self.dismiss(animated: true)
         self.navigationController?.popViewController(animated: true)
     }
     

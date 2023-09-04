@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 struct Helper {
+    static var loadingAlert: UIAlertController?
+    
     static func presentErrorAlert(on viewController: UIViewController, with message: String) {
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
@@ -18,14 +20,17 @@ struct Helper {
     
     static func presentLoading(on viewController: UIViewController, with message: String) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-
+        
         let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.style = UIActivityIndicatorView.Style.medium
         loadingIndicator.startAnimating()
-
+        
         alert.view.addSubview(loadingIndicator)
         viewController.present(alert, animated: true, completion: nil)
+        
+        // Store the presented alert controller
+        loadingAlert = alert
     }
     
     static func timeSinceUserCompleteTime(from userCompleteTime: Date) -> String {
@@ -63,5 +68,5 @@ struct Helper {
             return "~ Less than a minute"
         }
     }
-
+    
 }

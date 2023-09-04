@@ -15,6 +15,7 @@ class ProfileEmojiCollectionViewCell: UICollectionViewCell {
             emojiLabel.text = resultType.emoji
         } else {
             emojiLabel.text = "?"
+            emojiLabel.applyStyle(labelType: .unrevealedEmoji)
         }
         
 //        self.applyRoundedCornerAndShadow(borderType: .profileEmoji)

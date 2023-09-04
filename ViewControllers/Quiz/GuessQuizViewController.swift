@@ -54,16 +54,23 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     var blurEffectView: UIVisualEffectView?
 
     @IBOutlet var extraGuessPopupView: ExtraGuessPopupView!
+    var loadingSpinner: UIActivityIndicatorView?
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.tabBarController?.tabBar.isHidden = true
         extraGuessPopupView.removeFromSuperview()
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadingSpinner = UIActivityIndicatorView(style: .large)
+        loadingSpinner?.center = view.center
+        loadingSpinner?.hidesWhenStopped = true
+        
         extraGuessPopupView.delegate = self
         
         updateUI()
@@ -184,6 +191,13 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         
         guard selectedButton != nil else { return }
         
+        submitButton.isUserInteractionEnabled = false
+        if let loadingSpinner = loadingSpinner {
+            view.addSubview(loadingSpinner)
+            
+            loadingSpinner.startAnimating()
+        }
+        
         switch selectedButton {
         case multiChoiceButton1:
             guessedResultType = resultChoices[0]
@@ -201,7 +215,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         if previousWrongSelectedButton != nil {
             
             updateUserWithPointsAndGuessCount {}
-            
+            loadingSpinner?.stopAnimating()
             self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
             
         } else {
@@ -209,6 +223,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
             if guessedResultType == userQuizHistory?.finalResult {
                 updateUserWithPointsAndGuessCount {
                     self.updateGuessedMembers {
+                        self.loadingSpinner?.stopAnimating()
                         self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
                     }
                 }
@@ -217,6 +232,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 self.navigationItem.hidesBackButton = true
                 
                 previousWrongSelectedButton = selectedButton
+                loadingSpinner?.stopAnimating()
                 
                 showExtraGuessPopup()
                 
@@ -225,7 +241,10 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 self.updateGuessedMembers { }
                 
                 selectedButton = nil
+                submitButton.isUserInteractionEnabled = true
+                
             }
+            
         }
     }
     
@@ -354,14 +373,8 @@ extension GuessQuizViewController: GADFullScreenContentDelegate {
 
   /// Tells the delegate that the ad failed to present full screen content.
   func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-    print("Ad did fail to present full screen content.")
       presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
       updateUI()
-  }
-
-  /// Tells the delegate that the ad will present full screen content.
-  func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-    print("Ad will present full screen content.")
   }
 
   /// ad dismissed

@@ -11,29 +11,14 @@ import FirebaseAuth
 import GoogleSignIn
 import GoogleMobileAds
 import FirebaseFirestore
-import Network
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    let monitor = NWPathMonitor()
     let networkQueue = DispatchQueue(label: "NetworkMonitor")
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                // Internet connection is available
-                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": true])
-            } else {
-                    
-                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": false])
-            }
-        }
-        
-        monitor.start(queue: networkQueue)
         
         FirebaseApp.configure()
         

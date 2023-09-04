@@ -8,6 +8,8 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import Network
+
 
 private let reuseIdentifier = "Cell"
 
@@ -20,6 +22,9 @@ class SectionBackgroundView: UICollectionReusableView {
 
 
 class ProfileCollectionViewController: UICollectionViewController {
+    let monitor = NWPathMonitor()
+    let networkQueue = DispatchQueue(label: "NetworkMonitor")
+    
     @IBOutlet var settingsBarButton: UIBarButtonItem!
     @IBOutlet var editProfileBarButton: UIBarButtonItem!
     
@@ -116,8 +121,29 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
     }
     
+    func getTopMostViewController() -> UIViewController? {
+        var topMostViewController = UIApplication.shared.keyWindow?.rootViewController
+        
+        while let presentedViewController = topMostViewController?.presentedViewController {
+            topMostViewController = presentedViewController
+        }
+        
+        return topMostViewController
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                // Internet connection is available
+                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": true])
+            } else {
+                    print("offline")
+                NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": false])
+            }
+        }
+
+        monitor.start(queue: networkQueue)
         
         NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
         
@@ -154,7 +180,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         
         if let loadingSpinner = loadingSpinner {
             view.addSubview(loadingSpinner)
-
+            
             loadingSpinner.startAnimating()
         }
         
@@ -210,7 +236,6 @@ class ProfileCollectionViewController: UICollectionViewController {
             case .success(let user):
                 self.user = user
                 
-                self.loadingSpinner?.stopAnimating()
                 self.updateCollectionView()
                 
             case .failure(let error):
@@ -298,7 +323,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             // Profile info
             if sectionIndex == 0  {
-               
+                
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
@@ -306,12 +331,12 @@ class ProfileCollectionViewController: UICollectionViewController {
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 
-//                group.contentInsets = NSDirectionalEdgeInsets(
-//                    top: 0,
-//                    leading: infoHorzSpacing,
-//                    bottom: vertSpacing,
-//                    trailing: infoHorzSpacing
-//                )
+                //                group.contentInsets = NSDirectionalEdgeInsets(
+                //                    top: 0,
+                //                    leading: infoHorzSpacing,
+                //                    bottom: vertSpacing,
+                //                    trailing: infoHorzSpacing
+                //                )
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
@@ -321,7 +346,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     bottom: 30,
                     trailing: 0
                 )
-                    
+                
                 return section
             } else if sectionIndex == 1  {
                 // emoji
@@ -363,7 +388,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     )
                     
                     section.decorationItems = [backgroundItem]
-                                        
+                    
                     section.contentInsets = NSDirectionalEdgeInsets(
                         top: 12,
                         leading: 40,
@@ -372,7 +397,7 @@ class ProfileCollectionViewController: UICollectionViewController {
                     )
                     
                     return section
-                           
+                    
                 } else {
                     
                     let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
@@ -453,6 +478,7 @@ class ProfileCollectionViewController: UICollectionViewController {
     }
     
     func updateCollectionView() {
+        self.loadingSpinner?.stopAnimating()
         
         guard let profileUser = otherUser != nil ? otherUser : self.user, let currentUid = Auth.auth().currentUser?.uid else { return }
         print("collection view profileUser \(profileUser)")
@@ -544,18 +570,18 @@ class ProfileCollectionViewController: UICollectionViewController {
         let cell = collectionView.cellForItem(at: indexPath)
         
         let sectionIndex = indexPath.section
-                
+        
         if self.dataSource.snapshot().sectionIdentifiers[sectionIndex]  == .userQuizHistory {
             UIView.animate(withDuration: 0.1) {
                 cell?.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                    
+                
                 cell?.contentView.backgroundColor = UIColor(named: "cellHighlight")
                 
             }
         }
         
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
         let sectionIndex = indexPath.section
@@ -619,7 +645,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             }
             
         } else if segue.identifier == "guessFromProfile" {
-            print("i'm in")
+            
             let guessQuizVC = segue.destination as! GuessQuizViewController
             
             

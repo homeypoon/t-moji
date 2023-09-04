@@ -19,8 +19,9 @@ class GroupNameCollectionViewCell: UICollectionViewCell {
     weak var delegate: GroupNameCollectionViewCellDelegate?
     
     
-    func configure(groupName: String) {
+    func configure(groupName: String, groupEmoji: String?) {
         groupNameTextField.text = groupName
+        groupEmojiTextField.text = groupEmoji
     }
     
     @IBAction func groupNameTextFieldDidChange(_ sender: UITextField) {

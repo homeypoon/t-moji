@@ -131,6 +131,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             self.tabBarController?.navigationItem.hidesBackButton = false
             
             groupName = group.name
+            groupEmoji = group.emoji
         } else {
             // Add User
             self.navigationItem.leftBarButtonItem = self.cancelBarButton
@@ -165,7 +166,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             case .groupName:
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GroupName", for: indexPath) as! GroupNameCollectionViewCell
-                cell.configure(groupName: self.groupName)
+                cell.configure(groupName: self.groupName, groupEmoji: self.groupEmoji)
                 
                 cell.delegate = self
                 
@@ -383,9 +384,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                     updateDataDict["membersIDs"] = FieldValue.arrayUnion(addMemberIDs)
                 }
                 
-                document?.reference.updateData([
-                    "membersIDs": FieldValue.arrayUnion(addMemberIDs)
-                ])
+                document?.reference.updateData(updateDataDict)
             }
         }
         

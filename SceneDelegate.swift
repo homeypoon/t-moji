@@ -34,12 +34,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 } else {
                     DispatchQueue.main.async {
                         print("scene delegate offline")
-                        let offlineVC = self.storyboard.instantiateViewController(withIdentifier: "OfflineViewController")
-                        offlineVC.modalPresentationStyle = .fullScreen
-                        
-                        let appDelegate = UIApplication.shared.delegate
-                        appDelegate?.window??.addSubview(offlineVC.view)
-                        appDelegate?.window??.bringSubviewToFront(offlineVC.view)
+                        if let windowScene = notification.object as? UIWindowScene {
+                            
+//                            let offlineVC = self.storyboard.instantiateViewController (withIdentifier: "LoginViewController") as! LoginViewController
+//                            offlineVC.modalPresentationStyle = .fullScreen
+//                            self.showScreen(viewController: offlineVC, windowScene: windowScene)
+                        }
+//                        let offlineVC = self.storyboard.instantiateViewController(withIdentifier: "OfflineViewController")
+//                        offlineVC.modalPresentationStyle = .fullScreen
+//
+//                        let appDelegate = UIApplication.shared.delegate
+//                        appDelegate?.window??.addSubview(offlineVC.view)
+//                        appDelegate?.window??.bringSubviewToFront(offlineVC.view)
                     }
                 }
             }
@@ -49,12 +55,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusChange(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
-
-        
         guard let windowScene = scene as? UIWindowScene else { return }
         
         
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusChange(_:)), name: Notification.Name("NetworkStatusChanged"), object: windowScene)
         
         // No internet connection
         

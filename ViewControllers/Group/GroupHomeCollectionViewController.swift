@@ -11,7 +11,12 @@ import FirebaseFirestore
 
 private let reuseIdentifier = "Cell"
 
-class GroupHomeCollectionViewController: UICollectionViewController {
+class GroupHomeCollectionViewController: UICollectionViewController, TmateHeaderViewDelegate {
+    func tmateHeaderViewTapped(tmate: User) {
+        print("tmate present \(tmate)")
+       self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
+    }
+    
     
     var group: Group!
     @IBOutlet var leaveTeamBarButton: UIBarButtonItem!
@@ -216,6 +221,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.sectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! SectionHeaderCollectionReusableView
             
             let tmateHeader = collectionView.dequeueReusableSupplementaryView(ofKind: SupplementaryViewKind.tmateHeader, withReuseIdentifier: TmateHeaderCollectionReusableView.reuseIdentifier, for: indexPath) as! TmateHeaderCollectionReusableView
+            tmateHeader.delegate = self
             
             let section = dataSource.snapshot().sectionIdentifiers[indexPath.section]
             
@@ -227,13 +233,13 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             case .tmateEmojis(let tmate):
                 if let currentUid = Auth.auth().currentUser?.uid {
                     print("tmate.uid == currentUid \(tmate.uid == currentUid)")
-                    tmateHeader.configure(username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
+                    tmateHeader.configure(tmate: tmate, username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
                 }
                 
                 return tmateHeader
             case .noTmateEmojis(tmate: let tmate):
                 if let currentUid = Auth.auth().currentUser?.uid {
-                    tmateHeader.configure(username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
+                    tmateHeader.configure(tmate: tmate, username: "\(tmate.username)", points: "\(tmate.points) pts", isCurrentUser: tmate.uid == currentUid)
                 }
                 return tmateHeader
             }
@@ -359,6 +365,7 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                     trailing: 20
                 )
                 
+                
                 section.decorationItems = [backgroundItem]
                                     
                 section.contentInsets = NSDirectionalEdgeInsets(
@@ -372,8 +379,10 @@ class GroupHomeCollectionViewController: UICollectionViewController {
             }
         }
         layout.register(SectionBackgroundView.self, forDecorationViewOfKind: SupplementaryViewKind.sectionBackgroundView)
+        
         return layout
     }
+
     
     func updateCollectionView() {
         self.loadingSpinner?.stopAnimating()
@@ -586,8 +595,8 @@ class GroupHomeCollectionViewController: UICollectionViewController {
                 }
                 print("tmatee \(tmate)")
                 
-            case .tmateEmoji(tmate: let tmate, _, _):
-                self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
+            case .tmateEmoji(tmate: _, _, _):
+                break
             case .noEmojis(tmate: let tmate):
                 self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
             }

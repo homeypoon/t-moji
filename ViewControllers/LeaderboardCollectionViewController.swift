@@ -112,7 +112,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             
 
-            
             switch item {
             case .topThreeTmates(let tmate, let ordinal):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TopThreeLeaderboard", for: indexPath) as! TopThreeLeaderboardCollectionViewCell
@@ -248,6 +247,17 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             updateRankingsForTmates()
             sortedUsers = model.sortedUserMasterTmates
         }
+        print("soreted users before pt 1 \(sortedUsers)")
+
+        
+        sortedUsers = sortedUsers.reduce([]) { result, user in
+            // Check if the user's UID is not in the result array
+            if !result.contains(where: { $0.uid == user.uid }) {
+                return result + [user] // Add the user to the result array
+            }
+            return result // User with duplicate UID, skip it
+        }
+        
         
         sortedUsers = sortedUsers.sorted { (user1, user2) in
             if user1.points == user2.points {
@@ -255,6 +265,7 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             }
             return user1.points > user2.points
         }
+        print("soreted users pt 2 \(sortedUsers)")
         
         // Create the section identifiers and item arrays
         var sectionIDs = [ViewModel.Section]()
@@ -274,7 +285,6 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             
             print("indexxx \(index) user \(user) ranking \(currentRanking)")
 
-            
             let item: ViewModel.Item
             
             if index < 3 {
@@ -288,10 +298,11 @@ class LeaderboardCollectionViewController: UICollectionViewController {
             previousUserPoints = user.points
         }
         
+        print(itemsBySection)
+        
         // Update the dataSource with the sorted and ranked items
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
-        print(itemsBySection)
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }

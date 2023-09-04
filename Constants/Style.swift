@@ -278,7 +278,7 @@ extension UIButton {
 
 extension UILabel {
     enum LabelType {
-        case level, currentUser, otherUser
+        case level, unrevealedEmoji, currentUser, otherUser
         case leaderboardTopUser, leaderboardRemainingUser
     }
     func applyStyle(labelType: LabelType) {
@@ -288,7 +288,9 @@ extension UILabel {
             self.layer.cornerRadius = 13.0
             self.layer.backgroundColor = UIColor(named: "white")?.cgColor
             self.textColor = UIColor(named: "primaryDarkOrange")
-            
+        case .unrevealedEmoji:
+            self.textColor = UIColor(named: "primaryDarkOrange")
+            self.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         case .currentUser:
             self.text = "Me"
             self.textColor = UIColor(named: "darkCurrentUserText")
@@ -366,12 +368,22 @@ extension UIView {
         switch viewType {
         case .extraGuessPopup:
             // explore
-            self.layer.cornerRadius = 18.0
+            var shadowLayer: CAShapeLayer!
             
-            self.layer.masksToBounds = true
-            
-            self.layer.borderWidth = 2.5
-            self.layer.borderColor = UIColor.black.withAlphaComponent(0.8).cgColor
+            if shadowLayer == nil {
+                shadowLayer = CAShapeLayer()
+                
+                shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 18.0).cgPath
+                shadowLayer.fillColor = UIColor.white.cgColor
+                
+                shadowLayer.shadowColor = UIColor(named: "primaryDarkOrange")?.withAlphaComponent(0.8).cgColor
+                shadowLayer.shadowPath = shadowLayer.path
+                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+                shadowLayer.shadowOpacity = 1
+                shadowLayer.shadowRadius = 2.5
+                
+                layer.insertSublayer(shadowLayer, at: 0)
+            }
         case .quizDetailBanner:
             // explore
             var shadowLayer: CAShapeLayer!

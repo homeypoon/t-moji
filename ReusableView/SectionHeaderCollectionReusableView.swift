@@ -52,10 +52,15 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
     }
 }
 
+protocol TmateHeaderViewDelegate: AnyObject {
+    func tmateHeaderViewTapped(tmate: User)
+}
 
 class TmateHeaderCollectionReusableView: UICollectionReusableView {
     static let reuseIdentifier = "TmateHeader"
-    
+    weak var delegate: TmateHeaderViewDelegate?
+    var tmate: User?
+
     let usernameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
@@ -100,7 +105,10 @@ class TmateHeaderCollectionReusableView: UICollectionReusableView {
         ])
     }
     
-    func configure(username: String, points: String, isCurrentUser: Bool) {
+    func configure(tmate: User?, username: String, points: String, isCurrentUser: Bool) {
+        self.tmate = tmate
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
+                self.addGestureRecognizer(tapGestureRecognizer)
         usernameLabel.text = username
         pointsLabel.text = points
         
@@ -113,5 +121,13 @@ class TmateHeaderCollectionReusableView: UICollectionReusableView {
             usernameLabel.text = username
             usernameLabel.applyStyle(labelType: .otherUser)
         }
+        
     }
+    @objc func handleTapGesture(_ sender: UITapGestureRecognizer) {
+        print("tapped")
+            if let tmate = tmate {
+                print("tapped yes tmate \(tmate)")
+                delegate?.tmateHeaderViewTapped(tmate: tmate)
+            }
+        }
 }

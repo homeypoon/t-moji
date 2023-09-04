@@ -353,16 +353,16 @@ struct QuizData {
                 Answer(text: "Play in the Rain", correspondingResult: ResultType.green)
             ]),
             Question(text: "Hot or Cold Showers?", type: .ranged, possibleAnswers: [
-                Answer(text: "Hot", correspondingResult: ResultType.purple),
+                Answer(text: "Hot Showers", correspondingResult: ResultType.purple),
                 Answer(text: "", correspondingResult: ResultType.blue),
                 Answer(text: "", correspondingResult: ResultType.green),
-                Answer(text: "Cold", correspondingResult: ResultType.yellow)
+                Answer(text: "Cold Showers", correspondingResult: ResultType.yellow)
             ]),
             Question(text: "What Is Your Favorite Fast Food Chain?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Mac and Cheese", correspondingResult: ResultType.blue),
-                Answer(text: "Pizza", correspondingResult: ResultType.green),
-                Answer(text: "Ice Cream", correspondingResult: ResultType.yellow),
-                Answer(text: "Chicken Soup", correspondingResult: ResultType.orange)
+                Answer(text: "McDonald's", correspondingResult: ResultType.red),
+                Answer(text: "Subway", correspondingResult: ResultType.green),
+                Answer(text: "KFC", correspondingResult: ResultType.yellow),
+                Answer(text: "Taco Bell", correspondingResult: ResultType.orange)
             ]),
             Question(text: "Brain or Brawn?", type: .ranged, possibleAnswers: [
                 Answer(text: "Brain", correspondingResult: ResultType.white),
@@ -388,7 +388,7 @@ struct QuizData {
                 Answer(text: "Star-gazing", correspondingResult: ResultType.white),
                 Answer(text: "Fishing", correspondingResult: ResultType.black)
             ]),
-            Question(text: "Movie or Books?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "Movie or Books?", type: .ranged, possibleAnswers: [
                 Answer(text: "Movie", correspondingResult: ResultType.brown),
                 Answer(text: "", correspondingResult: ResultType.red),
                 Answer(text: "", correspondingResult: ResultType.black),
@@ -428,7 +428,7 @@ struct QuizData {
                 Answer(text: "Ruler", correspondingResult: ResultType.frenchFries),
                 Answer(text: "Crayon", correspondingResult: ResultType.hotDog)
             ]),
-            Question(text: "What Is Your Humor?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What Is Your Humor?", type: .ranged, possibleAnswers: [
                 Answer(text: "Dark", correspondingResult: ResultType.pizza),
                 Answer(text: "", correspondingResult: ResultType.burger),
                 Answer(text: "", correspondingResult: ResultType.hotDog),
@@ -466,7 +466,7 @@ struct QuizData {
                 Answer(text: "Two", correspondingResult: ResultType.iceCream),
                 Answer(text: "Three or More", correspondingResult: ResultType.doughnut)
             ]),
-            Question(text: "How Much Do You Like Playing Sports?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "How Much Do You Like Playing Sports?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hate it", correspondingResult: ResultType.iceCream),
                 Answer(text: "", correspondingResult: ResultType.doughnut),
                 Answer(text: "", correspondingResult: ResultType.cookie),
