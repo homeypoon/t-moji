@@ -13,13 +13,20 @@ import Network
 
 private let reuseIdentifier = "Cell"
 
-class SectionBackgroundView: UICollectionReusableView {
-    
+class SectionBackgroundView: UICollectionReusableView {    
     override func didMoveToSuperview() {
-        self.applyRoundedCornerAndShadow(reusableViewType: .tmatesEmojiCollection)
+        
+        self.layer.cornerRadius = 12.0
+        
+        layer.masksToBounds = false
+        layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+        layer.shadowOpacity = 0.8
+        layer.shadowOffset = CGSize(width: 1.7, height: 1.7)
+        layer.shadowRadius = 3.2
+        
+        self.backgroundColor = UIColor.white
     }
 }
-
 
 class ProfileCollectionViewController: UICollectionViewController {
     let monitor = NWPathMonitor()
@@ -138,11 +145,11 @@ class ProfileCollectionViewController: UICollectionViewController {
                 // Internet connection is available
                 NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": true])
             } else {
-                    print("offline")
+                print("offline")
                 NotificationCenter.default.post(name: Notification.Name("NetworkStatusChanged"), object: nil, userInfo: ["isConnected": false])
             }
         }
-
+        
         monitor.start(queue: networkQueue)
         
         NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
@@ -400,13 +407,13 @@ class ProfileCollectionViewController: UICollectionViewController {
                     
                 } else {
                     
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(48), heightDimension: .absolute(48))
                     let item = NSCollectionLayoutItem(layoutSize: itemSize)
                     
                     
                     let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
                     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                    group.interItemSpacing = .fixed(12)
+                    group.interItemSpacing = .fixed(10)
                     
                     let section = NSCollectionLayoutSection(group: group)
                     
@@ -537,7 +544,6 @@ class ProfileCollectionViewController: UICollectionViewController {
         }
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
-        print("itemsbyseeection \(itemsBySection)")
         
         DispatchQueue.main.async {
             self.collectionView.reloadData()

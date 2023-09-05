@@ -24,12 +24,13 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         enum Section: Hashable, Comparable {
             case homeTopBanner
             case groups
-            //            case activityFeed
+            case noGroups
         }
         
         enum Item: Hashable, Comparable {
             case homeTopBanner
             case group(group: Group)
+            case noGroups
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -37,6 +38,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     hasher.combine("homeTopBanner")
                 case .group(let group):
                     hasher.combine(group)
+                case .noGroups:
+                    hasher.combine("No Groups")
                 }
             }
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
@@ -45,6 +48,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     return true
                 case (.group(let lGroup), .group(let rGroup)):
                     return lGroup == rGroup
+                case (.noGroups, .noGroups):
+                    return true
                 default:
                     return false
                 }
@@ -132,6 +137,12 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 cell.configure(groupName: group.name, groupEmoji: group.emoji)
                 
                 return cell
+            case .noGroups:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NoGroups", for: indexPath) as! NoGroupsCollectionViewCell
+                
+                cell.configure()
+                
+                return cell
             }
         }
         
@@ -150,6 +161,9 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             case .homeTopBanner:
                 sectionHeader.configure(title: "", colorName: "Text")
                 return sectionHeader
+            case .noGroups:
+                sectionHeader.configure(title: "T--ms", colorName: "Text")
+                return sectionHeader
             }
         }
         
@@ -159,6 +173,12 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         let layout =  UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            
+            let sectionHeaderItemSize =
+            NSCollectionLayoutSize(widthDimension:
+                    .fractionalWidth(1), heightDimension: .estimated(48))
+            let sectionHeader =
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
             
             switch self.dataSource.snapshot().sectionIdentifiers[sectionIndex] {
             case .homeTopBanner:
@@ -172,19 +192,13 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 20,
-                    leading: 12,
+                    leading: 16,
                     bottom: 16,
-                    trailing: 12
+                    trailing: 16
                 )
                 
                 return section
             case .groups:
-                
-                let sectionHeaderItemSize =
-                NSCollectionLayoutSize(widthDimension:
-                        .fractionalWidth(1), heightDimension: .estimated(48))
-                let sectionHeader =
-                NSCollectionLayoutBoundarySupplementaryItem(layoutSize: sectionHeaderItemSize, elementKind: SupplementaryViewKind.sectionHeader, alignment: .top)
                 
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -201,7 +215,6 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 }
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)
                 
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 8,
@@ -214,6 +227,27 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 section.interGroupSpacing = 16
                 
                 return section
+            case .noGroups:
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(147))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                let section = NSCollectionLayoutSection(group: group)
+
+                section.boundarySupplementaryItems = [sectionHeader]
+                section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 24, bottom: 20, trailing: 24)
+                
+                return section
+                
             }
         }
         
@@ -235,6 +269,13 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             itemsBySection[.groups, default: []].append(ViewModel.Item.group(group: group))
         }
         
+        if itemsBySection[.groups] == nil  {
+            sectionIDs.append(.noGroups)
+            itemsBySection[.noGroups] = [ViewModel.Item.noGroups]
+        } else if let quizzes = itemsBySection[.groups], quizzes.isEmpty {
+            sectionIDs.append(.noGroups)
+            itemsBySection[.noGroups] = [ViewModel.Item.noGroups]
+        }
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
@@ -277,9 +318,6 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                             
                             try document.reference.setData(from: currentMember)
                             
-                            //                            document.reference.updateData([
-                            //                                "groupsIDs": FieldValue.arrayRemove([groupId])
-                            //                            ])
                         } else {
                             if let index = currentMember.masterGroupmatesIDs.firstIndex(where: { $0 == currentUid }) {
                                 currentMember.masterGroupmatesIDs.remove(at: index)
@@ -317,6 +355,8 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             case .group(let group):
                 performSegue(withIdentifier: "showGroupHome", sender: group)
             case .homeTopBanner:
+                break
+            case .noGroups:
                 break
             }
         }

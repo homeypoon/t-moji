@@ -208,32 +208,30 @@ extension UIButton {
             self.layer.shadowRadius = 3
             self.layer.masksToBounds = false
             
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
             self.backgroundColor = UIColor.clear
             
             
         case .quizSubmitButton:
-            self.layer.cornerRadius = 8.0
             self.layer.shadowColor = UIColor(named: "primaryDarkOrange")?.cgColor
-            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-            self.layer.shadowOpacity = 1.0
-            self.layer.shadowRadius = 1.0
+            self.layer.shadowOffset = CGSize(width: 0.8, height: 1.2)
+            self.layer.shadowOpacity = 0.7
+            self.layer.shadowRadius = 1.2
             self.layer.masksToBounds = false
             self.layer.cornerRadius = 4.0
             
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
             self.backgroundColor = UIColor.clear
             
         case .guessSubmitButton:
-            self.layer.cornerRadius = 8.0
-            self.layer.shadowColor = UIColor(named: "primaryRed")?.withAlphaComponent(0.8).cgColor
-            self.layer.shadowOffset = CGSize(width: 0.5, height: 1)
-            self.layer.shadowOpacity = 1.0
-            self.layer.shadowRadius = 1.0
+            self.layer.shadowColor = UIColor(named: "primaryRed")?.cgColor
+            self.layer.shadowOffset = CGSize(width: 0.8, height: 1.2)
+            self.layer.shadowOpacity = 0.7
+            self.layer.shadowRadius = 1.2
             self.layer.masksToBounds = false
             self.layer.cornerRadius = 4.0
             
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
             self.backgroundColor = UIColor.clear
             
         case .quizButton:
@@ -242,13 +240,11 @@ extension UIButton {
             layer.masksToBounds = false
             
             layer.shadowColor = UIColor(named: "primaryRed")?.cgColor
-
-            layer.borderColor = UIColor(named: "primaryRed")?.cgColor
             
             layer.shadowOpacity = 1
             layer.shadowOffset = CGSize(width: 1.2, height: 1)
             layer.shadowRadius = 2.7
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
 
             backgroundColor = UIColor.clear
         case .guessButton:
@@ -257,13 +253,11 @@ extension UIButton {
             layer.masksToBounds = false
             
             layer.shadowColor = UIColor(named: "primaryDarkOrange")?.cgColor
-
-            layer.borderColor = UIColor(named: "primaryDarkOrange")?.cgColor
             
             layer.shadowOpacity = 1
             layer.shadowOffset = CGSize(width: 1.5, height: 1)
             layer.shadowRadius = 3
-            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+//            self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
 
             backgroundColor = UIColor.clear
         case .exploreTag:
@@ -290,7 +284,7 @@ extension UILabel {
             self.textColor = UIColor(named: "primaryDarkOrange")
         case .unrevealedEmoji:
             self.textColor = UIColor(named: "primaryDarkOrange")
-            self.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+            self.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         case .currentUser:
             self.text = "Me"
             self.textColor = UIColor(named: "darkCurrentUserText")
@@ -368,40 +362,29 @@ extension UIView {
         switch viewType {
         case .extraGuessPopup:
             // explore
-            var shadowLayer: CAShapeLayer!
+            layer.cornerRadius = 18.0
             
-            if shadowLayer == nil {
-                shadowLayer = CAShapeLayer()
-                
-                shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 18.0).cgPath
-                shadowLayer.fillColor = UIColor.white.cgColor
-                
-                shadowLayer.shadowColor = UIColor(named: "primaryDarkOrange")?.withAlphaComponent(0.8).cgColor
-                shadowLayer.shadowPath = shadowLayer.path
-                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
-                shadowLayer.shadowOpacity = 1
-                shadowLayer.shadowRadius = 2.5
-                
-                layer.insertSublayer(shadowLayer, at: 0)
-            }
+            layer.masksToBounds = false
+            layer.shadowColor = UIColor(named: "primaryDarkOrange")?.withAlphaComponent(0.8).cgColor
+            layer.shadowOpacity = 1
+            layer.shadowOffset = CGSize(width: 1, height: 1)
+            layer.shadowRadius = 2.5
+            
+            backgroundColor = UIColor.white
+
         case .quizDetailBanner:
             // explore
-            var shadowLayer: CAShapeLayer!
             
-            if shadowLayer == nil {
-                shadowLayer = CAShapeLayer()
-                
-                shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: 18.0).cgPath
-                shadowLayer.fillColor = UIColor.white.cgColor
-                
-                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-                shadowLayer.shadowPath = shadowLayer.path
-                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
-                shadowLayer.shadowOpacity = 1
-                shadowLayer.shadowRadius = 2.5
-                
-                layer.insertSublayer(shadowLayer, at: 0)
-            }
+            layer.cornerRadius = 18.0
+            
+            layer.masksToBounds = false
+            layer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+            layer.shadowOpacity = 0.8
+            layer.shadowOffset = CGSize(width: 1, height: 1)
+            layer.shadowRadius = 2.5
+            
+            backgroundColor = UIColor.white
+            
         }
     }
 }

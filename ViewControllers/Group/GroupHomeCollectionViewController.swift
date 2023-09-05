@@ -13,7 +13,6 @@ private let reuseIdentifier = "Cell"
 
 class GroupHomeCollectionViewController: UICollectionViewController, TmateHeaderViewDelegate {
     func tmateHeaderViewTapped(tmate: User) {
-        print("tmate present \(tmate)")
        self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
     }
     
@@ -299,12 +298,12 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
                 // tmate emojis
                     let vertSpacing: CGFloat = 10
                     
-                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(50), heightDimension: .absolute(50))
+                    let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(48), heightDimension: .absolute(48))
                     let item = NSCollectionLayoutItem(layoutSize: itemSize)
                     
-                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(54))
+                    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(48))
                     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-                    group.interItemSpacing = .fixed(12)
+                    group.interItemSpacing = .fixed(10)
                     
                     let section = NSCollectionLayoutSection(group: group)
                     section.boundarySupplementaryItems = [tmateHeader]
@@ -383,8 +382,8 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
         return layout
     }
 
-    
     func updateCollectionView() {
+        
         self.loadingSpinner?.stopAnimating()
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
@@ -444,6 +443,7 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
             }
             
         case 1:
+
             let uniqueQuizIDs = fetchUniqueQuizIDs()
             
             if let currentUser = model.currentUser {
@@ -508,7 +508,7 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
                         return lTmate < rTmate
                     }
                 case (.tmateEmojis, .noTmateEmojis):
-                    return true 
+                    return true
                 default:
                     return false
                 }
@@ -598,7 +598,7 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
             case .tmateEmoji(tmate: _, _, _):
                 break
             case .noEmojis(tmate: let tmate):
-                self.performSegue(withIdentifier: "showTmateProfile", sender: tmate)
+                break
             }
         }
     }
@@ -641,9 +641,14 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
             let profileVC = segue.destination as! ProfileCollectionViewController
             
             if let senderInfo = sender as? User {
+                
                 let tmate = senderInfo
                 
-                profileVC.otherUser = tmate
+                if let currentUid = Auth.auth().currentUser?.uid, currentUid == tmate.uid {
+                    profileVC.user = tmate
+                } else {
+                    profileVC.otherUser = tmate
+                }
             }
         } else if segue.identifier == "showAddTmates" {
             

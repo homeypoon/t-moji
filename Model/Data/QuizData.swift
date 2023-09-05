@@ -338,10 +338,10 @@ struct QuizData {
                 Answer(text: "Witty", correspondingResult: ResultType.cloudy)
             ]),
             Question(text: "What is Your Favorite Type of Candy?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "sour", correspondingResult: ResultType.rainbow),
-                Answer(text: "chocolate", correspondingResult: ResultType.sunny),
-                Answer(text: "hard", correspondingResult: ResultType.cloudy),
-                Answer(text: "gummy", correspondingResult: ResultType.rainy)
+                Answer(text: "Sour Candy", correspondingResult: ResultType.rainbow),
+                Answer(text: "Chocolate", correspondingResult: ResultType.sunny),
+                Answer(text: "Hard Candy", correspondingResult: ResultType.cloudy),
+                Answer(text: "Gummy", correspondingResult: ResultType.rainy)
             ]),
         ]),
         

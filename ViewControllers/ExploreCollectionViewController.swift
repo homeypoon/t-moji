@@ -272,7 +272,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: horzSpacing, bottom: 20, trailing: horzSpacing)
                 
                 return section
-                
             }
         }
     }
@@ -415,9 +414,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         self.model.completedTmates.removeAll()
         
         let fetchTmatesDispatchGroup = DispatchGroup()
-        
-        print("called")
-        
+                
         for quizHistory in self.model.quizHistories {
             fetchTmatesDispatchGroup.enter()
             print("entered")
