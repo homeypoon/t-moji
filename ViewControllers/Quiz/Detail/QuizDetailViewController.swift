@@ -37,6 +37,8 @@ class QuizDetailViewController: UIViewController {
     
     
     @IBOutlet var quizButtons: [UIButton]!
+    var loadingAlert: UIAlertController?
+    var loadingIndicator: UIActivityIndicatorView?
     
     var isRetakeQuiz: Bool?
     
@@ -56,7 +58,6 @@ class QuizDetailViewController: UIViewController {
             self.fetchUser()
         }
         
-        
     }
     
     override func viewDidLoad() {
@@ -65,20 +66,47 @@ class QuizDetailViewController: UIViewController {
     }
     
     func loadRetakeQuizRewardedAd() {
+        if loadingAlert == nil {
+            loadingAlert = UIAlertController(title: nil, message: "Loading Video...", preferredStyle: .alert)
+            
+            loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+            loadingIndicator?.hidesWhenStopped = true
+            loadingIndicator?.style = UIActivityIndicatorView.Style.medium
+            loadingIndicator?.startAnimating()
+        }
+        
+        if let loadingAlert = loadingAlert, let loadingIndicator = loadingIndicator {
+            loadingAlert.view.addSubview(loadingIndicator)
+            present(loadingAlert, animated: true, completion: nil)
+        }
+        
         let request = GADRequest()
         GADRewardedAd.load(withAdUnitID:"ca-app-pub-3940256099942544/1712485313",
                            request: request,
                            completionHandler: { [self] ad, error in
-          if let error = error {
-//            print("Failed to load rewarded ad with error: \(error.localizedDescription)")
-            return
-          }
-          rewardedAd = ad
-            showRetakeQuizRewardedAd()
-//          print("Rewarded ad loaded.")
+            if let error = error {
+                //            print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+                if let vc = self.presentedViewController, vc is UIAlertController {
+                    print("isalert")
+                    dismiss(animated: false, completion: {
+                        self.presentErrorAlert(withTitle: "No videos available 😔", withMessage: "Try again soon!")
+                    })
+                    print("dismissed")
+                }
+                
+                return
+            }
+            rewardedAd = ad
+            if let vc = self.presentedViewController, vc is UIAlertController {
+                print("isalert")
+                dismiss(animated: false, completion: {
+                    self.showRetakeQuizRewardedAd()
+                })
+                print("dismissed")
+            }
         }
         )
-      }
+    }
     
     func showRetakeQuizRewardedAd() {
         if let ad = rewardedAd {
@@ -96,33 +124,33 @@ class QuizDetailViewController: UIViewController {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         if let existingShadowLayer = shadowLayer {
-                existingShadowLayer.removeFromSuperlayer()
-            }
+            existingShadowLayer.removeFromSuperlayer()
+        }
         
         if takeQuizState == ButtonState.takeQuiz {
             withResultView.isHidden = true
             withoutResultView.isHidden = false
             withoutResultQuizTitleLabel.text = quiz?.title
-
+            
             takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
             
             updateResultGroupButton(resultGroupButton: withoutResultResultGroupButton)
             
             //            withoutResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
-
-                shadowLayer = CAShapeLayer()
-                
-                shadowLayer.path = UIBezierPath(roundedRect: withoutResultView.bounds, cornerRadius: 18.0).cgPath
-                shadowLayer.fillColor = UIColor.white.cgColor
-                
-                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-                shadowLayer.shadowPath = shadowLayer.path
+            
+            shadowLayer = CAShapeLayer()
+            
+            shadowLayer.path = UIBezierPath(roundedRect: withoutResultView.bounds, cornerRadius: 18.0).cgPath
+            shadowLayer.fillColor = UIColor.white.cgColor
+            
+            shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+            shadowLayer.shadowPath = shadowLayer.path
             shadowLayer.shadowOffset = CGSize(width: 0.8, height: 0.8)
-                shadowLayer.shadowOpacity = 1
-                shadowLayer.shadowRadius = 2.5
-                
-                withoutResultView.layer.insertSublayer(shadowLayer, at: 0)
+            shadowLayer.shadowOpacity = 1
+            shadowLayer.shadowRadius = 2.5
+            
+            withoutResultView.layer.insertSublayer(shadowLayer, at: 0)
             
         } else if takeQuizState == ButtonState.retakeQuiz {
             withResultView.isHidden = false
@@ -135,19 +163,19 @@ class QuizDetailViewController: UIViewController {
             takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
             
             updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
-//            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
-                shadowLayer = CAShapeLayer()
-                
-                shadowLayer.path = UIBezierPath(roundedRect: withResultView.bounds, cornerRadius: 18.0).cgPath
-                shadowLayer.fillColor = UIColor.white.cgColor
-                
-                shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
-                shadowLayer.shadowPath = shadowLayer.path
-                shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
-                shadowLayer.shadowOpacity = 1
-                shadowLayer.shadowRadius = 2.5
-                
-                withResultView.layer.insertSublayer(shadowLayer, at: 0)
+            //            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
+            shadowLayer = CAShapeLayer()
+            
+            shadowLayer.path = UIBezierPath(roundedRect: withResultView.bounds, cornerRadius: 18.0).cgPath
+            shadowLayer.fillColor = UIColor.white.cgColor
+            
+            shadowLayer.shadowColor = UIColor(named: "primaryShadow")?.cgColor
+            shadowLayer.shadowPath = shadowLayer.path
+            shadowLayer.shadowOffset = CGSize(width: 1, height: 1)
+            shadowLayer.shadowOpacity = 1
+            shadowLayer.shadowRadius = 2.5
+            
+            withResultView.layer.insertSublayer(shadowLayer, at: 0)
         }
         
         guessForTmatesButton.configuration?.subtitle = takenByText
@@ -161,7 +189,7 @@ class QuizDetailViewController: UIViewController {
                 outgoing.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
                 return outgoing
             }
-
+            
         }
     }
     
@@ -188,12 +216,11 @@ class QuizDetailViewController: UIViewController {
         if let isRetakeQuiz = isRetakeQuiz {
             if isRetakeQuiz {
                 // UNCOMMENT
-//                loadRetakeQuizRewardedAd()
-
-                self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil) // delete
+                
+                loadRetakeQuizRewardedAd()
                 
                 
-//                showRetakeQuizRewardedAd()
+                //                showRetakeQuizRewardedAd()
             } else {
                 self.performSegue(withIdentifier: "showPersonalQuiz", sender: nil)
             }

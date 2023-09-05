@@ -156,7 +156,6 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             switch section {
             case .groups:
                 sectionHeader.configureBigHeader(title: "T--ms", colorName: "Text")
-                
                 return sectionHeader
             case .homeTopBanner:
                 sectionHeader.configure(title: "", colorName: "Text")

@@ -360,7 +360,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
     }
     
     func updateData(groupID: String, updateGroupName: Bool, updateGroupEmoji: Bool, addMemberIDs: [String]) {
-        guard let userId = Auth.auth().currentUser?.uid, (updateGroupName || !addMemberIDs.isEmpty) else {return}
+        guard (updateGroupName || updateGroupEmoji || !addMemberIDs.isEmpty) else {return}
         let collectionRef = FirestoreService.shared.db.collection("groups")
         
         collectionRef.whereField(FieldPath.documentID(), isEqualTo: groupID).getDocuments() { (querySnapshot, error) in
@@ -545,6 +545,8 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
             var addMemberIDs = model.userSelectedState
                 .filter { $0.value }
                 .map { $0.key }
+            
+            print("groupid \(group?.id), group emoji: \(groupEmoji)")
             
             if let groupID = group?.id {
                 let updateGroupName = group?.name != groupName
