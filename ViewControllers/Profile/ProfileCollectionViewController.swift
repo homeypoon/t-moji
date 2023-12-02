@@ -153,6 +153,7 @@ class ProfileCollectionViewController: UICollectionViewController {
         monitor.start(queue: networkQueue)
         
         NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
+        print("viewdidload ifd")
         
         // Current User Profile
         if otherUser == nil {
@@ -170,10 +171,13 @@ class ProfileCollectionViewController: UICollectionViewController {
             self.tabBarController?.navigationItem.hidesBackButton = false
             
             if !isOffline {
-                if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
-                    fetchQuizHistory(completedQuizIDs: completedQuizIDs)
-                } else {
-                    self.updateCollectionView()
+                fetchOtherUser(otherUserId: otherUser?.uid) {
+                    if let completedQuizIDs = self.otherUser?.userQuizHistory.map({ $0.quizID }), !completedQuizIDs.isEmpty {
+                        self.fetchQuizHistory(completedQuizIDs: completedQuizIDs)
+                        print("fetchingQuizHistorydksfh")
+                    } else {
+                        self.updateCollectionView()
+                    }
                 }
             }
         }
@@ -230,8 +234,6 @@ class ProfileCollectionViewController: UICollectionViewController {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
-    
     
     private func fetchUser() {
         guard !isOffline, let userID = Auth.auth().currentUser?.uid else { return }
@@ -677,6 +679,26 @@ class ProfileCollectionViewController: UICollectionViewController {
                 self.performSegue(withIdentifier: "guessFromProfile", sender: userQuizHistory)
             default:
                 break
+            }
+        }
+    }
+    
+    private func fetchOtherUser(otherUserId: String?, completion: @escaping () -> Void) {
+        guard let otherUserId = otherUserId else { return }
+        
+        let docRef = FirestoreService.shared.db.collection("users").document(otherUserId)
+        
+        docRef.getDocument(as: User.self) { result in
+            switch result {
+            case .success(let user):
+                self.otherUser = user
+                completion()
+                
+            case .failure(_):
+                // Handle the error appropriately
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "A network error occured!")
+                completion()
             }
         }
     }

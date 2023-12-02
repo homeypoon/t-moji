@@ -11,6 +11,7 @@ import FirebaseAuth
 import GoogleSignIn
 import GoogleMobileAds
 import FirebaseFirestore
+import AuthenticationServices
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

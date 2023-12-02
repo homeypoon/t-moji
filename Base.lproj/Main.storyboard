@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MAP-M9-YVB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MAP-M9-YVB">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -1356,14 +1356,14 @@
                             <tableViewSection headerTitle="Log Out" id="sl1-gB-FHn">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36.666667938232422"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.666666666666664"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
@@ -1386,21 +1386,21 @@
                             <tableViewSection headerTitle="Delete Account" footerTitle="This action cannot be undone." id="FDY-rD-Px4">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Hvn-XG-v0G">
-                                        <rect key="frame" x="20" y="155.33333015441895" width="353" height="36.666667938232422"/>
+                                        <rect key="frame" x="20" y="154.66666221618652" width="353" height="36"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Hvn-XG-v0G" id="ytV-Ds-9uz">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.666667938232422"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pUn-if-PVZ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.666666666666664"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Delete Account">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
                                                         <color key="baseForegroundColor" name="wrongRed"/>
                                                     </buttonConfiguration>
                                                     <connections>
-                                                        <action selector="logOutPressed:" destination="6Df-V6-ODc" eventType="touchUpInside" id="INN-Hp-DDR"/>
+                                                        <action selector="deleteUserPressed:" destination="6Df-V6-ODc" eventType="touchUpInside" id="8os-2s-Xki"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -1441,22 +1441,55 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mvt-c0-Puy" customClass="GIDSignInButton">
-                                <rect key="frame" x="76" y="406" width="240" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="T-moji" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V3k-yh-UR3">
+                                <rect key="frame" x="0.0" y="238.99999999999997" width="393" height="71.666666666666657"/>
+                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="60"/>
+                                <color key="textColor" name="white"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="otl-j1-kvx" customClass="ASAuthorizationAppleIDButton">
+                                <rect key="frame" x="24" y="602" width="345" height="48"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="U5Q-62-uv9"/>
+                                </constraints>
                                 <connections>
-                                    <action selector="signInUser:" destination="9pv-pT-9Gg" eventType="touchDown" id="mIF-W3-ssT"/>
+                                    <action selector="signInUser:" destination="9pv-pT-9Gg" eventType="touchDown" id="NaJ-Pe-sfS"/>
+                                </connections>
+                            </view>
+                            <view contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="eUZ-tD-TJt" customClass="GIDSignInButton">
+                                <rect key="frame" x="24" y="698" width="345" height="48"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="signInUser:" destination="9pv-pT-9Gg" eventType="touchDown" id="RAQ-Nj-8FO"/>
                                 </connections>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="mMj-Qe-2Xg"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" name="primaryDarkOrange"/>
+                        <constraints>
+                            <constraint firstItem="eUZ-tD-TJt" firstAttribute="height" secondItem="otl-j1-kvx" secondAttribute="height" id="VEd-Fm-zaz"/>
+                            <constraint firstItem="V3k-yh-UR3" firstAttribute="top" secondItem="mMj-Qe-2Xg" secondAttribute="top" constant="180" id="YWc-tI-NeV"/>
+                            <constraint firstItem="otl-j1-kvx" firstAttribute="leading" secondItem="mMj-Qe-2Xg" secondAttribute="leading" constant="24" id="bqF-u5-0yS"/>
+                            <constraint firstItem="eUZ-tD-TJt" firstAttribute="leading" secondItem="mMj-Qe-2Xg" secondAttribute="leading" constant="24" id="dM5-aU-n6I"/>
+                            <constraint firstItem="V3k-yh-UR3" firstAttribute="leading" secondItem="mMj-Qe-2Xg" secondAttribute="leading" id="hFx-4H-Gha"/>
+                            <constraint firstItem="mMj-Qe-2Xg" firstAttribute="bottom" secondItem="eUZ-tD-TJt" secondAttribute="bottom" constant="72" id="ib8-hH-ggP"/>
+                            <constraint firstItem="mMj-Qe-2Xg" firstAttribute="trailing" secondItem="V3k-yh-UR3" secondAttribute="trailing" id="mIh-Xp-B05"/>
+                            <constraint firstAttribute="trailing" secondItem="eUZ-tD-TJt" secondAttribute="trailing" constant="24" id="pr3-XM-5aC"/>
+                            <constraint firstItem="mMj-Qe-2Xg" firstAttribute="trailing" secondItem="otl-j1-kvx" secondAttribute="trailing" constant="24" id="rYd-HM-RcA"/>
+                            <constraint firstItem="eUZ-tD-TJt" firstAttribute="top" secondItem="otl-j1-kvx" secondAttribute="bottom" constant="48" id="xWP-At-wVv"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="otl-j1-kvx"/>
+                                <exclude reference="eUZ-tD-TJt"/>
+                            </mask>
+                        </variation>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MDD-oi-VwQ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7365" y="2179"/>
+            <point key="canvasLocation" x="7364.1221374045799" y="2178.8732394366198"/>
         </scene>
         <!--Explore-->
         <scene sceneID="PxB-Vw-CcR">
@@ -1942,6 +1975,7 @@ Accuracy</string>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rh-RR-7V6">
                                                 <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135.33333333333334"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" secondItem="3rh-RR-7V6" secondAttribute="height" multiplier="5:4" id="3re-Ga-QtL"/>
                                                     <constraint firstAttribute="width" secondItem="3rh-RR-7V6" secondAttribute="height" multiplier="5:4" id="gE3-Rl-7RW"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryLightOrange"/>
@@ -1955,9 +1989,6 @@ Accuracy</string>
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="3rh-RR-7V6" firstAttribute="width" secondItem="3rh-RR-7V6" secondAttribute="height" multiplier="5:4" id="3re-Ga-QtL"/>
-                                        </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="F8i-6J-3uH">
                                         <rect key="frame" x="0.0" y="147.33333333333331" width="349.66666666666669" height="135.33333333333331"/>
@@ -1966,6 +1997,7 @@ Accuracy</string>
                                                 <rect key="frame" x="0.0" y="0.0" width="169" height="135.33333333333334"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="NhB-6a-KDj" secondAttribute="height" multiplier="5:4" id="GPd-qE-71r"/>
+                                                    <constraint firstAttribute="width" secondItem="NhB-6a-KDj" secondAttribute="height" multiplier="5:4" id="heT-CL-RkC"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryLightOrange"/>
                                                 <state key="normal" title="Button"/>
@@ -1980,6 +2012,7 @@ Accuracy</string>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3DR-8h-aEQ">
                                                 <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135.33333333333334"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" secondItem="3DR-8h-aEQ" secondAttribute="height" multiplier="5:4" id="d0S-pe-Vmq"/>
                                                     <constraint firstAttribute="width" secondItem="3DR-8h-aEQ" secondAttribute="height" multiplier="5:4" id="uzl-PG-iGP"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryLightOrange"/>
@@ -1993,10 +2026,6 @@ Accuracy</string>
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="3DR-8h-aEQ" firstAttribute="width" secondItem="3DR-8h-aEQ" secondAttribute="height" multiplier="5:4" id="d0S-pe-Vmq"/>
-                                            <constraint firstItem="NhB-6a-KDj" firstAttribute="width" secondItem="NhB-6a-KDj" secondAttribute="height" multiplier="5:4" id="heT-CL-RkC"/>
-                                        </constraints>
                                     </stackView>
                                 </subviews>
                             </stackView>
@@ -2502,6 +2531,7 @@ Accuracy</string>
                                                 <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135.33333333333334"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="ZOE-8r-239" secondAttribute="height" multiplier="5:4" id="Fwu-LD-luq"/>
+                                                    <constraint firstAttribute="width" secondItem="ZOE-8r-239" secondAttribute="height" multiplier="5:4" id="r8R-O1-vef"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryRed"/>
                                                 <state key="normal" title="Button"/>
@@ -2514,9 +2544,6 @@ Accuracy</string>
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="ZOE-8r-239" firstAttribute="width" secondItem="ZOE-8r-239" secondAttribute="height" multiplier="5:4" id="r8R-O1-vef"/>
-                                        </constraints>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="9P0-Ye-gM5">
                                         <rect key="frame" x="0.0" y="147.33333333333337" width="349.66666666666669" height="135"/>
@@ -2525,6 +2552,7 @@ Accuracy</string>
                                                 <rect key="frame" x="0.0" y="0.0" width="169" height="135"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="pOE-N4-y1X" secondAttribute="height" multiplier="5:4" id="EAb-2V-taK"/>
+                                                    <constraint firstAttribute="width" secondItem="pOE-N4-y1X" secondAttribute="height" multiplier="5:4" id="uwa-EA-8Jk"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryRed"/>
                                                 <state key="normal" title="Button"/>
@@ -2540,6 +2568,7 @@ Accuracy</string>
                                                 <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="Ge6-g4-Sbl" secondAttribute="height" multiplier="5:4" id="HfW-Uj-0WL"/>
+                                                    <constraint firstAttribute="width" secondItem="Ge6-g4-Sbl" secondAttribute="height" multiplier="5:4" id="gF6-T8-dqu"/>
                                                 </constraints>
                                                 <color key="tintColor" name="primaryRed"/>
                                                 <state key="normal" title="Button"/>
@@ -2552,10 +2581,6 @@ Accuracy</string>
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <constraints>
-                                            <constraint firstItem="Ge6-g4-Sbl" firstAttribute="width" secondItem="Ge6-g4-Sbl" secondAttribute="height" multiplier="5:4" id="gF6-T8-dqu"/>
-                                            <constraint firstItem="pOE-N4-y1X" firstAttribute="width" secondItem="pOE-N4-y1X" secondAttribute="height" multiplier="5:4" id="uwa-EA-8Jk"/>
-                                        </constraints>
                                     </stackView>
                                 </subviews>
                             </stackView>
@@ -2673,7 +2698,7 @@ Accuracy</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" verticalHuggingPriority="251" image="wifi.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="vru-W0-5Js">
-                                <rect key="frame" x="20" y="259.66666666666663" width="353" height="125.66666666666669"/>
+                                <rect key="frame" x="20" y="258.66666666666663" width="353" height="127.33333333333337"/>
                                 <color key="tintColor" name="primaryDarkOrange"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cannot connect to the internet" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hpw-LJ-wUP">
@@ -3099,7 +3124,7 @@ Accuracy</string>
     <inferredMetricsTieBreakers>
         <segue reference="ZLO-ql-kZX"/>
         <segue reference="0Pe-Oy-V1F"/>
-        <segue reference="PuQ-E1-i1W"/>
+        <segue reference="Uhf-ds-Jba"/>
         <segue reference="uKU-6H-I3X"/>
         <segue reference="ezA-0P-XDu"/>
     </inferredMetricsTieBreakers>
@@ -3113,10 +3138,10 @@ Accuracy</string>
         <image name="house.fill" catalog="system" width="128" height="104"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="person.fill" catalog="system" width="128" height="120"/>
-        <image name="rectangle.portrait.and.arrow.forward" catalog="system" width="128" height="109"/>
+        <image name="rectangle.portrait.and.arrow.forward" catalog="system" width="128" height="108"/>
         <image name="target" catalog="system" width="128" height="123"/>
         <image name="trophy.fill" catalog="system" width="128" height="128"/>
-        <image name="wifi.slash" catalog="system" width="128" height="101"/>
+        <image name="wifi.slash" catalog="system" width="128" height="111"/>
         <image name="xmark.square.fill" catalog="system" width="128" height="114"/>
         <namedColor name="LightText">
             <color red="0.2196078431372549" green="0.2196078431372549" blue="0.2196078431372549" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3161,19 +3186,19 @@ Accuracy</string>
             <color red="0.72549019607843135" green="0.19607843137254902" blue="0.30588235294117649" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

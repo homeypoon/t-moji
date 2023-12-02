@@ -25,7 +25,7 @@ struct Points {
     static let takeQuiz = 5
     static let retakeQuiz = 2
     static let guessCorrect = 3
-    static let guessIncorrect = 0
+    static let guessIncorrect = 1
 }
 
 struct ButtonState {

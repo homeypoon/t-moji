@@ -179,6 +179,10 @@ class QuizDetailViewController: UIViewController {
         }
         
         guessForTmatesButton.configuration?.subtitle = takenByText
+        
+        if takenByText == "Not taken by any t-mates yet" {
+            guessForTmatesButton.isEnabled = false
+        }
     }
     
     private func updateButtonFont() {

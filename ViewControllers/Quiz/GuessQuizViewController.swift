@@ -13,6 +13,7 @@ import GoogleMobileAds
 class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func noThanksButtonClicked() {
         
+        print("no thanks clicked")
         removeBlurEffect()
         updateUserWithPointsAndGuessCount {
 
@@ -377,10 +378,10 @@ extension GuessQuizViewController: GADFullScreenContentDelegate {
       updateUI()
   }
 
-  /// ad dismissed
-  func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-      self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
-  }
+//  /// ad dismissed
+//  func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+//      self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+//  }
 }
 
 

@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import AuthenticationServices
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -57,8 +58,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = scene as? UIWindowScene else { return }
         
-        
         NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusChange(_:)), name: Notification.Name("NetworkStatusChanged"), object: windowScene)
+        
+        if let userID = UserDefaults.standard.string(forKey: "userID") {
+                    
+            // get the login status of Apple sign in for the app
+            // asynchronous
+            ASAuthorizationAppleIDProvider().getCredentialState(forUserID: userID, completion: {
+                credentialState, error in
+
+                switch(credentialState){
+                case .authorized:
+                    print("user remain logged in, proceed to another view")
+                    let tabBarController = self.storyboard.instantiateViewController (withIdentifier: "TabBar") as! UITabBarController
+
+                    tabBarController.selectedIndex = TabBarScreen.profile.rawValue
+                    self.showScreen(viewController: tabBarController, windowScene: windowScene)
+                case .revoked:
+                    print("user logged in before but revoked")
+                case .notFound:
+                    print("user haven't log in before")
+                default:
+                    print("unknown state")
+                }
+            })
+        }
         
         // No internet connection
         

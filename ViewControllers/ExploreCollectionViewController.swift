@@ -108,7 +108,6 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
-        
         fetchCurrentUser(userID: userID) { user in
             self.model.user = user
             
@@ -121,14 +120,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
     override func viewDidLoad() {
         super.viewDidLoad()
         // Create and configure the loading spinner
-        loadingSpinner = UIActivityIndicatorView(style: .large)
-        loadingSpinner?.center = view.center
-        loadingSpinner?.hidesWhenStopped = true
-        if let loadingSpinner = loadingSpinner {
-            view.addSubview(loadingSpinner)
-
-            loadingSpinner.startAnimating()
-        }
+        
         
         dataSource = createDataSource()
         collectionView.dataSource = dataSource
@@ -292,9 +284,7 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
         } else {
             quizzes = QuizData.quizzes
         }
-        
-        print("quizzes \(quizzes)")
-        
+                
         var itemIndex = 0
         
         for quiz in quizzes {
