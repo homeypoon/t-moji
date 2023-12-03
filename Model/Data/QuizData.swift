@@ -570,7 +570,7 @@ struct QuizData {
                 Answer(text: "MacBook", correspondingResult: ResultType.pencil),
                 Answer(text: "AirPods", correspondingResult: ResultType.scissors)
             ]),
-            Question(text: "What Juice Flavor Tastes Best", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What Juice Flavor Tastes Best?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Apple", correspondingResult: ResultType.scissors),
                 Answer(text: "Orange", correspondingResult: ResultType.crayon),
                 Answer(text: "Mango", correspondingResult: ResultType.pen),

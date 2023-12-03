@@ -343,10 +343,10 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 takenByText: takenByText
             )
     
-            // Insert an AdMob banner item every 4 quiz items
-            if itemIndex % 4 == 3 {
-                itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
-            }
+//            // Insert an AdMob banner item every 4 quiz items
+//            if itemIndex % 4 == 3 {
+//                itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
+//            }
             
             if let user = model.user, selectedSegmentIndex == 1 {
                 //            print("")

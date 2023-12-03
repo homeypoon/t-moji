@@ -45,7 +45,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
         
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
-        request.requestedScopes = [.fullName, .email]
+//        request.requestedScopes = [.fullName, .email]
         
         // Generate nonce for validation after authentication successful
         self.currentNonce = randomNonceString()
@@ -136,7 +136,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                     // Error. If error.code == .MissingOrInvalidNonce, make sure
                     // you're sending the SHA256-hashed nonce as a hex string with
                     // your request to Apple.
-                    self.presentErrorAlert(with: "\(error)We recieved an error during the login! Pleaes try again later!")
+                    self.presentErrorAlert(with: "We recieved an error during the login! Pleaes try again later!")
                     return
                 }
                 print("signed in!")

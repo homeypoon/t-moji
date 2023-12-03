@@ -132,6 +132,7 @@ class QuizDetailViewController: UIViewController {
             withoutResultView.isHidden = false
             withoutResultQuizTitleLabel.text = quiz?.title
             
+            takeQuizButton.isEnabled = true
             takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
             
@@ -159,8 +160,12 @@ class QuizDetailViewController: UIViewController {
             withResultQuizTitleLabel.text = quiz?.title
             
             myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
-            takeQuizButton.setTitle("  Retake Quiz", for: [])
-            takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
+            takeQuizButton.setTitle("Quiz Taken", for: []) // remove
+            takeQuizButton.setImage(nil, for: [])
+            takeQuizButton.isEnabled = false // remove
+            // **** removed ad
+//            takeQuizButton.setTitle("  Retake Quiz", for: [])
+//            takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
             
             updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
             //            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)

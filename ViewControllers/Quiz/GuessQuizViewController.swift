@@ -77,7 +77,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         updateUI()
         quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
         
-        loadGuessRewardedAd()
+//        loadGuessRewardedAd()
     }
     
     private func loadGuessRewardedAd() {
@@ -229,20 +229,27 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                     }
                 }
             } else {
-                // Show extra guess pop up
-                self.navigationItem.hidesBackButton = true
                 
-                previousWrongSelectedButton = selectedButton
-                loadingSpinner?.stopAnimating()
-                
-                showExtraGuessPopup()
-                
-                extraGuessPopupView.restartCountdown()
-                
-                self.updateGuessedMembers { }
-                
-                selectedButton = nil
-                submitButton.isUserInteractionEnabled = true
+                updateUserWithPointsAndGuessCount {
+                    self.updateGuessedMembers {
+                        self.loadingSpinner?.stopAnimating()
+                        self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+                    }
+                }
+//                // Show extra guess pop up  ****removed ad
+//                self.navigationItem.hidesBackButton = true
+//                
+//                previousWrongSelectedButton = selectedButton
+//                loadingSpinner?.stopAnimating()
+//                
+//                showExtraGuessPopup()
+//                
+//                extraGuessPopupView.restartCountdown()
+//                
+//                self.updateGuessedMembers { }
+//                
+//                selectedButton = nil
+//                submitButton.isUserInteractionEnabled = true
                 
             }
             

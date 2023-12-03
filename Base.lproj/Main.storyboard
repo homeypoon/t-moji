@@ -929,7 +929,7 @@
                                                     <color key="textColor" name="Text"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Group Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN" customClass="RoundedTextField" customModule="T_moji" customModuleProvider="target">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="T--m Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8vn-cf-vBN" customClass="RoundedTextField" customModule="T_moji" customModuleProvider="target">
                                                     <rect key="frame" x="19.666666666666657" y="44.333333333333343" width="353.66666666666674" height="48"/>
                                                     <color key="backgroundColor" name="white"/>
                                                     <constraints>
@@ -941,7 +941,7 @@
                                                         <action selector="groupNameTextFieldDidChange:" destination="qUC-9F-qM2" eventType="editingChanged" id="xPB-6V-q0p"/>
                                                     </connections>
                                                 </textField>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Group Emoji (1 character)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tCt-ZH-B4Z" customClass="EmojiTextField" customModule="T_moji" customModuleProvider="target">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="T--m Emoji (1 character)" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tCt-ZH-B4Z" customClass="EmojiTextField" customModule="T_moji" customModuleProvider="target">
                                                     <rect key="frame" x="19.666666666666657" y="108.33333333333331" width="353.66666666666674" height="48"/>
                                                     <color key="backgroundColor" name="white"/>
                                                     <constraints>
@@ -2160,6 +2160,11 @@ Accuracy</string>
                             <constraint firstItem="9xX-5V-XOd" firstAttribute="top" secondItem="n3W-GF-OHf" secondAttribute="bottom" priority="200" constant="80" id="snJ-rI-wZi"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="top" secondItem="9xX-5V-XOd" secondAttribute="bottom" constant="48" id="z2d-83-7gM"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="W40-bK-j45"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="kPy-ZZ-d6a"/>
                     <connections>
@@ -3122,10 +3127,10 @@ Accuracy</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="ZLO-ql-kZX"/>
+        <segue reference="Bwj-UY-ATU"/>
         <segue reference="0Pe-Oy-V1F"/>
         <segue reference="Uhf-ds-Jba"/>
-        <segue reference="uKU-6H-I3X"/>
+        <segue reference="98i-p1-Qef"/>
         <segue reference="ezA-0P-XDu"/>
     </inferredMetricsTieBreakers>
     <resources>
