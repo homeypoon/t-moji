@@ -8,6 +8,7 @@
 import UIKit
 import Firebase
 import AuthenticationServices
+import AppTrackingTransparency
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
@@ -122,6 +123,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         // Called when the scene has moved from an inactive state to an active state.
         // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        if #available(iOS 14, *) {
+        ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+        DispatchQueue.main.async {
+        //User is on iOS 14/15.
+        //Do what you need to do after you received permission
+        }
+        })
+        } else {
+        //User has a lower iOS version
+        //Do whatever you want, you don't need any permission
+        }
+        }
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
