@@ -4,13 +4,10 @@
 //
 //  Created by Homey Poon on 2023-08-05.
 //
-
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import GoogleMobileAds
-
-
 class QuizDetailViewController: UIViewController {
     
     var quiz: Quiz?
@@ -81,7 +78,7 @@ class QuizDetailViewController: UIViewController {
         }
         
         let request = GADRequest()
-        GADRewardedAd.load(withAdUnitID:"ca-app-pub-3940256099942544/1712485313",
+        GADRewardedAd.load(withAdUnitID:"ca-app-pub-2315105541829350/8566828108",
                            request: request,
                            completionHandler: { [self] ad, error in
             if let error = error {
@@ -132,7 +129,6 @@ class QuizDetailViewController: UIViewController {
             withoutResultView.isHidden = false
             withoutResultQuizTitleLabel.text = quiz?.title
             
-            takeQuizButton.isEnabled = true
             takeQuizButton.setImage(nil, for: [])
             takeQuizButton.setTitle("Take Quiz", for: [])
             
@@ -160,12 +156,8 @@ class QuizDetailViewController: UIViewController {
             withResultQuizTitleLabel.text = quiz?.title
             
             myResultLabel.text = "My Result: \(currentUserResultType?.emoji ?? " ")"
-            takeQuizButton.setTitle("Quiz Taken", for: []) // remove
-            takeQuizButton.setImage(nil, for: [])
-            takeQuizButton.isEnabled = false // remove
-            // **** removed ad
-//            takeQuizButton.setTitle("  Retake Quiz", for: [])
-//            takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
+            takeQuizButton.setTitle("  Retake Quiz", for: [])
+            takeQuizButton.setImage(UIImage(systemName: "play.square.fill"), for: [])
             
             updateResultGroupButton(resultGroupButton: withResultResultGroupButton)
             //            withResultView.applyRoundedCornerAndShadow(viewType: .quizDetailBanner)
@@ -182,14 +174,14 @@ class QuizDetailViewController: UIViewController {
             
             withResultView.layer.insertSublayer(shadowLayer, at: 0)
         }
-        
+
         guessForTmatesButton.configuration?.subtitle = takenByText
-        
+
         if takenByText == "Not taken by any t-mates yet" {
             guessForTmatesButton.isEnabled = false
         }
     }
-    
+
     private func updateButtonFont() {
         for button in quizButtons {
             button.applyRoundedCornerAndShadow(borderType: .quizDetailButton)
@@ -337,7 +329,6 @@ class QuizDetailViewController: UIViewController {
     }
     
 }
-
 extension QuizDetailViewController: GADFullScreenContentDelegate {
     
     /// Tells the delegate that the ad failed to present full screen content.

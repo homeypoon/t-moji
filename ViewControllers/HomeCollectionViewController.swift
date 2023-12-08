@@ -8,6 +8,10 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import AdSupport
+import AppTrackingTransparency
+
+
 
 private let reuseIdentifier = "Cell"
 
@@ -72,8 +76,21 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         
         fetchGroups()
     }
+    
+
+    func doThis() {
+            guard #available(iOS 14.0, *) else { return }
+            ATTrackingManager.requestTrackingAuthorization { status in
+                // Get IDFA here
+                let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+                print("status = \(status.rawValue), idfa = \(idfa)")
+            }
+        }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        doThis()
         
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center

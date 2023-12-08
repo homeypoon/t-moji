@@ -184,7 +184,9 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 
                 let adSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.exploreItemSize, self.exploreItemSize)
                 let adBannerView = GADBannerView(adSize: adSize)
-                adBannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111"
+//                adBannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111" // test
+               
+                adBannerView.adUnitID = "ca-app-pub-2315105541829350/5326383257"
                 adBannerView.rootViewController = self
                 
                 
@@ -343,10 +345,10 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 takenByText: takenByText
             )
     
-//            // Insert an AdMob banner item every 4 quiz items
-//            if itemIndex % 4 == 3 {
-//                itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
-//            }
+            // Insert an AdMob banner item every 4 quiz items
+            if itemIndex % 4 == 3 {
+                itemsBySection[.quizzes, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
+            }
             
             if let user = model.user, selectedSegmentIndex == 1 {
                 //            print("")

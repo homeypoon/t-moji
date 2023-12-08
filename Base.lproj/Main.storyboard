@@ -1356,14 +1356,14 @@
                             <tableViewSection headerTitle="Log Out" id="sl1-gB-FHn">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.666666666666664"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
@@ -1386,14 +1386,14 @@
                             <tableViewSection headerTitle="Delete Account" footerTitle="This action cannot be undone." id="FDY-rD-Px4">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Hvn-XG-v0G">
-                                        <rect key="frame" x="20" y="154.66666221618652" width="353" height="36"/>
+                                        <rect key="frame" x="20" y="155.33333015441895" width="353" height="36.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Hvn-XG-v0G" id="ytV-Ds-9uz">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pUn-if-PVZ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.666666666666664"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Delete Account">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
@@ -1950,7 +1950,7 @@ Accuracy</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="9xX-5V-XOd">
-                                <rect key="frame" x="21.666666666666657" y="314.66666666666663" width="349.66666666666674" height="282.66666666666663"/>
+                                <rect key="frame" x="21.666666666666657" y="290.33333333333337" width="349.66666666666674" height="282.33333333333337"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="6Un-FU-sCV">
                                         <rect key="frame" x="0.0" y="0.0" width="349.66666666666669" height="135.33333333333334"/>
@@ -1991,10 +1991,10 @@ Accuracy</string>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="F8i-6J-3uH">
-                                        <rect key="frame" x="0.0" y="147.33333333333331" width="349.66666666666669" height="135.33333333333331"/>
+                                        <rect key="frame" x="0.0" y="147.33333333333337" width="349.66666666666669" height="135"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NhB-6a-KDj">
-                                                <rect key="frame" x="0.0" y="0.0" width="169" height="135.33333333333334"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="169" height="135"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="NhB-6a-KDj" secondAttribute="height" multiplier="5:4" id="GPd-qE-71r"/>
                                                     <constraint firstAttribute="width" secondItem="NhB-6a-KDj" secondAttribute="height" multiplier="5:4" id="heT-CL-RkC"/>
@@ -2010,7 +2010,7 @@ Accuracy</string>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3DR-8h-aEQ">
-                                                <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135.33333333333334"/>
+                                                <rect key="frame" x="181" y="0.0" width="168.66666666666663" height="135"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="3DR-8h-aEQ" secondAttribute="height" multiplier="5:4" id="d0S-pe-Vmq"/>
                                                     <constraint firstAttribute="width" secondItem="3DR-8h-aEQ" secondAttribute="height" multiplier="5:4" id="uzl-PG-iGP"/>
@@ -2030,7 +2030,7 @@ Accuracy</string>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pfa-XH-xWb">
-                                <rect key="frame" x="21.666666666666657" y="645.33333333333337" width="349.66666666666674" height="52"/>
+                                <rect key="frame" x="21.666666666666657" y="620.66666666666663" width="349.66666666666674" height="52"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="52" id="n2r-vY-ADV"/>
                                 </constraints>
@@ -2160,11 +2160,6 @@ Accuracy</string>
                             <constraint firstItem="9xX-5V-XOd" firstAttribute="top" secondItem="n3W-GF-OHf" secondAttribute="bottom" priority="200" constant="80" id="snJ-rI-wZi"/>
                             <constraint firstItem="Pfa-XH-xWb" firstAttribute="top" secondItem="9xX-5V-XOd" secondAttribute="bottom" constant="48" id="z2d-83-7gM"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="W40-bK-j45"/>
-                            </mask>
-                        </variation>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="kPy-ZZ-d6a"/>
                     <connections>
@@ -3128,7 +3123,7 @@ Accuracy</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Bwj-UY-ATU"/>
-        <segue reference="0Pe-Oy-V1F"/>
+        <segue reference="c0W-xN-dL4"/>
         <segue reference="Uhf-ds-Jba"/>
         <segue reference="98i-p1-Qef"/>
         <segue reference="ezA-0P-XDu"/>
@@ -3194,16 +3189,16 @@ Accuracy</string>
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
