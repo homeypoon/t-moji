@@ -24,6 +24,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         removeBlurEffect()
     }
     
+    @IBOutlet var bannerView: GADBannerView!
     @IBOutlet var quizQuestionTextView: UITextView!
     @IBOutlet var multiChoiceButton1: UIButton!
     @IBOutlet var multiChoiceButton2: UIButton!
@@ -63,11 +64,16 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
         loadingSpinner?.hidesWhenStopped = true
         
         extraGuessPopupView.delegate = self
+        
+        bannerView.adUnitID = "ca-app-pub-2315105541829350/5389008147"
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
         
         updateUI()
         quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
@@ -90,7 +96,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func showExtraGuessRewardAd() {
       guard let rewardedInterstitialAd = rewardedInterstitialAd else {
         presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
-          loadGuessRewardedAd()
+//          loadGuessRewardedAd()
+          self.updateUI()
           return
       }
       rewardedInterstitialAd.present(fromRootViewController: self) {

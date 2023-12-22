@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseFirestore
 import FirebaseAuth
+import GoogleMobileAds
 
 class PersonalQuizViewController: UIViewController {
     var isRetakeQuiz: Bool!
@@ -21,7 +22,8 @@ class PersonalQuizViewController: UIViewController {
     var chosenAnswers: [QuestionIndex: [Answer]] = [:]
     
     var selectedButton: UIButton?
-        
+    @IBOutlet var bannerView: GADBannerView!
+    
     @IBOutlet var quizQuestionTextView: UITextView!
     
     @IBOutlet var multiChoiceStackView: UIStackView!
@@ -53,6 +55,10 @@ class PersonalQuizViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bannerView.adUnitID = "ca-app-pub-2315105541829350/5312986520"
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
+
         updateInitialUI()
         updateUI()
 

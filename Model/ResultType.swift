@@ -25,6 +25,7 @@ enum ResultType: String {
     case iceCream = "ice cream", doughnut = "doughnut", cookie = "cookie", cupcake = "cupcake", pie = "pie"
     case croissant = "croissant", pretzel = "pretzel", baguette = "baguette", whiteBread = "white bread", bagel = "bagel"
     case broccoli = "broccoli", corn = "corn", sweetPotato = "sweet potato", chiliPepper = "chili pepper", onion = "onion", potato = "potato"
+
     case pen = "pen", ruler = "ruler", pencil = "pencil", scissors = "scissors", crayon = "crayon"
     case addition = "addition", subtraction = "subtraction", division = "division", multiplication = "multiplication"
     case tulip = "tulip", rose = "rose", cherryBlossom = "cherry blossom", sunflower = "sunflower"
@@ -539,6 +540,7 @@ extension ResultType {
             .mathOperation: [.addition, .subtraction, .division, .multiplication],
             .flower: [.tulip, .rose, .cherryBlossom, .sunflower],
             .bathroomItem: [.toothbrush, .toiletPaper, .soap, .bathtub],
+            .stationary: [.crayon, .pen, .pencil, .scissors, .ruler],
             .ballSport: [.soccer, .football, .tennis, .basketball, .volleyball],
             .color: [.red, .purple, .blue, .green, .yellow, .orangeColor, .brown, .white, .black],
         ]

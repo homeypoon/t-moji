@@ -304,20 +304,48 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
         self.model.users.removeAll()
         self.model.allUsers.removeAll()
         
+//        if let membersIDs = self.membersIDs, !membersIDs.isEmpty {
+//            FirestoreService.shared.db.collection("users").whereField(FieldPath.documentID(), notIn: membersIDs).getDocuments { (querySnapshot, error) in
+//                if let error = error {
+//                    self.presentErrorAlert(with: error.localizedDescription)
+//                } else {
+//                    for document in querySnapshot!.documents {
+//                        do {
+//                            var user = try document.data(as: User.self)
+//                            
+//                            
+//                            self.model.userSelectedState[user.uid] = false
+//                            
+//                            self.model.users.append(user)
+//                            self.model.allUsers.append(user)
+//                            
+//                        }
+//                        catch {
+//                            self.presentErrorAlert(with: error.localizedDescription)
+//                        }
+//                        
+//                    }
+//                    self.updateSaveButtonState()
+//                    self.updateCollectionView()
+//                    print("update")
+//                }
+//            }
+//        }
         if let membersIDs = self.membersIDs, !membersIDs.isEmpty {
-            FirestoreService.shared.db.collection("users").whereField(FieldPath.documentID(), notIn: membersIDs).getDocuments { (querySnapshot, error) in
+            FirestoreService.shared.db.collection("users").getDocuments { (querySnapshot, error) in
                 if let error = error {
                     self.presentErrorAlert(with: error.localizedDescription)
                 } else {
                     for document in querySnapshot!.documents {
                         do {
                             var user = try document.data(as: User.self)
-                            
-                            
-                            self.model.userSelectedState[user.uid] = false
-                            
-                            self.model.users.append(user)
-                            self.model.allUsers.append(user)
+                            if !membersIDs.contains(user.uid) {
+                                
+                                self.model.userSelectedState[user.uid] = false
+                                
+                                self.model.users.append(user)
+                                self.model.allUsers.append(user)
+                            }
                             
                         }
                         catch {
@@ -330,7 +358,7 @@ class AddUsersCollectionViewController: UICollectionViewController, GroupNameCol
                     print("update")
                 }
             }
-        } else {
+        }else {
             FirestoreService.shared.db.collection("users").whereField(FieldPath.documentID(), isNotEqualTo: uid).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     self.presentErrorAlert(with: error.localizedDescription)
