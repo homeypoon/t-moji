@@ -10,11 +10,11 @@ import FirebaseFirestore
 import GoogleMobileAds
 class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func noThanksButtonClicked() {
-
+        
         print("no thanks clicked")
         removeBlurEffect()
         updateUserWithPointsAndGuessCount {
-
+            
             self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
         }
     }
@@ -25,14 +25,29 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     }
     
     @IBOutlet var bannerView: GADBannerView!
+    
     @IBOutlet var quizQuestionTextView: UITextView!
+    
     @IBOutlet var multiChoiceButton1: UIButton!
     @IBOutlet var multiChoiceButton2: UIButton!
     @IBOutlet var multiChoiceButton3: UIButton!
     @IBOutlet var multiChoiceButton4: UIButton!
+    @IBOutlet var multiChoiceStackView: UIStackView!
+    
     @IBOutlet var submitButton: UIButton!
     
+    @IBOutlet var rangedStackView: UIStackView!
+    
+    @IBOutlet var rangedSlider: UISlider!
+    @IBOutlet var rangedLabel1: UILabel!
+    @IBOutlet var rangedLabel2: UILabel!
+    
     @IBOutlet var multiChoiceButtons: [UIButton]!
+    @IBOutlet var quizProgressView: UIProgressView!
+    
+    var questionIndex: Int = 0
+    var currentQuestion: Question!
+    var possibleAnswers: [Answer]!
     
     private var rewardedInterstitialAd: GADRewardedInterstitialAd?
     
@@ -41,10 +56,16 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     var quiz: Quiz?
     var group: Group?
     var userQuizHistory: UserQuizHistory?
+    
+    typealias QuestionIndex = Int
+    var chosenAnswers: [QuestionIndex: Answer] = [:]
+    
     var members = [User]()
     var guessedMember: User?
     
     var guessedResultType: ResultType! // selected by user
+    
+    var submitButtonClickRequired: Bool = false
     
     var previousWrongSelectedButton: UIButton?
     
@@ -65,6 +86,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        quiz = QuizData.quizzes.first(where: { $0.id == userQuizHistory?.quizID })
+        
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
         loadingSpinner?.hidesWhenStopped = true
@@ -75,7 +98,9 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
         
-        updateUI()
+        updateInitialUI()
+        updateUiForGuessAnswers()
+        
         quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
         
         loadGuessRewardedAd()
@@ -84,32 +109,33 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     private func loadGuessRewardedAd() {
         
         GADRewardedInterstitialAd.load(withAdUnitID:"ca-app-pub-2315105541829350/1590356210",
-            request: GADRequest()) { ad, error in
-              if let error = error {
-                  return
-              }
-              self.rewardedInterstitialAd = ad
-              self.rewardedInterstitialAd?.fullScreenContentDelegate = self
+                                       request: GADRequest()) { ad, error in
+            if let error = error {
+                return
             }
+            self.rewardedInterstitialAd = ad
+            self.rewardedInterstitialAd?.fullScreenContentDelegate = self
+        }
     }
     
     func showExtraGuessRewardAd() {
-      guard let rewardedInterstitialAd = rewardedInterstitialAd else {
-        presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
-//          loadGuessRewardedAd()
-          self.updateUI()
-          return
-      }
-      rewardedInterstitialAd.present(fromRootViewController: self) {
-          self.updateUI()
-          self.loadGuessRewardedAd()
-      }
+        guard let rewardedInterstitialAd = rewardedInterstitialAd else {
+            presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
+            //          loadGuessRewardedAd()
+            self.updateUiForTmojiAnswer()
+            return
+        }
+        rewardedInterstitialAd.present(fromRootViewController: self) {
+            self.updateUiForTmojiAnswer()
+            self.loadGuessRewardedAd()
+        }
     }
     
-    func updateUI() {
+    func updateInitialUI() {
         for button in multiChoiceButtons {
             if button == previousWrongSelectedButton {
                 button.isEnabled = false
+                
                 button.tintColor = UIColor(named: "guessedButtonColor")
                 button.layer.borderColor = UIColor(named: "guessedButtonColor")?.withAlphaComponent(0.4).cgColor
                 button.applyRoundedCornerAndShadow(borderType: .guessButton)
@@ -140,11 +166,21 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         submitButton.setTitleColor(UIColor(named: "white"), for: [])
         
         submitButton.applyRoundedCornerAndShadow(borderType: .guessSubmitButton)
+    }
+    
+    func updateUiForTmojiAnswer() {
+        guard let quiz = quiz else {return }
+        navigationItem.title = "T-Moji Guess \(questionIndex + 1)/\(quiz.questions.count + 1)"
+        // changed to + 1 for quiz.questions.count
+        let totalProgress = Float(questionIndex) / Float(quiz.questions.count + 1)
+        quizProgressView.setProgress(totalProgress, animated: true)
+        
         if let quizHistory = userQuizHistory,
            let member = guessedMember {
             
             if let quiz = QuizData.quizzes.first(where: { $0.id == quizHistory.quizID }) {
                 self.quiz = quiz
+                
                 quizQuestionTextView.text = "Which \(quiz.resultGroup.rawValue) do you think \(member.username) got?"
             }
             
@@ -161,12 +197,34 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                     multiChoiceButton2.setTitle("\(resultChoices[1].rawValue.capitalized) \(resultChoices[1].emoji)", for: [])
                     multiChoiceButton3.setTitle("\(resultChoices[2].rawValue.capitalized) \(resultChoices[2].emoji)", for: [])
                     multiChoiceButton4.setTitle("\(resultChoices[3].rawValue.capitalized) \(resultChoices[3].emoji)", for: [])
-                    
                 }
                 
             }
         }
+    }
+    
+    func updateUiForGuessAnswers() {
+        print("quizfsjkjfslj \(String(describing: quiz))")
+        guard let quiz = quiz else { return }
+        currentQuestion = quiz.questions[questionIndex]
+        possibleAnswers = currentQuestion.possibleAnswers
         
+        quizQuestionTextView.text = currentQuestion.text
+        
+        multiChoiceStackView.isHidden = true
+        rangedStackView.isHidden = true
+        
+        navigationItem.title = "Question \(questionIndex + 1)/\(quiz.questions.count + 1)"
+        // changed to + 1 for quiz.questions.count
+        let totalProgress = Float(questionIndex) / Float(quiz.questions.count + 1)
+        quizProgressView.setProgress(totalProgress, animated: true)
+        
+        switch currentQuestion.type {
+        case .multipleChoice:
+            updateMultiChoiceStack(using: possibleAnswers)
+        case .ranged:
+            updateRangeStack(using: possibleAnswers)
+        }
     }
     
     @IBAction func multiChoiceButtonTapped(_ sender: UIButton) {
@@ -182,8 +240,32 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         
         selectedButton = sender
     }
+    
     @IBAction func submitButtonPressed(_ sender: UIButton) {
+        guard selectedButton != nil else {return}
+        submitButtonClickRequired = !submitButtonClickRequired
         
+        switch currentQuestion.type {
+        case .multipleChoice:
+            if !submitButtonClickRequired {
+                nextQuestion()
+            } else {
+                showCorrectMultiAnswer()
+            }
+            
+        case .ranged:
+            if !submitButtonClickRequired {
+                nextQuestion()
+                //                updateRangedSelectedAnswer()
+            } else {
+                //                showCorrectRangedAnswer()
+            }
+        }
+    }
+    
+    
+    
+    func guessedTmojiAnswer() {
         guard selectedButton != nil else { return }
         
         submitButton.isUserInteractionEnabled = false
@@ -243,6 +325,87 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         }
     }
     
+    func showCorrectMultiAnswer() {
+        print("entored")
+        
+        
+        if selectedButton != nil {
+            switch selectedButton {
+            case multiChoiceButton1:
+                chosenAnswers[questionIndex] = possibleAnswers[0]
+            case multiChoiceButton2:
+                chosenAnswers[questionIndex] = possibleAnswers[1]
+            case multiChoiceButton3:
+                chosenAnswers[questionIndex] = possibleAnswers[2]
+            case multiChoiceButton4:
+                chosenAnswers[questionIndex] = possibleAnswers[3]
+            default:
+                break
+            }
+            
+            print("questionIndex \(questionIndex)")
+            print("chosenAnswerssssss \(chosenAnswers)")
+            print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
+            
+            guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
+            guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
+            print("userGuessAnswer.text \(userGuessAnswer.text)")
+            print("correctGuessAnswer.text \(correctGuessAnswer.text)")
+            
+            if userGuessAnswer.text == correctGuessAnswer.text {
+                print("correct")
+            }
+        }
+        
+    }
+    
+    func updateRangedSelectedAnswer() {
+        
+        let index = Int(round(rangedSlider.value * Float(possibleAnswers.count - 1)))
+        
+        chosenAnswers[questionIndex] = possibleAnswers[index]
+        
+        nextQuestion()
+    }
+    
+    func nextQuestion() {
+        questionIndex += 1
+        
+        guard let quiz = quiz else { return }
+        
+        if questionIndex < quiz.questions.count {
+            updateUiForGuessAnswers()
+        } else {
+            updateUiForTmojiAnswer()
+        }
+    }
+    
+    
+    
+    func updateMultiChoiceStack(using answers: [Answer]) {
+        print(true)
+        multiChoiceStackView.isHidden = false
+        
+        
+        for button in multiChoiceButtons {
+            button.tintColor = UIColor(named: "primaryLightOrange")
+            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+        }
+        selectedButton = nil
+        
+        rangedSlider.setValue(0.5, animated: false)
+        multiChoiceButton1.setTitle(answers[0].text, for: [])
+        multiChoiceButton2.setTitle(answers[1].text, for: [])
+        multiChoiceButton3.setTitle(answers[2].text, for: [])
+        multiChoiceButton4.setTitle(answers[3].text, for: [])
+    }
+    
+    func updateRangeStack(using answers: [Answer]) {
+        rangedStackView.isHidden = false
+        rangedLabel1.text = answers.first?.text
+        rangedLabel2.text = answers.last?.text
+    }
+    
     func updateGuessedMembers(completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else {
             completion()
@@ -293,7 +456,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                         "wrongGuesses": FieldValue.increment(Int64(1))
                     ])
                 }
-               
+                
                 completion()
             case .failure(let error):
                 // Handle the error appropriately
@@ -338,12 +501,12 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         addBlurEffect()
         view.addSubview(extraGuessPopupView)
         extraGuessPopupView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                extraGuessPopupView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                extraGuessPopupView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                extraGuessPopupView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
-                extraGuessPopupView.heightAnchor.constraint(equalToConstant: 330)
-            ])
+        NSLayoutConstraint.activate([
+            extraGuessPopupView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            extraGuessPopupView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            extraGuessPopupView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
+            extraGuessPopupView.heightAnchor.constraint(equalToConstant: 330)
+        ])
     }
     
     func addBlurEffect() {
@@ -365,11 +528,11 @@ extension GuessQuizViewController: GADFullScreenContentDelegate {
     /// Tells the delegate that the ad failed to present full screen content.
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         presentErrorAlert(with: "The video wasn't available, but you still get another guess!")
-        updateUI()
+        updateUiForTmojiAnswer()
     }
     
     /// ad dismissed
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-//        self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
+        //        self.performSegue(withIdentifier: "submitMemberQuiz", sender: nil)
     }
 }

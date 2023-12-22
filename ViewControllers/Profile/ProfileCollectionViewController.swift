@@ -659,9 +659,7 @@ class ProfileCollectionViewController: UICollectionViewController {
             
             if let senderInfo = sender as? UserQuizHistory {
                 let userQuizHistory = senderInfo
-                
-                print("myquizhiosoo\(userQuizHistory)")
-                
+                                
                 guessQuizVC.guessedMember = otherUser
                 guessQuizVC.userQuizHistory = userQuizHistory
             }

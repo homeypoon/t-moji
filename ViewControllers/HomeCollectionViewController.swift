@@ -78,19 +78,19 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     }
     
 
-    func doThis() {
-            guard #available(iOS 14.0, *) else { return }
-            ATTrackingManager.requestTrackingAuthorization { status in
-                // Get IDFA here
-                let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
-                print("status = \(status.rawValue), idfa = \(idfa)")
-            }
-        }
+//    func doThis() {
+//            guard #available(iOS 14.0, *) else { return }
+//            ATTrackingManager.requestTrackingAuthorization { status in
+//                // Get IDFA here
+//                let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+//                print("status = \(status.rawValue), idfa = \(idfa)")
+//            }
+//        }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        doThis()
+//        doThis()
         
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
