@@ -19,8 +19,8 @@ struct QuizData {
             ]),
             Question(text: "How introverted or extraverted are you?", type: .ranged, possibleAnswers: [
                 Answer(text: "Introverted", correspondingResult: ResultType.cat),
-                Answer(text: "", correspondingResult: ResultType.rabbit),
-                Answer(text: "", correspondingResult: ResultType.tiger),
+                Answer(text: "Slightly Introverted", correspondingResult: ResultType.rabbit),
+                Answer(text: "Slightly Extraverted", correspondingResult: ResultType.tiger),
                 Answer(text: "Extraverted", correspondingResult: ResultType.dog)
             ]),
             Question(text: "What is your favourite season?", type: .multipleChoice, possibleAnswers: [
@@ -65,8 +65,8 @@ struct QuizData {
             ]),
             Question(text: "Indoors or Outdoors?", type: .ranged, possibleAnswers: [
                 Answer(text: "Indoors", correspondingResult: ResultType.car),
-                Answer(text: "", correspondingResult: ResultType.bus),
-                Answer(text: "", correspondingResult: ResultType.ship),
+                Answer(text: "Slightly Indoors", correspondingResult: ResultType.bus),
+                Answer(text: "Slightly Outdoors", correspondingResult: ResultType.ship),
                 Answer(text: "Outdoors", correspondingResult: ResultType.helicopter)
             ]),
             Question(text: "Which type of music do you prefer?", type: .multipleChoice, possibleAnswers: [
@@ -152,8 +152,8 @@ struct QuizData {
             ]),
             Question(text: "City or Countryside?", type: .ranged, possibleAnswers: [
                 Answer(text: "City", correspondingResult: ResultType.ariel),
-                Answer(text: "", correspondingResult: ResultType.rapunzel),
-                Answer(text: "", correspondingResult: ResultType.mulan),
+                Answer(text: "Slightly City", correspondingResult: ResultType.rapunzel),
+                Answer(text: "Slightly Countryside", correspondingResult: ResultType.mulan),
                 Answer(text: "Countryside", correspondingResult: ResultType.belle)
             ]),
             Question(text: "Qualities of Ideal Friend?", type: .multipleChoice, possibleAnswers: [
@@ -164,8 +164,8 @@ struct QuizData {
             ]),
             Question(text: "Structure or Spontaneity?", type: .ranged, possibleAnswers: [
                 Answer(text: "Structure", correspondingResult: ResultType.elsa),
-                Answer(text: "", correspondingResult: ResultType.belle),
-                Answer(text: "", correspondingResult: ResultType.rapunzel),
+                Answer(text: "Slightly Structure", correspondingResult: ResultType.belle),
+                Answer(text: "Slightly Spontaneity", correspondingResult: ResultType.rapunzel),
                 Answer(text: "Spontaneity", correspondingResult: ResultType.ariel)
             ]),
             Question(text: "What is Your Favorite Element?", type: .multipleChoice, possibleAnswers: [
@@ -192,8 +192,8 @@ struct QuizData {
             ]),
             Question(text: "Early Bird or Night Owl?", type: .ranged, possibleAnswers: [
                 Answer(text: "Early Bird", correspondingResult: ResultType.child),
-                Answer(text: "", correspondingResult: ResultType.baby),
-                Answer(text: "", correspondingResult: ResultType.senior),
+                Answer(text: "Slightly Early Bird", correspondingResult: ResultType.baby),
+                Answer(text: "Slightly Night Owl", correspondingResult: ResultType.senior),
                 Answer(text: "Night Owl", correspondingResult: ResultType.adult)
             ]),
             Question(text: "What is your favorite pattern?", type: .multipleChoice, possibleAnswers: [
@@ -238,8 +238,8 @@ struct QuizData {
             ]),
             Question(text: "How lazy are you?", type: .ranged, possibleAnswers: [
                 Answer(text: "Not Lazy", correspondingResult: ResultType.brownBear),
-                Answer(text: "", correspondingResult: ResultType.polarBear),
-                Answer(text: "", correspondingResult: ResultType.koala),
+                Answer(text: "Slightly Not Lazy", correspondingResult: ResultType.polarBear),
+                Answer(text: "Slightly very lazy", correspondingResult: ResultType.koala),
                 Answer(text: "Very Lazy", correspondingResult: ResultType.panda)
             ]),
             Question(text: "What is your favorite sense?", type: .multipleChoice, possibleAnswers: [
@@ -271,8 +271,8 @@ struct QuizData {
         Quiz(id: 6, resultGroup: .element, title: "Which Element Are You?", quizType: .character, questions: [
             Question(text: "What Climate Do You Prefer?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hot", correspondingResult: ResultType.fire),
-                Answer(text: "", correspondingResult: ResultType.water),
-                Answer(text: "", correspondingResult: ResultType.nature),
+                Answer(text: "Slightly hot", correspondingResult: ResultType.water),
+                Answer(text: "Slightly cold", correspondingResult: ResultType.nature),
                 Answer(text: "Cold", correspondingResult: ResultType.ice)
             ]),
             Question(text: "How Do You Respond To Conflict", type: .multipleChoice, possibleAnswers: [
@@ -282,8 +282,8 @@ struct QuizData {
                 Answer(text: "Confront", correspondingResult: ResultType.fire)
             ]),
             Question(text: "Which Of These Describe You Best?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Grounded", correspondingResult: ResultType.nature),
-                Answer(text: "Reserved", correspondingResult: ResultType.ice),
+                Answer(text: "Generous", correspondingResult: ResultType.nature),
+                Answer(text: "Patient", correspondingResult: ResultType.ice),
                 Answer(text: "Passionate", correspondingResult: ResultType.fire),
                 Answer(text: "Adaptable", correspondingResult: ResultType.water)
             ]),
@@ -302,7 +302,7 @@ struct QuizData {
             Question(text: "What Is Your Creative Style?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Versatile", correspondingResult: ResultType.nature),
                 Answer(text: "Practical", correspondingResult: ResultType.water),
-                Answer(text: "thoughtful", correspondingResult: ResultType.ice),
+                Answer(text: "Thoughtful", correspondingResult: ResultType.ice),
                 Answer(text: "Fiery", correspondingResult: ResultType.fire)
             ]),
         ]),
@@ -325,11 +325,11 @@ struct QuizData {
                 Answer(text: "Enthusiastic", correspondingResult: ResultType.thunderstorm),
                 Answer(text: "Care Free", correspondingResult: ResultType.rainbow)
             ]),
-            Question(text: "How Do You Deal With change?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Approach", correspondingResult: ResultType.rainy),
-                Answer(text: "Confront", correspondingResult: ResultType.thunderstorm),
-                Answer(text: "Embrace", correspondingResult: ResultType.rainbow),
-                Answer(text: "Adapt", correspondingResult: ResultType.sunny)
+            Question(text: "Which is Your Ideal Foodie Adventure?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "A DIY cooking class", correspondingResult: ResultType.rainy),
+                Answer(text: "A gourmet five-course meal", correspondingResult: ResultType.thunderstorm),
+                Answer(text: "Exotic street food", correspondingResult: ResultType.rainbow),
+                Answer(text: "My Favourite Comfort food", correspondingResult: ResultType.sunny)
             ]),
             Question(text: "What Is Your Type of Humor?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sarcastic", correspondingResult: ResultType.thunderstorm),
@@ -354,8 +354,8 @@ struct QuizData {
             ]),
             Question(text: "Hot or Cold Showers?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hot Showers", correspondingResult: ResultType.purple),
-                Answer(text: "", correspondingResult: ResultType.blue),
-                Answer(text: "", correspondingResult: ResultType.green),
+                Answer(text: "Slightly Hot Showers", correspondingResult: ResultType.blue),
+                Answer(text: "Slightly Cold Showers", correspondingResult: ResultType.green),
                 Answer(text: "Cold Showers", correspondingResult: ResultType.yellow)
             ]),
             Question(text: "What Is Your Favorite Fast Food Chain?", type: .multipleChoice, possibleAnswers: [
@@ -366,8 +366,8 @@ struct QuizData {
             ]),
             Question(text: "Brain or Brawn?", type: .ranged, possibleAnswers: [
                 Answer(text: "Brain", correspondingResult: ResultType.white),
-                Answer(text: "", correspondingResult: ResultType.black),
-                Answer(text: "", correspondingResult: ResultType.red),
+                Answer(text: "Slightly Brain", correspondingResult: ResultType.black),
+                Answer(text: "Slightly Brawn", correspondingResult: ResultType.red),
                 Answer(text: "Brawn", correspondingResult: ResultType.purple)
             ]),
             Question(text: "What’s your Favorite Karaoke Song?", type: .multipleChoice, possibleAnswers: [
@@ -390,8 +390,8 @@ struct QuizData {
             ]),
             Question(text: "Movie or Books?", type: .ranged, possibleAnswers: [
                 Answer(text: "Movie", correspondingResult: ResultType.brown),
-                Answer(text: "", correspondingResult: ResultType.red),
-                Answer(text: "", correspondingResult: ResultType.black),
+                Answer(text: "Slightly Movie", correspondingResult: ResultType.red),
+                Answer(text: "Slightly Books", correspondingResult: ResultType.black),
                 Answer(text: "Book", correspondingResult: ResultType.white)
             ]),
             
@@ -406,8 +406,8 @@ struct QuizData {
         Quiz(id: 9, resultGroup: .fastFood, title: "What Fast Food Are You?", quizType: .character, questions: [
             Question(text: "What Type of Music do you Prefer?", type: .ranged, possibleAnswers: [
                 Answer(text: "Energetic", correspondingResult: ResultType.burger),
-                Answer(text: "", correspondingResult: ResultType.frenchFries),
-                Answer(text: "", correspondingResult: ResultType.hotDog),
+                Answer(text: "Slightly Energetic", correspondingResult: ResultType.frenchFries),
+                Answer(text: "Slightly Calm", correspondingResult: ResultType.hotDog),
                 Answer(text: "Calm", correspondingResult: ResultType.pizza)
             ]),
             Question(text: "Which Type of Sports Are More Fun?", type: .multipleChoice, possibleAnswers: [
@@ -430,8 +430,8 @@ struct QuizData {
             ]),
             Question(text: "What Is Your Humor?", type: .ranged, possibleAnswers: [
                 Answer(text: "Dark", correspondingResult: ResultType.pizza),
-                Answer(text: "", correspondingResult: ResultType.burger),
-                Answer(text: "", correspondingResult: ResultType.hotDog),
+                Answer(text: "Slightly Dark", correspondingResult: ResultType.burger),
+                Answer(text: "Slightly Light", correspondingResult: ResultType.hotDog),
                 Answer(text: "Light", correspondingResult: ResultType.frenchFries)
             ]),
         ]),
@@ -456,8 +456,8 @@ struct QuizData {
             ]),
             Question(text: "How Do You Like Your Music?", type: .ranged, possibleAnswers: [
                 Answer(text: "Loud", correspondingResult: ResultType.iceCream),
-                Answer(text: "", correspondingResult: ResultType.doughnut),
-                Answer(text: "", correspondingResult: ResultType.cookie),
+                Answer(text: "Slightly Loud", correspondingResult: ResultType.doughnut),
+                Answer(text: "Slightly Quiet", correspondingResult: ResultType.cookie),
                 Answer(text: "Quiet", correspondingResult: ResultType.cupcake)
             ]),
             Question(text: "How Many Siblings Do You Prefer?", type: .multipleChoice, possibleAnswers: [
@@ -468,8 +468,8 @@ struct QuizData {
             ]),
             Question(text: "How Much Do You Like Playing Sports?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hate it", correspondingResult: ResultType.iceCream),
-                Answer(text: "", correspondingResult: ResultType.doughnut),
-                Answer(text: "", correspondingResult: ResultType.cookie),
+                Answer(text: "Slightly hate it", correspondingResult: ResultType.doughnut),
+                Answer(text: "Slightly love it", correspondingResult: ResultType.cookie),
                 Answer(text: "Love it", correspondingResult: ResultType.pie)
             ]),
         ]),
@@ -500,8 +500,8 @@ struct QuizData {
             ]),
             Question(text: "Your Opinion on Reading?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hate it", correspondingResult: ResultType.croissant),
-                Answer(text: "", correspondingResult: ResultType.pretzel),
-                Answer(text: "", correspondingResult: ResultType.baguette),
+                Answer(text: "Slightly Hate it", correspondingResult: ResultType.pretzel),
+                Answer(text: "Slightly Love it", correspondingResult: ResultType.baguette),
                 Answer(text: "Love it", correspondingResult: ResultType.whiteBread)
             ]),
             Question(text: "Which Do You Want Most?", type: .multipleChoice, possibleAnswers: [
@@ -530,11 +530,11 @@ struct QuizData {
                 Answer(text: "Soy Sauce", correspondingResult: ResultType.onion),
                 Answer(text: "Barbeque Sauce", correspondingResult: ResultType.potato)
             ]),
-            Question(text: "Hot or Cold", type: .ranged, possibleAnswers: [
-                Answer(text: "Hot", correspondingResult: ResultType.chiliPepper),
-                Answer(text: "", correspondingResult: ResultType.onion),
-                Answer(text: "", correspondingResult: ResultType.potato),
-                Answer(text: "Cold", correspondingResult: ResultType.broccoli)
+            Question(text: "Would you rather be hungry or tired", type: .ranged, possibleAnswers: [
+                Answer(text: "Hungry", correspondingResult: ResultType.chiliPepper),
+                Answer(text: "Slightly hungry", correspondingResult: ResultType.onion),
+                Answer(text: "Slightly tired", correspondingResult: ResultType.potato),
+                Answer(text: "Tired", correspondingResult: ResultType.broccoli)
             ]),
             Question(text: "What Color is Math?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Blue", correspondingResult: ResultType.sweetPotato),
@@ -578,11 +578,11 @@ struct QuizData {
             ]),
             Question(text: "How Much Do You Like To Draw?", type: .ranged, possibleAnswers: [
                 Answer(text: "Hate it", correspondingResult: ResultType.crayon),
-                Answer(text: "", correspondingResult: ResultType.pen),
-                Answer(text: "", correspondingResult: ResultType.ruler),
+                Answer(text: "Slightly hate it", correspondingResult: ResultType.pen),
+                Answer(text: "Slightly love it", correspondingResult: ResultType.ruler),
                 Answer(text: "Love it", correspondingResult: ResultType.pencil)
             ]),
-            Question(text: "What Type of Shoe Is best?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What Type of Shoe is the Best?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sneakers", correspondingResult: ResultType.pen),
                 Answer(text: "Boots", correspondingResult: ResultType.ruler),
                 Answer(text: "Sandals", correspondingResult: ResultType.pencil),
@@ -633,19 +633,19 @@ struct QuizData {
                 Answer(text: "Vibrant", correspondingResult: ResultType.tulip),
                 Answer(text: "Romantic", correspondingResult: ResultType.rose),
                 Answer(text: "Pastels", correspondingResult: ResultType.cherryBlossom),
-                Answer(text: "simple", correspondingResult: ResultType.sunflower)
+                Answer(text: "Simple", correspondingResult: ResultType.sunflower)
             ]),
             Question(text: "What Is Your Social Style?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Deep", correspondingResult: ResultType.rose),
                 Answer(text: "Observant", correspondingResult: ResultType.cherryBlossom),
-                Answer(text: "Friendly", correspondingResult: ResultType.sunflower),
-                Answer(text: "Energetic", correspondingResult: ResultType.tulip)
+                Answer(text: "Friendly", correspondingResult: ResultType.tulip),
+                Answer(text: "Energetic", correspondingResult: ResultType.sunflower)
             ]),
-            Question(text: "How Do You Handle Stress?", type: .multipleChoice, possibleAnswers: [
-                Answer(text: "Reflect", correspondingResult: ResultType.cherryBlossom),
-                Answer(text: "Stay Positive", correspondingResult: ResultType.sunflower),
-                Answer(text: "Embrace Change", correspondingResult: ResultType.tulip),
-                Answer(text: "Seek Support", correspondingResult: ResultType.rose)
+            Question(text: "Who Are You In Social Situations?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Life of the party", correspondingResult: ResultType.cherryBlossom),
+                Answer(text: "Social chameleon", correspondingResult: ResultType.tulip),
+                Answer(text: "Thoughtful listener", correspondingResult: ResultType.sunflower),
+                Answer(text: "Mysterious lurker", correspondingResult: ResultType.rose)
             ]),
             Question(text: "What Word Resonates Most?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Simplicity", correspondingResult: ResultType.sunflower),
@@ -676,8 +676,8 @@ struct QuizData {
             ]),
             Question(text: "How organized are you?", type: .ranged, possibleAnswers: [
                 Answer(text: "Not Organized", correspondingResult: ResultType.bathtub),
-                Answer(text: "", correspondingResult: ResultType.soap),
-                Answer(text: "", correspondingResult: ResultType.toothbrush),
+                Answer(text: "Slightly Not Organized", correspondingResult: ResultType.soap),
+                Answer(text: "Slightly Organized", correspondingResult: ResultType.toothbrush),
                 Answer(text: "Very Organized", correspondingResult: ResultType.toiletPaper)
             ]),
             Question(text: "What is your favorite sport?", type: .multipleChoice, possibleAnswers: [
@@ -706,7 +706,7 @@ struct QuizData {
             ])
         ]),
         Quiz(id: 17, resultGroup: .animal, title: "What Ball Sport Are You?", quizType: .character, questions: [
-            Question(text: "What do you value most in friendship?", type: .multipleChoice, possibleAnswers: [
+            Question(text: "What do you value most in friendships?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Hanging out", correspondingResult: ResultType.basketball),
                 Answer(text: "Improving together", correspondingResult: ResultType.tennis),
                 Answer(text: "Supporting one another", correspondingResult: ResultType.volleyball),
@@ -749,14 +749,14 @@ struct QuizData {
             Question(text: "What Does Your Weekend Look Like?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Sports", correspondingResult: ResultType.ant),
                 Answer(text: "Creativity", correspondingResult: ResultType.butterfly),
-                Answer(text: "travel", correspondingResult: ResultType.bee),
+                Answer(text: "Travel", correspondingResult: ResultType.bee),
                 Answer(text: "Enjoying Content", correspondingResult: ResultType.ladybug)
             ]),
-            Question(text: "Indoors Or Outdoors", type: .ranged, possibleAnswers: [
-                Answer(text: "Indoors", correspondingResult: ResultType.ladybug),
-                Answer(text: "", correspondingResult: ResultType.ant),
-                Answer(text: "", correspondingResult: ResultType.butterfly),
-                Answer(text: "Outdoors", correspondingResult: ResultType.bee)
+            Question(text: "Do You Tend to be High or Low Energy", type: .ranged, possibleAnswers: [
+                Answer(text: "High Energy", correspondingResult: ResultType.bee),
+                Answer(text: "Slightly High Energy", correspondingResult: ResultType.butterfly),
+                Answer(text: "Slightly Low Energy", correspondingResult: ResultType.ant),
+                Answer(text: "Low Energy", correspondingResult: ResultType.ladybug)
             ]),
             Question(text: "Who Are You In Parties?", type: .multipleChoice, possibleAnswers: [
                 Answer(text: "Socialite", correspondingResult: ResultType.ladybug),
@@ -792,8 +792,8 @@ struct QuizData {
             ]),
             Question(text: "Reading or Watching", type: .ranged, possibleAnswers: [
                 Answer(text: "Reading", correspondingResult: ResultType.deciduousTree),
-                Answer(text: "", correspondingResult: ResultType.palmTree),
-                Answer(text: "", correspondingResult: ResultType.christmasTree),
+                Answer(text: "Slightly Reading", correspondingResult: ResultType.palmTree),
+                Answer(text: "Slightly Watching", correspondingResult: ResultType.christmasTree),
                 Answer(text: "Watching", correspondingResult: ResultType.evergreenTree)
             ]),
             Question(text: "Which Would You Ride?", type: .multipleChoice, possibleAnswers: [

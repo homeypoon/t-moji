@@ -67,4 +67,5 @@ enum QuestionType: Codable {
 struct Answer: Codable {
     var text: String
     var correspondingResult: ResultType
+    var rangedValue: Float?
 }

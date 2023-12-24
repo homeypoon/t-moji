@@ -1356,14 +1356,14 @@
                             <tableViewSection headerTitle="Log Out" id="sl1-gB-FHn">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="rwV-hJ-9zH">
-                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36.333332061767578"/>
+                                        <rect key="frame" x="20" y="55.333332061767578" width="353" height="36"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rwV-hJ-9zH" id="iwS-jQ-9TN">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qy7-Fg-Lp2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Log Out">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
@@ -1386,14 +1386,14 @@
                             <tableViewSection headerTitle="Delete Account" footerTitle="This action cannot be undone." id="FDY-rD-Px4">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="Hvn-XG-v0G">
-                                        <rect key="frame" x="20" y="154.9999942779541" width="353" height="36.333332061767578"/>
+                                        <rect key="frame" x="20" y="154.66666221618652" width="353" height="36"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Hvn-XG-v0G" id="ytV-Ds-9uz">
-                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pUn-if-PVZ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="353" height="36"/>
                                                     <color key="tintColor" systemColor="systemRedColor"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Delete Account">
                                                         <fontDescription key="titleFontDescription" type="system" weight="medium" pointSize="18"/>
@@ -2034,11 +2034,11 @@ Accuracy</string>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="52" id="n2r-vY-ADV"/>
                                 </constraints>
+                                <color key="tintColor" name="primaryRed"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Submit">
                                     <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
                                     <color key="baseForegroundColor" name="white"/>
-                                    <color key="baseBackgroundColor" name="primaryRed"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="submitButtonPressed:" destination="eZe-Do-Vmq" eventType="touchUpInside" id="h5g-jk-C2c"/>
@@ -2147,7 +2147,7 @@ Accuracy</string>
                                     <slider opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="owl-N9-yhu">
                                         <rect key="frame" x="-2" y="0.0" width="349" height="31"/>
                                         <color key="tintColor" name="primaryDarkBlue"/>
-                                        <color key="minimumTrackTintColor" name="primaryRed"/>
+                                        <color key="minimumTrackTintColor" name="primaryDarkOrange"/>
                                         <color key="maximumTrackTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </slider>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="46" translatesAutoresizingMaskIntoConstraints="NO" id="SBX-VH-EgI">

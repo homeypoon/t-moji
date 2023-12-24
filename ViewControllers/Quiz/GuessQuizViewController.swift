@@ -80,6 +80,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
         extraGuessPopupView.removeFromSuperview()
+        self.navigationItem.hidesBackButton = true
         
     }
     
@@ -245,6 +246,22 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         guard selectedButton != nil else {return}
         submitButtonClickRequired = !submitButtonClickRequired
         
+        if submitButtonClickRequired {
+            for button in multiChoiceButtons {
+                button.isUserInteractionEnabled = false
+                rangedSlider.isUserInteractionEnabled = false
+            }
+            submitButton.setTitle("Next Question", for: [])
+            submitButton.tintColor = UIColor(named: "primaryDarkOrange")
+        } else {
+            for button in multiChoiceButtons {
+                button.isUserInteractionEnabled = true
+                rangedSlider.isUserInteractionEnabled = true
+            }
+            submitButton.setTitle("Submit", for: [])
+            submitButton.tintColor = UIColor(named: "primaryRed")
+        }
+        
         switch currentQuestion.type {
         case .multipleChoice:
             if !submitButtonClickRequired {
@@ -258,12 +275,10 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 nextQuestion()
                 //                updateRangedSelectedAnswer()
             } else {
-                //                showCorrectRangedAnswer()
+                showCorrectRangedAnswer()
             }
         }
     }
-    
-    
     
     func guessedTmojiAnswer() {
         guard selectedButton != nil else { return }
@@ -328,35 +343,100 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func showCorrectMultiAnswer() {
         print("entored")
         
+        guard let selectedButton = selectedButton else { return }
         
-        if selectedButton != nil {
-            switch selectedButton {
-            case multiChoiceButton1:
-                chosenAnswers[questionIndex] = possibleAnswers[0]
-            case multiChoiceButton2:
-                chosenAnswers[questionIndex] = possibleAnswers[1]
-            case multiChoiceButton3:
-                chosenAnswers[questionIndex] = possibleAnswers[2]
-            case multiChoiceButton4:
-                chosenAnswers[questionIndex] = possibleAnswers[3]
-            default:
-                break
-            }
-            
-            print("questionIndex \(questionIndex)")
-            print("chosenAnswerssssss \(chosenAnswers)")
-            print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
-            
-            guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
-            guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
-            print("userGuessAnswer.text \(userGuessAnswer.text)")
-            print("correctGuessAnswer.text \(correctGuessAnswer.text)")
-            
-            if userGuessAnswer.text == correctGuessAnswer.text {
-                print("correct")
-            }
+        switch selectedButton {
+        case multiChoiceButton1:
+            chosenAnswers[questionIndex] = possibleAnswers[0]
+        case multiChoiceButton2:
+            chosenAnswers[questionIndex] = possibleAnswers[1]
+        case multiChoiceButton3:
+            chosenAnswers[questionIndex] = possibleAnswers[2]
+        case multiChoiceButton4:
+            chosenAnswers[questionIndex] = possibleAnswers[3]
+        default:
+            break
         }
         
+        print("questionIndex \(questionIndex)")
+        print("chosenAnswerssssss \(chosenAnswers)")
+        print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
+        
+        guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
+        guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
+        print("userGuessAnswer.text \(userGuessAnswer.text)")
+        print("correctGuessAnswer.text \(correctGuessAnswer.text)")
+        
+        if userGuessAnswer.text == correctGuessAnswer.text {
+            updateButtonsForCorrectMulti(correctText: correctGuessAnswer.text, chosenButton: selectedButton, userCorrect: true)
+        } else {
+            updateButtonsForCorrectMulti(correctText: correctGuessAnswer.text, chosenButton: selectedButton, userCorrect: false)
+            
+        }
+    }
+    
+    func updateButtonsForCorrectMulti(correctText: String, chosenButton: UIButton, userCorrect: Bool) {
+        for button in multiChoiceButtons {
+            button.tintColor = UIColor(named: "primaryLightOrange")
+            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+        }
+        // Set the correct button's color
+        if userCorrect {
+            chosenButton.tintColor = UIColor(named: "correctGreen")
+            chosenButton.setTitleColor(UIColor(named: "white"), for: [])
+            chosenButton.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
+        } else {
+            chosenButton.tintColor = UIColor(named: "wrongRed")
+            chosenButton.setTitleColor(UIColor(named: "white"), for: [])
+            chosenButton.layer.shadowColor = UIColor(named: "wrongRed")?.cgColor
+            
+            // set wrong button
+            if possibleAnswers[0].text == correctText {
+                multiChoiceButton1.tintColor = UIColor(named: "correctGreen")
+                multiChoiceButton1.setTitleColor(UIColor(named: "white"), for: [])
+                multiChoiceButton1.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
+            } else if possibleAnswers[1].text == correctText {
+                multiChoiceButton2.tintColor = UIColor(named: "correctGreen")
+                multiChoiceButton2.setTitleColor(UIColor(named: "white"), for: [])
+                multiChoiceButton2.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
+            } else if possibleAnswers[2].text == correctText {
+                multiChoiceButton3.tintColor = UIColor(named: "correctGreen")
+                multiChoiceButton3.setTitleColor(UIColor(named: "white"), for: [])
+                multiChoiceButton3.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
+            } else if possibleAnswers[3].text == correctText {
+                multiChoiceButton4.tintColor = UIColor(named: "correctGreen")
+                multiChoiceButton4.setTitleColor(UIColor(named: "white"), for: [])
+                multiChoiceButton4.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
+            }
+        }
+    }
+    
+    func showCorrectRangedAnswer() {
+        let index = Int(round(rangedSlider.value * Float(possibleAnswers.count - 1)))
+        
+        chosenAnswers[questionIndex] = possibleAnswers[index]
+        print("rangeedddd")
+        
+        print("questionIndex \(questionIndex)")
+        print("chosenAnswerssssss \(chosenAnswers)")
+        print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
+        
+        guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
+        guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
+        print("userGuessAnswer.text \(userGuessAnswer.text)")
+        print("correctGuessAnswer.text \(correctGuessAnswer.text)")
+                
+        if userGuessAnswer.text == correctGuessAnswer.text {
+            rangedSlider.minimumTrackTintColor = UIColor(named: "correctGreen")
+        } else {
+            rangedSlider.minimumTrackTintColor = UIColor(named: "wrongRed")
+        }
+        print(correctGuessAnswer.rangedValue)
+        guard let rangedValue = correctGuessAnswer.rangedValue else { return }
+        
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {
+            self.rangedSlider.setValue(0.89, animated: true) },
+                completion: nil)
     }
     
     func updateRangedSelectedAnswer() {
@@ -380,16 +460,14 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         }
     }
     
-    
-    
     func updateMultiChoiceStack(using answers: [Answer]) {
         print(true)
         multiChoiceStackView.isHidden = false
         
-        
         for button in multiChoiceButtons {
             button.tintColor = UIColor(named: "primaryLightOrange")
             button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+            button.layer.shadowColor = UIColor(named: "primaryDarkOrange")?.cgColor
         }
         selectedButton = nil
         
@@ -401,6 +479,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     }
     
     func updateRangeStack(using answers: [Answer]) {
+        rangedSlider.minimumTrackTintColor = UIColor(named: "primaryDarkOrange")
         rangedStackView.isHidden = false
         rangedLabel1.text = answers.first?.text
         rangedLabel2.text = answers.last?.text

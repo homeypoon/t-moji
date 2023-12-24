@@ -30,7 +30,6 @@ struct User {
     var points: Int = 0
     
     var guessHistory: [QuizID: IsGuessCorrect] = [:]
-
 }
 
 extension User: Codable { }

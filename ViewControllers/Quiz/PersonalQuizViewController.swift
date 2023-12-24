@@ -194,8 +194,12 @@ class PersonalQuizViewController: UIViewController {
     func updateRangedSelectedAnswer() {
         
         let index = Int(round(rangedSlider.value * Float(possibleAnswers.count - 1)))
+        possibleAnswers[index].rangedValue = Float(rangedSlider.value)
         
         chosenAnswers[questionIndex] = [possibleAnswers[index]]
+        print(index)
+        print(Float(rangedSlider.value))
+        print(chosenAnswers[questionIndex])
         
         nextQuestion()
     }
@@ -259,8 +263,6 @@ class PersonalQuizViewController: UIViewController {
            
             self.performSegue(withIdentifier: "showPersonalResults", sender: nil)
         }
-        
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
