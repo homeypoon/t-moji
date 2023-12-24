@@ -34,6 +34,9 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
     var quizHistory: QuizHistory?
     var loadingSpinner: UIActivityIndicatorView?
     
+    var totalGuesses: Int = 0
+    var correctGuesses: Int = 0
+    
     typealias DataSourceType = UICollectionViewDiffableDataSource<ViewModel.Section, ViewModel.Item>
     
     enum ViewModel {
@@ -142,8 +145,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
             switch item {
             case .guessSummary(let currentUser, let quizHistory):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSummary", for: indexPath) as! GuessSummaryCollectionViewCell
-                cell.configure(quizTitle: self.quiz?.title, isCorrect: (self.guessedResultType == quizHistory.finalResult), withPoints: currentUser.points)
-                
+                cell.configure(quizTitle: self.quiz?.title, totalGuesses: self.totalGuesses, correctGuesses: self.correctGuesses, isCorrect: (self.guessedResultType == quizHistory.finalResult), withPoints: currentUser.points)
                 return cell
                 
             case .currentUserResult(_, let quizHistory):
@@ -210,7 +212,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(265))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(310))
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -235,7 +237,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 section.contentInsets = NSDirectionalEdgeInsets(
                     top: 0,
                     leading: 20,
-                    bottom: 20,
+                    bottom: 12,
                     trailing: 20
                 )
                 

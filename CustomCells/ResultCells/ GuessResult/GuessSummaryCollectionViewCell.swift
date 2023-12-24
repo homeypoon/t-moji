@@ -10,7 +10,12 @@ import UIKit
 class GuessSummaryCollectionViewCell: UICollectionViewCell {
     @IBOutlet var quizTitleLabel: UILabel!
     @IBOutlet var correctLabel: UILabel!
-    @IBOutlet var pointsLabel: UILabel!
+    
+    @IBOutlet var totalGuessPointsLabel: UILabel!
+    @IBOutlet var correctGuessesPointsLabel: UILabel!
+    @IBOutlet var correctTmojiGuessPointsLabel: UILabel!
+    @IBOutlet var totalGuessQuizPointsLabel: UILabel!
+    
     @IBOutlet var pointsDescriptionLabel: UILabel!
     @IBOutlet var levelLabel: UILabel!
     @IBOutlet var levelProgressView: UIProgressView!
@@ -18,24 +23,27 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
     
     private var progressUpdated = false
     
-    func configure(quizTitle: String?, isCorrect: Bool, withPoints currentPoints: Int) {
+    func configure(quizTitle: String?, totalGuesses: Int, correctGuesses: Int, isCorrect: Bool, withPoints currentPoints: Int) {
         
         quizTitleLabel.text = quizTitle
+        totalGuessPointsLabel.text = "\(Points.participationGuess) pt x \(totalGuesses)"
+        correctGuessesPointsLabel.text = "\(Points.correctGuessBonus) pts x \(correctGuesses)"
         
         // if guessedResultType == resultType
         if isCorrect {
             correctLabel.text = "Correct Guess"
-            pointsLabel.text = "+ \(Points.guessCorrect) pts"
-            pointsDescriptionLabel.text = "Correct Guess"
+            correctTmojiGuessPointsLabel.text = "\(Points.correctTmojiGuess) pts"
+            pointsDescriptionLabel.text = "Correct T-moji Guess"
             self.contentView.layer.backgroundColor = UIColor(named: "correctGreen")?.cgColor
 
         } else {
             correctLabel.text = "Wrong Guess"
-            pointsLabel.text = "+ \(Points.guessIncorrect) pt"
-            pointsDescriptionLabel.text = "Wrong Guess"
+            correctTmojiGuessPointsLabel.text = "\(Points.incorrectTmojiGuess) pt"
+            pointsDescriptionLabel.text = "Wrong T-moji Guess"
             self.contentView.layer.backgroundColor = UIColor(named: "wrongRed")?.cgColor
-
         }
+        
+        totalGuessQuizPointsLabel.text = "\(Points.calculatePoints(totalGuesses: totalGuesses, correctGuesses: correctGuesses, isCorrect: isCorrect)) pts"
         
         levelLabel.applyStyle(labelType: .level)
         levelProgressView.applyStyle(progressType: .levelProgress)
@@ -45,7 +53,7 @@ class GuessSummaryCollectionViewCell: UICollectionViewCell {
         print("currentPoints \(currentPoints)")
         
         if !progressUpdated {
-            let initialPoints = isCorrect ? currentPoints - Points.guessCorrect : currentPoints - Points.guessIncorrect
+            let initialPoints = isCorrect ? currentPoints - Points.correctTmojiGuess : currentPoints - Points.incorrectTmojiGuess
             updateProgress(initialPoints: initialPoints, currentPoints: currentPoints)
             progressUpdated = true
         }

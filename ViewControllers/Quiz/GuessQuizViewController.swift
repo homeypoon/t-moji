@@ -1,5 +1,5 @@
 //
-//  MemberQuizViewController.swift
+//  GuessQuizViewController.swift
 //  T-moji
 //
 //  Created by Homey Poon on 2023-08-02.
@@ -8,6 +8,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseFirestore
 import GoogleMobileAds
+
 class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     func noThanksButtonClicked() {
         
@@ -65,6 +66,10 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     
     var guessedResultType: ResultType! // selected by user
     
+    var totalGuesses: Int = 0
+    var correctGuesses: Int = 0
+    var isCorrect: Bool = false
+    
     var submitButtonClickRequired: Bool = false
     
     var previousWrongSelectedButton: UIButton?
@@ -102,9 +107,12 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         updateInitialUI()
         updateUiForGuessAnswers()
         
+        totalGuesses = quiz?.questions.count ?? 0
+        
         quizQuestionTextView.applyStyle(textViewType: .quizQuestion)
         
         loadGuessRewardedAd()
+        
     }
     
     private func loadGuessRewardedAd() {
@@ -171,7 +179,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     
     func updateUiForTmojiAnswer() {
         guard let quiz = quiz else {return }
-        navigationItem.title = "T-Moji Guess \(questionIndex + 1)/\(quiz.questions.count + 1)"
+        navigationItem.title = "T-Moji Guess - \(questionIndex + 1)/\(quiz.questions.count + 1)"
         // changed to + 1 for quiz.questions.count
         let totalProgress = Float(questionIndex) / Float(quiz.questions.count + 1)
         quizProgressView.setProgress(totalProgress, animated: true)
@@ -204,6 +212,15 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         }
     }
     
+    func trimUsername(username: String, maxChars: Int) -> String {
+        if username.count > maxChars {
+            let trimmedUsername = String(username.prefix(maxChars)) + "..."
+            return trimmedUsername
+        } else {
+            return username
+        }
+    }
+    
     func updateUiForGuessAnswers() {
         print("quizfsjkjfslj \(String(describing: quiz))")
         guard let quiz = quiz else { return }
@@ -215,7 +232,10 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         multiChoiceStackView.isHidden = true
         rangedStackView.isHidden = true
         
-        navigationItem.title = "Question \(questionIndex + 1)/\(quiz.questions.count + 1)"
+        if let guessedMemberUsername = guessedMember?.username {
+            navigationItem.title = "\(trimUsername(username: guessedMemberUsername, maxChars: 18))'s POV - \(questionIndex + 1)/\(quiz.questions.count + 1)"
+        }
+        
         // changed to + 1 for quiz.questions.count
         let totalProgress = Float(questionIndex) / Float(quiz.questions.count + 1)
         quizProgressView.setProgress(totalProgress, animated: true)
@@ -243,39 +263,54 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     }
     
     @IBAction func submitButtonPressed(_ sender: UIButton) {
-        guard selectedButton != nil else {return}
         submitButtonClickRequired = !submitButtonClickRequired
         
-        if submitButtonClickRequired {
-            for button in multiChoiceButtons {
-                button.isUserInteractionEnabled = false
-                rangedSlider.isUserInteractionEnabled = false
-            }
-            submitButton.setTitle("Next Question", for: [])
-            submitButton.tintColor = UIColor(named: "primaryDarkOrange")
-        } else {
-            for button in multiChoiceButtons {
-                button.isUserInteractionEnabled = true
-                rangedSlider.isUserInteractionEnabled = true
-            }
-            submitButton.setTitle("Submit", for: [])
-            submitButton.tintColor = UIColor(named: "primaryRed")
+        print("in")
+        guard let quiz = quiz else { return }
+        for button in multiChoiceButtons {
+            button.tintColor = UIColor(named: "primaryLightOrange")
+            button.setTitleColor(UIColor(named: "darkOrangeText"), for: [])
+            button.layer.shadowColor = UIColor(named: "primaryDarkOrange")?.cgColor
+            button.isUserInteractionEnabled = true
         }
         
-        switch currentQuestion.type {
-        case .multipleChoice:
-            if !submitButtonClickRequired {
-                nextQuestion()
+        if questionIndex == quiz.questions.count {
+            print("yes")
+            
+            guessedTmojiAnswer()
+//            ***********
+        } else {
+            if submitButtonClickRequired {
+                for button in multiChoiceButtons {
+                    button.isUserInteractionEnabled = false
+                    rangedSlider.isUserInteractionEnabled = false
+                }
+                submitButton.setTitle("Next Question", for: [])
+                submitButton.tintColor = UIColor(named: "primaryDarkOrange")
             } else {
-                showCorrectMultiAnswer()
+                for button in multiChoiceButtons {
+                    button.isUserInteractionEnabled = true
+                    rangedSlider.isUserInteractionEnabled = true
+                }
+                submitButton.setTitle("Submit", for: [])
+                submitButton.tintColor = UIColor(named: "primaryRed")
             }
             
-        case .ranged:
-            if !submitButtonClickRequired {
-                nextQuestion()
-                //                updateRangedSelectedAnswer()
-            } else {
-                showCorrectRangedAnswer()
+            switch currentQuestion.type {
+            case .multipleChoice:
+                if !submitButtonClickRequired {
+                    nextQuestion()
+                } else {
+                    showCorrectMultiAnswer()
+                }
+                
+            case .ranged:
+                if !submitButtonClickRequired {
+                    nextQuestion()
+                    //                updateRangedSelectedAnswer()
+                } else {
+                    showCorrectRangedAnswer()
+                }
             }
         }
     }
@@ -302,7 +337,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         default:
             break
         }
-        
+                
         // If user retried guess already, show guess results
         if previousWrongSelectedButton != nil {
             
@@ -313,6 +348,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         } else {
             // If user is correct, perform segue
             if guessedResultType == userQuizHistory?.finalResult {
+                isCorrect = true
                 updateUserWithPointsAndGuessCount {
                     self.updateGuessedMembers {
                         self.loadingSpinner?.stopAnimating()
@@ -320,6 +356,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                     }
                 }
             } else {
+                isCorrect = false
                 // Show extra guess pop up
                 self.navigationItem.hidesBackButton = true
                 
@@ -358,20 +395,13 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
             break
         }
         
-        print("questionIndex \(questionIndex)")
-        print("chosenAnswerssssss \(chosenAnswers)")
-        print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
-        
         guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
         guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
-        print("userGuessAnswer.text \(userGuessAnswer.text)")
-        print("correctGuessAnswer.text \(correctGuessAnswer.text)")
         
         if userGuessAnswer.text == correctGuessAnswer.text {
             updateButtonsForCorrectMulti(correctText: correctGuessAnswer.text, chosenButton: selectedButton, userCorrect: true)
         } else {
             updateButtonsForCorrectMulti(correctText: correctGuessAnswer.text, chosenButton: selectedButton, userCorrect: false)
-            
         }
     }
     
@@ -382,6 +412,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         }
         // Set the correct button's color
         if userCorrect {
+            correctGuesses += 1
             chosenButton.tintColor = UIColor(named: "correctGreen")
             chosenButton.setTitleColor(UIColor(named: "white"), for: [])
             chosenButton.layer.shadowColor = UIColor(named: "correctGreen")?.cgColor
@@ -415,18 +446,16 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         let index = Int(round(rangedSlider.value * Float(possibleAnswers.count - 1)))
         
         chosenAnswers[questionIndex] = possibleAnswers[index]
-        print("rangeedddd")
         
-        print("questionIndex \(questionIndex)")
-        print("chosenAnswerssssss \(chosenAnswers)")
-        print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
+//        print("questionIndex \(questionIndex)")
+//        print("chosenAnswerssssss \(chosenAnswers)")
+//        print("userQuizHistory?.chosenAnswers \(userQuizHistory?.chosenAnswers)")
         
         guard let userGuessAnswer = chosenAnswers[questionIndex] else { return }
         guard let correctGuessAnswer: Answer = userQuizHistory?.chosenAnswers[questionIndex]?.first as? Answer else { return }
-        print("userGuessAnswer.text \(userGuessAnswer.text)")
-        print("correctGuessAnswer.text \(correctGuessAnswer.text)")
                 
         if userGuessAnswer.text == correctGuessAnswer.text {
+            correctGuesses += 1
             rangedSlider.minimumTrackTintColor = UIColor(named: "correctGreen")
         } else {
             rangedSlider.minimumTrackTintColor = UIColor(named: "wrongRed")
@@ -522,7 +551,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         docRef.getDocument(as: User.self) { result in
             switch result {
             case .success(_):
-                let points = self.guessedResultType == self.userQuizHistory?.finalResult ? Points.guessCorrect : Points.guessIncorrect
+                
+                let points = Points.calculatePoints(totalGuesses: self.totalGuesses, correctGuesses: self.correctGuesses, isCorrect: self.isCorrect)
                 
                 if self.guessedResultType == self.userQuizHistory?.finalResult {
                     docRef.updateData([
@@ -570,6 +600,8 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         guessResultVC.guessedUser = self.guessedMember
         guessResultVC.userQuizHistory = self.userQuizHistory
         guessResultVC.guessedResultType = self.guessedResultType
+        guessResultVC.correctGuesses = self.correctGuesses
+        guessResultVC.totalGuesses = self.totalGuesses
         
         
         self.navigationController?.popViewController(animated: true)

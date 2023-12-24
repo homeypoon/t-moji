@@ -22,10 +22,18 @@ struct Price {
 }
 
 struct Points {
-    static let takeQuiz = 5
-    static let retakeQuiz = 2
-    static let guessCorrect = 3
-    static let guessIncorrect = 1
+    static let takeQuiz = 10
+    static let retakeQuiz = 8
+    static let correctTmojiGuess = 3
+    static let incorrectTmojiGuess = 1
+    static let participationGuess = 1
+    static let correctGuessBonus = 2
+    
+    static func calculatePoints(totalGuesses: Int, correctGuesses: Int, isCorrect: Bool) -> Int {
+        let tmojiGuessPoints = isCorrect ? Points.correctTmojiGuess : Points.incorrectTmojiGuess
+        
+        return (Points.participationGuess * totalGuesses) + (Points.correctGuessBonus * correctGuesses) + tmojiGuessPoints
+    }
 }
 
 struct ButtonState {
