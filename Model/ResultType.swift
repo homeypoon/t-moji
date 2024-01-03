@@ -32,6 +32,8 @@ enum ResultType: String {
     case toothbrush = "toothbrush", soap = "soap", toiletPaper = "toilet paper", bathtub = "bathtub"
     case basketball = "basketball", tennis = "tennis", volleyball = "volleyball", soccer = "soccer", football = "football"
     case red = "red", purple = "purple", blue = "blue", green = "green", yellow = "yellow", orangeColor = "orange ", brown = "brown", white = "white", black = "black"
+    case swimming = "swimming", surfing = "surfing", rockClimbing = "rock climbing", biking = "biking"
+    case scrambledEgg = "scrambled egg", breakfastWrap = "breakfast wrap", waffle = "waffle", pancake = "pancake"
     
     
     // ALERT: Watch how long each result message is + word length
@@ -258,6 +260,24 @@ enum ResultType: String {
             return "Your clarity, openness, and purity of heart are truly admirable. You are admired for embracing your pure and unpretentious spirit, for you bring a sense of freshness and renewal to our world."
         case .black:
             return "Your sophistication, mystery, and strength of character are truly captivating. You inspire with your enigmatic and powerful presence, and your uniqueness adds an aura of intrigue and a touch of timeless class to every situation."
+            
+        case .swimming:
+                    return "You value the calming and refreshing aspects of water, finding relaxation in life. It's a way for you to unwind and enjoy a sense of calmness."
+        case .surfing:
+                    return "You're an adventurer drawn to the excitement of life. You possess a thrill-seeking nature and feed off of other people’s energy."
+                case .rockClimbing:
+                    return "You thrive on challenges and heights, embodying determination and resilience. You love conquering mental and physical tests."
+                case .biking:
+                    return "You appreciate the freedom of movement and the simple joys of nature. You like to explore while staying active at a relaxed pace."
+        case .scrambledEgg:
+                    return "You appreciate simple pleasures and comfort. You have a practical and down-to-earth nature, often finding contentment in the familiar and cozy."
+        case .pancake:
+                    return "You have an energetic and vibrant personality. You tackle each day with excitement, embracing the invigorating moments."
+                case .waffle:
+                    return "You're a vibrant and adventurous individual who seeks joy and excitement in everything you do. You have a preference for lively experiences and a desire to infuse every moment with positivity."
+                case .breakfastWrap:
+                    return "You're practical and focused on what works best for you. You have a no-nonsense approach to life, valuing efficiency and functionality."
+
         }
     }
     
@@ -491,6 +511,23 @@ enum ResultType: String {
         case .black:
             return "⚫️"
             
+        case .swimming:
+                    return "🏊‍♂️"
+                case .surfing:
+                    return "🏄‍♂️"
+                case .rockClimbing:
+                    return "🧗‍♂️"
+                case .biking:
+                    return "🚴‍♂️"
+
+        case .scrambledEgg:
+                    return "🍳"
+                case .breakfastWrap:
+                     return "🌯"
+                case .waffle:
+                    return "🧇"
+                case .pancake:
+                    return "🥞"
             
         }
     }
@@ -517,6 +554,8 @@ enum ResultGroup: String {
     case flower = "Flower"
     case bathroomItem = "Bathroom Item"
     case ballSport = "Ball Sport"
+    case outdoorActivity = "Outdoor Activity"
+    case breakfastFood = "Breakfast Food"
     
 }
 
@@ -543,6 +582,8 @@ extension ResultType {
             .stationary: [.crayon, .pen, .pencil, .scissors, .ruler],
             .ballSport: [.soccer, .football, .tennis, .basketball, .volleyball],
             .color: [.red, .purple, .blue, .green, .yellow, .orangeColor, .brown, .white, .black],
+            .outdoorActivity: [.swimming, .surfing, .rockClimbing, .biking],
+            .breakfastFood: [.breakfastWrap, .scrambledEgg, .waffle, .pancake],
         ]
     }()
 }

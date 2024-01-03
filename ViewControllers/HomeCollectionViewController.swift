@@ -10,8 +10,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import AdSupport
 import AppTrackingTransparency
-
-
+import GoogleMobileAds
 
 private let reuseIdentifier = "Cell"
 
@@ -29,12 +28,15 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             case homeTopBanner
             case groups
             case noGroups
+            case unguessedTmates
         }
         
         enum Item: Hashable, Comparable {
             case homeTopBanner
             case group(group: Group)
             case noGroups
+            case unguessedTmate(tmate: User, userQuizHistory: UserQuizHistory)
+            case adInlineBanner(uuid: UUID)
             
             func hash(into hasher: inout Hasher) {
                 switch self {
@@ -44,6 +46,11 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     hasher.combine(group)
                 case .noGroups:
                     hasher.combine("No Groups")
+                case .unguessedTmate(let tmate, let userQuizHistory):
+                    hasher.combine(tmate)
+                    hasher.combine(userQuizHistory)
+                case .adInlineBanner(let uuid):
+                    hasher.combine(uuid)
                 }
             }
             static func ==(_ lhs: Item, _ rhs: Item) -> Bool {
@@ -54,6 +61,10 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                     return lGroup == rGroup
                 case (.noGroups, .noGroups):
                     return true
+                case (.unguessedTmate(let lTmate, let lUserQuizHistory), .unguessedTmate(let rTmate, let rUserQuizHistory)):
+                    return lTmate == rTmate && lUserQuizHistory == rUserQuizHistory
+                case (.adInlineBanner(let lUUID), .adInlineBanner(let rUUID)):
+                    return lUUID == rUUID
                 default:
                     return false
                 }
@@ -64,7 +75,9 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     
     struct Model {
         var groups = [Group]()
+        var userMasterTmates = [User]()
     }
+    let unguessedItemSize: CGFloat = 80.0
     
     var dataSource: DataSourceType!
     var model = Model()
@@ -75,22 +88,23 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         self.tabBarController?.tabBar.isHidden = false
         
         fetchGroups()
+        fetchGlobalUsers()
     }
     
-
-//    func doThis() {
-//            guard #available(iOS 14.0, *) else { return }
-//            ATTrackingManager.requestTrackingAuthorization { status in
-//                // Get IDFA here
-//                let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
-//                print("status = \(status.rawValue), idfa = \(idfa)")
-//            }
-//        }
-
+    
+    //    func doThis() {
+    //            guard #available(iOS 14.0, *) else { return }
+    //            ATTrackingManager.requestTrackingAuthorization { status in
+    //                // Get IDFA here
+    //                let idfa = ASIdentifierManager.shared().advertisingIdentifier.uuidString
+    //                print("status = \(status.rawValue), idfa = \(idfa)")
+    //            }
+    //        }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        doThis()
+        //        doThis()
         
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
@@ -138,6 +152,32 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         }
     }
     
+    private func fetchGlobalUsers() {
+        self.model.userMasterTmates.removeAll()
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        FirestoreService.shared.db.collection("users").getDocuments { (querySnapshot, error) in
+            if let error = error {
+                self.loadingSpinner?.stopAnimating()
+                self.presentErrorAlert(with: "An error occured!")
+            } else {
+                for document in querySnapshot!.documents {
+                    do {
+                        let member = try document.data(as: User.self)
+                        if member.masterGroupmatesIDs.contains(currentUid) {
+                            self.model.userMasterTmates.append(member)
+                        }
+                    }
+                    catch {
+                        self.loadingSpinner?.stopAnimating()
+                        self.presentErrorAlert(with: error.localizedDescription)
+                    }
+                }
+                self.updateCollectionView()
+            }
+        }
+    }
+    
     func createDataSource() -> DataSourceType {
         let dataSource = DataSourceType(collectionView: collectionView) { (collectionView, indexPath, item) -> UICollectionViewCell? in
             switch item {
@@ -160,6 +200,32 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 cell.configure()
                 
                 return cell
+            case .unguessedTmate(let tmate, let userQuizHistory):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GuessSelectMember", for: indexPath) as! GuessSelectMemberCollectionViewCell
+                cell.configure(withUsername: tmate.username, withTimePassed: Helper.timeSinceUserCompleteTime(from: userQuizHistory.userCompleteTime))
+                return cell
+            case .adInlineBanner(_):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier:
+                                                                "HomeInlineAd", for: indexPath)
+                
+                let adSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.unguessedItemSize, self.unguessedItemSize)
+                let adBannerView = GADBannerView(adSize: adSize)
+                adBannerView.adUnitID = "ca-app-pub-2315105541829350/8957577868"
+                adBannerView.rootViewController = self
+                
+                // Load ad
+                let request = GADRequest()
+                adBannerView.load(request)
+                
+                cell.contentView.addSubview(adBannerView)
+                adBannerView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    adBannerView.topAnchor.constraint(equalTo: cell.contentView.topAnchor),
+                    adBannerView.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor),
+                    adBannerView.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor),
+                    adBannerView.bottomAnchor.constraint(equalTo: cell.contentView.bottomAnchor)
+                ])
+                return cell
             }
         }
         
@@ -173,14 +239,14 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             switch section {
             case .groups:
                 sectionHeader.configureBigHeader(title: "T--ms", colorName: "Text")
-                return sectionHeader
             case .homeTopBanner:
                 sectionHeader.configure(title: "", colorName: "Text")
-                return sectionHeader
             case .noGroups:
                 sectionHeader.configure(title: "T--ms", colorName: "Text")
-                return sectionHeader
+            case .unguessedTmates:
+                sectionHeader.configure(title: "Unguessed T-mates", colorName: "Text")
             }
+            return sectionHeader
         }
         
         return dataSource
@@ -189,6 +255,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
         let layout =  UICollectionViewCompositionalLayout { (sectionIndex, environment ) -> NSCollectionLayoutSection? in
+            let horzSpacing: CGFloat = 20
             
             let sectionHeaderItemSize =
             NSCollectionLayoutSize(widthDimension:
@@ -247,7 +314,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(147))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(200))
                 
                 var group: NSCollectionLayoutGroup!
                 
@@ -258,12 +325,43 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 }
                 
                 let section = NSCollectionLayoutSection(group: group)
-
+                
                 section.boundarySupplementaryItems = [sectionHeader]
                 section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 24, bottom: 20, trailing: 24)
                 
+                section.interGroupSpacing = 28
+                
                 return section
                 
+            case .unguessedTmates:
+                let vertSpacing: CGFloat = 10
+                
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+                let item = NSCollectionLayoutItem(layoutSize: itemSize)
+                
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(self.unguessedItemSize))
+                
+                var group: NSCollectionLayoutGroup!
+                
+                if #available(iOS 16.0, *) {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+                } else {
+                    group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitem: item, count: 1)
+                }
+                
+                let section = NSCollectionLayoutSection(group: group)
+                section.boundarySupplementaryItems = [sectionHeader]
+                
+                section.contentInsets = NSDirectionalEdgeInsets(
+                    top: 8,
+                    leading: 24,
+                    bottom: 10,
+                    trailing: 24
+                )
+                
+                section.interGroupSpacing = 16
+                
+                return section
             }
         }
         
@@ -271,7 +369,10 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
     }
     
     func updateCollectionView() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+
         self.loadingSpinner?.stopAnimating()
+
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
         
@@ -284,14 +385,37 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
         for group in model.groups {
             itemsBySection[.groups, default: []].append(ViewModel.Item.group(group: group))
         }
-        
+    
         if itemsBySection[.groups] == nil  {
             sectionIDs.append(.noGroups)
             itemsBySection[.noGroups] = [ViewModel.Item.noGroups]
         } else if let quizzes = itemsBySection[.groups], quizzes.isEmpty {
             sectionIDs.append(.noGroups)
             itemsBySection[.noGroups] = [ViewModel.Item.noGroups]
+            
         }
+        
+        sectionIDs.append(.unguessedTmates)
+                
+        var itemIndex = 0
+        
+        // Iterate through userQuizHistory array
+        for userMasterTmate in model.userMasterTmates {
+            for userQuizHistory in userMasterTmate.userQuizHistory {
+                if !userQuizHistory.membersGuessed.contains(currentUid) {
+                    // Append to the list if membersGuessed doesn't contain currentUid
+                    itemsBySection[.unguessedTmates, default: []].append(ViewModel.Item.unguessedTmate(tmate: userMasterTmate, userQuizHistory: userQuizHistory))
+                    itemIndex += 1
+                    
+                    // Insert an AdMob banner item every 9 unguessed items
+                    if itemIndex % 9 == 5 {
+                        itemsBySection[.unguessedTmates, default: []].append(ViewModel.Item.adInlineBanner(uuid: UUID()))
+                    }
+                }
+            }
+        }
+        
+        
         
         dataSource.applySnapshotUsing(sectionIds: sectionIDs, itemsBySection: itemsBySection)
         
@@ -360,6 +484,7 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 }
                 
                 self.fetchGroups()
+                self.fetchGlobalUsers()
                 self.collectionView.reloadData()
             }
         }
@@ -374,6 +499,10 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
                 break
             case .noGroups:
                 break
+            case .unguessedTmate(tmate: let tmate, userQuizHistory: let userQuizHistory):
+                self.performSegue(withIdentifier: "guessTmateFromHome", sender: (tmate, userQuizHistory))
+            case .adInlineBanner(uuid: let uuid):
+                break
             }
         }
     }
@@ -386,6 +515,16 @@ class HomeCollectionViewController: UICollectionViewController, HomeTopBannerDel
             
             if let group = sender as? Group {
                 groupHomeVC.group = group
+            }
+        } else if segue.identifier == "guessTmateFromHome" {
+            let guessQuizVC = segue.destination as! GuessQuizViewController
+            
+            if let senderInfo = sender as? (User, UserQuizHistory) {
+                let guessedMember = senderInfo.0
+                let userQuizHistory = senderInfo.1
+                
+                guessQuizVC.guessedMember = guessedMember
+                guessQuizVC.userQuizHistory = userQuizHistory
             }
         }
     }

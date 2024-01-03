@@ -52,7 +52,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
     
     private var rewardedInterstitialAd: GADRewardedInterstitialAd?
     
-    var fromResultVC: Bool?
+    var fromResultVC: Bool? = false
     
     var quiz: Quiz?
     var group: Group?
@@ -100,7 +100,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         
         extraGuessPopupView.delegate = self
         
-        bannerView.adUnitID = "ca-app-pub-2315105541829350/5389008147"
+        bannerView.adUnitID = "c∂a-app-pub-2315105541829350/5389008147"
         bannerView.rootViewController = self
         bannerView.load(GADRequest())
         
@@ -463,9 +463,7 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
         print(correctGuessAnswer.rangedValue)
         guard let rangedValue = correctGuessAnswer.rangedValue else { return }
         
-        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {
-            self.rangedSlider.setValue(0.89, animated: true) },
-                completion: nil)
+        self.rangedSlider.setValue(rangedValue, animated: true)
     }
     
     func updateRangedSelectedAnswer() {
@@ -554,16 +552,21 @@ class GuessQuizViewController: UIViewController, ExtraGuessPopupViewDelegate {
                 
                 let points = Points.calculatePoints(totalGuesses: self.totalGuesses, correctGuesses: self.correctGuesses, isCorrect: self.isCorrect)
                 
-                if self.guessedResultType == self.userQuizHistory?.finalResult {
-                    docRef.updateData([
-                        "points": FieldValue.increment(Int64(points)),
-                        "correctGuesses": FieldValue.increment(Int64(1))
-                    ])
-                } else {
-                    docRef.updateData([
-                        "points": FieldValue.increment(Int64(points)),
-                        "wrongGuesses": FieldValue.increment(Int64(1))
-                    ])
+                if let quiz = self.quiz {
+                    let wrongGuesses = quiz.questions.count - self.correctGuesses
+                    
+                    if self.guessedResultType == self.userQuizHistory?.finalResult {
+                        docRef.updateData([
+                            "points": FieldValue.increment(Int64(points)),
+                            "correctGuesses": FieldValue.increment(Int64((self.correctGuesses + 1))),
+                            "wrongGuesses": FieldValue.increment(Int64(wrongGuesses))
+                        ])
+                    } else {
+                        docRef.updateData([
+                            "points": FieldValue.increment(Int64(self.correctGuesses)),
+                            "wrongGuesses": FieldValue.increment(Int64(wrongGuesses + 1))
+                        ])
+                    }
                 }
                 
                 completion()

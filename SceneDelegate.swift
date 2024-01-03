@@ -73,7 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     print("user remain logged in, proceed to another view")
                     let tabBarController = self.storyboard.instantiateViewController (withIdentifier: "TabBar") as! UITabBarController
 
-                    tabBarController.selectedIndex = TabBarScreen.profile.rawValue
+                    tabBarController.selectedIndex = TabBarScreen.home.rawValue
                     self.showScreen(viewController: tabBarController, windowScene: windowScene)
                 case .revoked:
                     print("user logged in before but revoked")
@@ -94,7 +94,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
                 let tabBarController = self.storyboard.instantiateViewController (withIdentifier: "TabBar") as! UITabBarController
 
-                tabBarController.selectedIndex = TabBarScreen.profile.rawValue
+                tabBarController.selectedIndex = TabBarScreen.home.rawValue
                 self.showScreen(viewController: tabBarController, windowScene: windowScene)
         
                 

@@ -821,5 +821,87 @@ struct QuizData {
                 Answer(text: "Functionality", correspondingResult: ResultType.deciduousTree)
             ]),
         ]),
+        Quiz(id: 20, resultGroup: .outdoorActivity, title: "What’s Your Outdoor Activity?", quizType: .character, questions: [
+            Question(text: "Which Mythical Creature Would You Want As Your Partner?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Dragon", correspondingResult: ResultType.swimming),
+                Answer(text: "Phoenix", correspondingResult: ResultType.surfing),
+                Answer(text: "Pegasus", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Werewolf", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "Choose a scenery:", type: .ranged, possibleAnswers: [
+                Answer(text: "Mountains", correspondingResult: ResultType.swimming),
+                Answer(text: "Beaches", correspondingResult: ResultType.surfing),
+                Answer(text: "Cliffs", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Countryside", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "If You Were a Seashell, What Would Be Your Pattern?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Spiral", correspondingResult: ResultType.swimming),
+                Answer(text: "Smooth and Rounded", correspondingResult: ResultType.surfing),
+                Answer(text: "Angular and Unique", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Textured and Edgy", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "How Do You Handle Heights?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Scared but can handle", correspondingResult: ResultType.swimming),
+                Answer(text: "Fine with them", correspondingResult: ResultType.surfing),
+                Answer(text: "Love a challenge", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Prefer to stay low", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "Your Ideal Coastal Adventure Involves:", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Snorkeling in Coral Reefs", correspondingResult: ResultType.swimming),
+                Answer(text: "Catching Waves on a Surfboard", correspondingResult: ResultType.surfing),
+                Answer(text: "Scaling Seaside Cliffs", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Coastal Biking Trails", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "Excitement or Calmness?", type: .ranged, possibleAnswers: [
+                Answer(text: "Excitement", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Slightly Excitement", correspondingResult: ResultType.surfing),
+                Answer(text: "Slightly Calmness", correspondingResult: ResultType.biking),
+                Answer(text: "Calmness", correspondingResult: ResultType.swimming)
+            ]),
+            Question(text: "Which Colour Palette Appeals to You the Most?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Azure Blue", correspondingResult: ResultType.swimming),
+                Answer(text: "Sunset Orange", correspondingResult: ResultType.surfing),
+                Answer(text: "Deep Sea Green", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Sandy Beige", correspondingResult: ResultType.biking)
+            ]),
+            Question(text: "In a Fantastical World, Which Enchanted forest Would You Explore?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Mystic Grove of Whispers", correspondingResult: ResultType.swimming),
+                Answer(text: "Eternal Flame Emberwood", correspondingResult: ResultType.surfing),
+                Answer(text: "Lunar Cascade Shadowland", correspondingResult: ResultType.rockClimbing),
+                Answer(text: "Sun-kissed Serenity Glade", correspondingResult: ResultType.biking)
+            ]),
+        ]),
+        Quiz(id: 21, resultGroup: .breakfastFood, title: "What Breakfast Food Are You?", quizType: .character, questions: [
+            Question(text: "Choose a Morning Activity:", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Morning jog", correspondingResult: ResultType.pancake),
+                Answer(text: "Meditating", correspondingResult: ResultType.waffle),
+                Answer(text: "Checking emails", correspondingResult: ResultType.breakfastWrap),
+                Answer(text: "Reading a book", correspondingResult: ResultType.scrambledEgg)
+            ]),
+            Question(text: "Pick a Pancake Topping:", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Maple Syrup", correspondingResult: ResultType.pancake),
+                Answer(text: "Fruit", correspondingResult: ResultType.breakfastWrap),
+                Answer(text: "Chocolate Syrup", correspondingResult: ResultType.waffle),
+                Answer(text: "No syrup", correspondingResult: ResultType.scrambledEgg)
+            ]),
+            Question(text: "Which Meditation Soundtrack Resonates with You?", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Nature Sounds", correspondingResult: ResultType.scrambledEgg),
+                Answer(text: "Calming Instrumental Tunes", correspondingResult: ResultType.waffle),
+                Answer(text: "Upbeat and Energizing Music", correspondingResult: ResultType.pancake),
+                Answer(text: "Ambient Office Background", correspondingResult: ResultType.breakfastWrap)
+            ]),
+            Question(text: "Work Alone or With Others?", type: .ranged, possibleAnswers: [
+                Answer(text: "Work Alone", correspondingResult: ResultType.breakfastWrap),
+                Answer(text: "Slightly Work Alone", correspondingResult: ResultType.scrambledEgg),
+                Answer(text: "Slightly Work With Others", correspondingResult: ResultType.waffle),
+                Answer(text: "Work With Others", correspondingResult: ResultType.pancake)
+            ]),
+            Question(text: "Pick a Historical Period to Time Travel to:", type: .multipleChoice, possibleAnswers: [
+                Answer(text: "Ancient Rome", correspondingResult: ResultType.breakfastWrap),
+                Answer(text: "Medieval Europe", correspondingResult: ResultType.scrambledEgg),
+                Answer(text: "Renaissance", correspondingResult: ResultType.waffle),
+                Answer(text: "Wild West", correspondingResult: ResultType.pancake)
+            ]),
+        ]),
     ]
 }

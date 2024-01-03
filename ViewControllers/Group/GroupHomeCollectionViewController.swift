@@ -615,7 +615,7 @@ class GroupHomeCollectionViewController: UICollectionViewController, TmateHeader
                 let userQuizHistory = senderInfo.1
                 
                 guessQuizVC.guessedMember = tmate
-                guessQuizVC.userQuizHistory = userQuizHistory
+                guessQuizVC.userQuizHistory = tmate.userQuizHistory.first(where: { $0.quizID == userQuizHistory.quizID })
                 guessQuizVC.group = group
             }
             

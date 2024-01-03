@@ -184,16 +184,13 @@ class ExploreCollectionViewController: UICollectionViewController, UISearchBarDe
                 
                 let adSize = GADInlineAdaptiveBannerAdSizeWithWidthAndMaxHeight(self.exploreItemSize, self.exploreItemSize)
                 let adBannerView = GADBannerView(adSize: adSize)
-//                adBannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111" // test
-               
                 adBannerView.adUnitID = "ca-app-pub-2315105541829350/5326383257"
                 adBannerView.rootViewController = self
                 
-                
-                // Step 3: Load an ad.
+    
+                // Load ad
                 let request = GADRequest()
                 adBannerView.load(request)
-                // TODO: Insert banner view in table view or scroll view, etc.
                 
                 cell.contentView.addSubview(adBannerView)
                 adBannerView.translatesAutoresizingMaskIntoConstraints = false

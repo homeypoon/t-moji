@@ -51,21 +51,22 @@ class PersonalQuizViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
-//        self.navigationItem.hidesBackButton = true
+        //        self.navigationItem.hidesBackButton = true
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bannerView.adUnitID = "ca-app-pub-2315105541829350/5312986520"
-        bannerView.rootViewController = self
-        bannerView.load(GADRequest())
-
+        
         updateInitialUI()
         updateUI()
-
+        
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
         loadingSpinner?.hidesWhenStopped = true
+        
+        bannerView.adUnitID = "ca-app-pub-2315105541829350/5312986520"
+        bannerView.rootViewController = self
+        bannerView.load(GADRequest())
     }
     
     func updateInitialUI() {
@@ -107,11 +108,11 @@ class PersonalQuizViewController: UIViewController {
         quizProgressView.setProgress(totalProgress, animated: true)
         
         if questionIndex == (quiz.questions.count - 1) {
-//            if isRetakeQuiz {
-//                submitButton.setTitle("Submit Quiz -\(Price.retakeQuiz)💸", for: [])
-//            } else {
+            //            if isRetakeQuiz {
+            //                submitButton.setTitle("Submit Quiz -\(Price.retakeQuiz)💸", for: [])
+            //            } else {
             submitButton.setTitle("Submit Quiz", for: [])
-//            }
+            //            }
         }
         
         switch currentQuestion.type {
@@ -260,7 +261,7 @@ class PersonalQuizViewController: UIViewController {
         dispatchGroup.notify(queue: .main) {
             self.loadingSpinner?.stopAnimating()
             self.submitButton.isUserInteractionEnabled = true
-           
+            
             self.performSegue(withIdentifier: "showPersonalResults", sender: nil)
         }
     }
@@ -273,13 +274,15 @@ class PersonalQuizViewController: UIViewController {
         let navController = segue.destination as! UINavigationController
         let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
         
-//        let quizResultVC = segue.destination as! QuizResultCollectionViewController
+        //        let quizResultVC = segue.destination as! QuizResultCollectionViewController
         quizResultVC.quiz = self.quiz
         quizResultVC.resultUser = self.currentUser
         quizResultVC.userQuizHistory = self.userQuizHistory
         quizResultVC.quizResultType = isRetakeQuiz ? .ownRetake : .ownQuiz
         
         self.navigationController?.popViewController(animated: true)
+        
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -300,10 +303,10 @@ class PersonalQuizViewController: UIViewController {
                         quizHistory.completedUsers.append(userID)
                         self.quizHistory = quizHistory
                         
-                            document.reference.updateData([
-                                "completedUsers": FieldValue.arrayUnion([userID]),
-                            ])
-                    
+                        document.reference.updateData([
+                            "completedUsers": FieldValue.arrayUnion([userID]),
+                        ])
+                        
                     } catch {
                         self.presentErrorAlert(with: error.localizedDescription)
                     }

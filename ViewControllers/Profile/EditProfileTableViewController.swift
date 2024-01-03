@@ -116,10 +116,15 @@ class EditProfileTableViewController: UITableViewController {
             checkUsernameAvailability(username: username) { isAvailable in
                 if isAvailable {
                     // Username is unique, perform the unwind segue
-                    self.performSegue(withIdentifier: "saveUnwind", sender: sender)
+                    
+                    if username.trimmingCharacters(in: .whitespaces).isEmpty {
+                        self.presentErrorAlert(with: "Please enter a username!")
+                    } else {
+                        self.performSegue(withIdentifier: "saveUnwind", sender: sender)
+                    }
                 } else {
                     // Username is not unique, show error
-                    self.presentErrorAlert(with: "Username is already taken.")
+                    self.presentErrorAlert(with: "Username is already taken!")
                 }
             }
         }

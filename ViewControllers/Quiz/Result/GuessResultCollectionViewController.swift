@@ -8,10 +8,13 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleMobileAds
 
 private let reuseIdentifier = "Cell"
 
 class GuessResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate {
+    private var interstitial: GADInterstitialAd?
+
     func guessToRevealPressed(sender: UnrevealedResultCollectionViewCell) {
         if let indexPath = collectionView.indexPath(for: sender) {
             if let item = dataSource.itemIdentifier(for: indexPath) {
@@ -461,7 +464,7 @@ class GuessResultCollectionViewController: UICollectionViewController, Unreveale
                 let member = senderInfo
                 guessQuizVC.members = self.members
                 guessQuizVC.guessedMember = member
-                guessQuizVC.userQuizHistory = userQuizHistory
+                guessQuizVC.userQuizHistory = member.userQuizHistory.first(where: { $0.quizID == quiz?.id })
                 guessQuizVC.group = self.group
                 guessQuizVC.fromResultVC = true
             }

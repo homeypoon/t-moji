@@ -8,6 +8,8 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleMobileAds
+
 
 private let reuseIdentifier = "Cell"
 
@@ -15,7 +17,9 @@ enum QuizResultType {
     case ownRetake, ownQuiz, checkOtherResult, checkOwnResult
 }
 
-class QuizResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate {
+class QuizResultCollectionViewController: UICollectionViewController, UnrevealedResultCellDelegate, GADFullScreenContentDelegate {
+    
+    private var interstitial: GADInterstitialAd?
     
     func guessToRevealPressed(sender: UnrevealedResultCollectionViewCell) {
         if let indexPath = collectionView.indexPath(for: sender) {
@@ -115,7 +119,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
         NotificationCenter.default.addObserver(self, selector: #selector(networkStatusChanged(_:)), name: Notification.Name("NetworkStatusChanged"), object: nil)
         
         fetchQuizHistory { [weak self] in
-                        
+            
             self?.fetchUser {
                 if let masterGroupmatesIDs = self?.model.currentUser?.masterGroupmatesIDs, !masterGroupmatesIDs.isEmpty {
                     self!.fetchUserMasterTmates(membersIDs: Array(Set(masterGroupmatesIDs)))
@@ -129,12 +133,14 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         loadingSpinner = UIActivityIndicatorView(style: .large)
         loadingSpinner?.center = view.center
         loadingSpinner?.hidesWhenStopped = true
+        
         if let loadingSpinner = loadingSpinner {
             view.addSubview(loadingSpinner)
-
+            
             loadingSpinner.startAnimating()
         }
         
@@ -214,7 +220,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     
     // Create compositional layout
     func createLayout() -> UICollectionViewCompositionalLayout {
-                
+        
         let sectionHeaderItemSize =
         NSCollectionLayoutSize(widthDimension:
                 .fractionalWidth(1), heightDimension: .estimated(48))
@@ -240,7 +246,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                     bottom: 12,
                     trailing: 0
                 )
-                                
+                
                 return section
             case .currentUserResult:
                 // Quiz Result
@@ -299,7 +305,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     
     func updateCollectionView() {
         self.loadingSpinner?.stopAnimating()
-
+        
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         var sectionIDs = [ViewModel.Section]()
         var itemsBySection = [ViewModel.Section: [ViewModel.Item]]()
@@ -384,7 +390,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
         
         DispatchQueue.main.async {
             self.collectionView.reloadData()
-        }        
+        }
     }
     
     
@@ -466,14 +472,14 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        if let item = dataSource.itemIdentifier(for: indexPath) {
-//            switch item {
-//            case .unrevealedResult(let member):
-//                self.performSegue(withIdentifier: "guessToRevealFromPersonal", sender: (member))
-//            default:
-//                return
-//            }
-//        }
+        //        if let item = dataSource.itemIdentifier(for: indexPath) {
+        //            switch item {
+        //            case .unrevealedResult(let member):
+        //                self.performSegue(withIdentifier: "guessToRevealFromPersonal", sender: (member))
+        //            default:
+        //                return
+        //            }
+        //        }
     }
     
     
@@ -488,7 +494,7 @@ class QuizResultCollectionViewController: UICollectionViewController, Unrevealed
                 let guessedMember = senderInfo
                 guessQuizVC.members = self.members
                 guessQuizVC.guessedMember = guessedMember
-                guessQuizVC.userQuizHistory = userQuizHistory
+                guessQuizVC.userQuizHistory = guessedMember.userQuizHistory.first(where: { $0.quizID == quiz?.id })
                 guessQuizVC.group = self.group
                 guessQuizVC.fromResultVC = true
             }

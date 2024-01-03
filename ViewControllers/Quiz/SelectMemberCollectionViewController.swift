@@ -400,7 +400,6 @@ class SelectMemberCollectionViewController: UICollectionViewController {
                 guessQuizVC.userQuizHistory = userQuizHistory
             }
             
-            //            self.navigationController?.popViewController(animated: true)
         } else if segue.identifier == "showResultFromSelectMember" {
             let navController = segue.destination as! UINavigationController
             let quizResultVC = navController.topViewController as! QuizResultCollectionViewController
