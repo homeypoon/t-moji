@@ -12,3 +12,6 @@ T-moji is a fun and engaging iOS app designed to help users discover their uniqu
 **_Collectible T-mojis_**: As users complete quizzes, they build a personal collection of t-mojis, creating a gallery that reflects their personality and style.
 
 **_Leaderboard_**: Users can climb the ranks by completing quizzes and accurately guessing their friends' t-mojis, competing for the top spot on the T-moji Leaderboard.
+
+![IMG_7212](https://github.com/user-attachments/assets/3f267f40-610b-41f2-8b41-0ecf131b6855)
+![Screenshot 2023-12-03 at 2 21 (2)](https://github.com/user-attachments/assets/bf50d51d-6093-49d2-bf23-8d42a06e898b)
