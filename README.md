@@ -64,7 +64,7 @@ Climb the leaderboard by completing quizzes and accurately guessing your friends
 Feel free to reach out with any questions or suggestions!
 
 - **Email**: [pn.homey@gmail.com](mailto:pn.homey@gmail.com)
-- **LinkedIn**: [LinkedIn Profile](https://www.linkedin.com/in/homey)
+- **LinkedIn**: [https://www.linkedin.com/in/homey-poon/](https://www.linkedin.com/in/homey-poon/)
 
 ---
 
