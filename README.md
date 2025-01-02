@@ -1,5 +1,6 @@
 # **T-moji**
-#### *Discover Your Unique T-mojis and Strengthen Friendships!*
+#### *Discover Your Unique T-mojis and Strengthen Friendships!* 
+**Click [here](https://apps.apple.com/ca/app/t-moji/id6465692268) to download the T-moji app on the App Store now!**
 
 <img src="https://github.com/user-attachments/assets/080da63b-7102-4257-9cda-e4a2db4a718e" width="450" height="450">
 
