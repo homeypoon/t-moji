@@ -3,6 +3,8 @@
 
 **Click <a href="https://apps.apple.com/ca/app/t-moji/id6465692268" target="_blank">here</a> to download the T-moji app on the App Store now!**
 
+Check out the T-moji Website: <a href="https://tmoji.netlify.app" target="_blank">https://tmoji.netlify.app</a>
+
 <img src="https://github.com/user-attachments/assets/080da63b-7102-4257-9cda-e4a2db4a718e" width="450" height="450">
 
 ## Overview
